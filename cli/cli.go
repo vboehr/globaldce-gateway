@@ -1,15 +1,15 @@
 package cli
 
 import (
-    "github.com/globaldce/globaldce/applog"
+    "github.com/globaldce/globaldce-toolbox/applog"
     "os"
-    "github.com/globaldce/globaldce/wallet"
+    "github.com/globaldce/globaldce-toolbox/wallet"
     "time"
     "fmt"
     "strings"
     "path/filepath"
-    "github.com/globaldce/globaldce/daemon"
-    "github.com/globaldce/globaldce/utility"
+    "github.com/globaldce/globaldce-toolbox/daemon"
+    "github.com/globaldce/globaldce-toolbox/utility"
 )
 const (
     appVersion="0.1.0"

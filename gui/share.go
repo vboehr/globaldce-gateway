@@ -14,10 +14,10 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"
-	"github.com/globaldce/globaldce/daemon"
+	"github.com/globaldce/globaldce-toolbox/daemon"
 	//"fyne.io/fyne/v2/data/validation"
 	"fyne.io/fyne/v2/dialog"
-	"github.com/globaldce/globaldce/cli"
+	"github.com/globaldce/globaldce-toolbox/cli"
 )
 
 var publicsharename string

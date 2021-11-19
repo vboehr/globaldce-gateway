@@ -1,8 +1,8 @@
 package wire
 
 import (
-	"github.com/globaldce/globaldce/applog"
-	"github.com/globaldce/globaldce/mainchain"
+	"github.com/globaldce/globaldce-toolbox/applog"
+	"github.com/globaldce/globaldce-toolbox/mainchain"
 )
 func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 	applog.Trace("\n new message to be handled",rmsg)

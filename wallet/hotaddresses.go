@@ -3,13 +3,13 @@ import
 (
 	//"crypto/sha256"
 	//"math/big"
-	"github.com/globaldce/globaldce/utility"
+	"github.com/globaldce/globaldce-toolbox/utility"
 	"encoding/json"
 	"encoding/binary"
 	"bytes"
 	"math/rand"
 	//"github.com/btcsuite/btcd/btcec"
-	//"github.com/globaldce/globaldce/applog"
+	//"github.com/globaldce/globaldce-toolbox/applog"
 	"fmt"
 	"os"
 )

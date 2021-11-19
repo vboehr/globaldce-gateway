@@ -1,8 +1,8 @@
 package wallet
 import (
-	"github.com/globaldce/globaldce/applog"
+	"github.com/globaldce/globaldce-toolbox/applog"
 	"fmt"
-	"github.com/globaldce/globaldce/utility"
+	"github.com/globaldce/globaldce-toolbox/utility"
 )
 
 func (wlt * Wallet) ComputeBalance() (uint64){

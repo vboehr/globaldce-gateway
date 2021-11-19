@@ -1,10 +1,10 @@
 package mainchain
 import (
 	"time"
-	"github.com/globaldce/globaldce/utility"
+	"github.com/globaldce/globaldce-toolbox/utility"
 	"container/list"
 	"fmt"
-	"github.com/globaldce/globaldce/applog"
+	"github.com/globaldce/globaldce-toolbox/applog"
 )
 
 

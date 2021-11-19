@@ -16,8 +16,8 @@ import (
 	//"fyne.io/fyne/v2/data/validation"
 	//"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/data/binding"
-	"github.com/globaldce/globaldce/daemon"
-	//"github.com/globaldce/globaldce/cli"
+	"github.com/globaldce/globaldce-toolbox/daemon"
+	//"github.com/globaldce/globaldce-toolbox/cli"
 )
 
 //type RegistredNameInfo struct {

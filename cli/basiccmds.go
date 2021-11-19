@@ -1,7 +1,7 @@
 package cli
 
 import (
-    "github.com/globaldce/globaldce/applog"
+    "github.com/globaldce/globaldce-toolbox/applog"
     "os"
 )
 

@@ -5,7 +5,7 @@ import
 	"math/big"
 	//"fmt"
 	//"github.com/btcsuite/btcd/btcec"
-	//"github.com/globaldce/globaldce/applog"
+	//"github.com/globaldce/globaldce-toolbox/applog"
 )
  
 

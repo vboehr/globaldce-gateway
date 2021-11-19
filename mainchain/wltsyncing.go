@@ -1,8 +1,8 @@
 package mainchain
 import (
-	"github.com/globaldce/globaldce/applog"
-	"github.com/globaldce/globaldce/utility"
-	"github.com/globaldce/globaldce/wallet"
+	"github.com/globaldce/globaldce-toolbox/applog"
+	"github.com/globaldce/globaldce-toolbox/utility"
+	"github.com/globaldce/globaldce-toolbox/wallet"
 	"strings"
 )
 

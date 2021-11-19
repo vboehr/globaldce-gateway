@@ -10,16 +10,16 @@ import (
 	//"fyne.io/fyne/v2/dialog"
 	//"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2"
-	"github.com/globaldce/globaldce/applog"
+	"github.com/globaldce/globaldce-toolbox/applog"
     "os"
 	//"errors"
-    "github.com/globaldce/globaldce/wallet"
+    "github.com/globaldce/globaldce-toolbox/wallet"
     //"time"
     "fmt"
     //"strings"
     //"path/filepath"
-    "github.com/globaldce/globaldce/daemon"
-	"github.com/globaldce/globaldce/cli"
+    "github.com/globaldce/globaldce-toolbox/daemon"
+	"github.com/globaldce/globaldce-toolbox/cli"
 )
 
 const appscreenWidth =800

@@ -4,8 +4,8 @@ import(
 	"fmt"
 	"encoding/json"
 	"path/filepath"
-	"github.com/globaldce/globaldce/utility"
-	"github.com/globaldce/globaldce/daemon"
+	"github.com/globaldce/globaldce-toolbox/utility"
+	"github.com/globaldce/globaldce-toolbox/daemon"
 )
 var MainwalletFilePathDefault=filepath.Join("WalletFiles","Wallet.dat")
 

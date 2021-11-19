@@ -1,9 +1,9 @@
 package wire
 import (
-	"github.com/globaldce/globaldce/applog"
+	"github.com/globaldce/globaldce-toolbox/applog"
 	"net"
 	"sync"
-	//"github.com/globaldce/globaldce/utility"
+	//"github.com/globaldce/globaldce-toolbox/utility"
 	
 )
 

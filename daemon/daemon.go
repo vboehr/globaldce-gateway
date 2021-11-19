@@ -1,12 +1,12 @@
 package daemon
 import (
-	"github.com/globaldce/globaldce/mainchain"
-	"github.com/globaldce/globaldce/wire"
-	"github.com/globaldce/globaldce/wallet"
+	"github.com/globaldce/globaldce-toolbox/mainchain"
+	"github.com/globaldce/globaldce-toolbox/wire"
+	"github.com/globaldce/globaldce-toolbox/wallet"
 	//"path/filepath"
 	//"fmt"
 	//"os"
-	//"github.com/globaldce/globaldce/applog"
+	//"github.com/globaldce/globaldce-toolbox/applog"
 )
 	var (
 

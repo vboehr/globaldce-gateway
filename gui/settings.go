@@ -15,7 +15,7 @@ import (
 	//"net/url"
 	//"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2"
-	"github.com/globaldce/globaldce/cli"
+	"github.com/globaldce/globaldce-toolbox/cli"
 )
 
 

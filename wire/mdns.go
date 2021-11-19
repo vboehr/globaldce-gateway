@@ -1,9 +1,9 @@
 package wire
 import (
-	"github.com/globaldce/globaldce/applog"
+	"github.com/globaldce/globaldce-toolbox/applog"
 	"os"
 	"time"
-	"github.com/globaldce/mdns"
+	"github.com/globaldce/mdns-1"
 )
 func (sw *Swarm) StartMDNSServer(){
 
