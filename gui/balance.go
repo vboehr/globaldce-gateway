@@ -21,8 +21,6 @@ import (
 
 
 
-
-
 func balanceScreen() fyne.CanvasObject {
 	tabs := container.NewAppTabs(
 		//container.NewTabItem("Balance",  welcomeScreen()),
