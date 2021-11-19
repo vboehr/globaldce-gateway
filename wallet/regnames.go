@@ -1,0 +1,49 @@
+package wallet
+import
+(
+	//"crypto/sha256"
+	//"math/big"
+	"github.com/globaldce/globaldce/utility"
+	//"encoding/json"
+	//"encoding/binary"
+	//"bytes"
+	//"math/rand"
+	//"github.com/btcsuite/btcd/btcec"
+	//"github.com/globaldce/globaldce/applog"
+	"fmt"
+	"strings"
+)
+func (wlt *Wallet) GetRegisteredNames() []string{
+	var registerednames []string
+	for _, asset := range wlt.Assetarray {
+
+			if strings.Index(asset.StateString,"NAMEREGISTERED_")==0{
+				r := strings.NewReplacer("NAMEREGISTERED_", "")
+				tmpstatestring:=asset.StateString
+				tmpregisteredname:=r.Replace(tmpstatestring)
+				registerednames=append(registerednames,tmpregisteredname)
+			}
+
+	}
+	return registerednames
+}
+func (wlt *Wallet) GetAddressesDetails() []string{
+	var addresses []string
+	//fmt.Printf("\nNumber of addresses %d\n",len(wlt.Privatekeyarray))
+	for _, prvkey := range wlt.Privatekeyarray {
+		address:=utility.ComputeHash(prvkey.PubKey().SerializeCompressed())
+		addresses=append(addresses,fmt.Sprintf("%x",address))
+	}
+	return addresses
+
+}
+func (wlt *Wallet) GetAssetsDetails() []string{
+	var assestsdestails []string
+	//fmt.Printf("\nNumber of addresses %d\n",len(wlt.Privatekeyarray))
+	for _, tmpasset := range wlt.Assetarray {
+		
+		assestsdestails=append(assestsdestails,fmt.Sprintf(" %d ",tmpasset.Value)+tmpasset.StateString)
+	}
+	return assestsdestails
+
+}

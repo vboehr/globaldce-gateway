@@ -1,0 +1,15 @@
+/Mainblocks
+/Data
+/Mainstatedb
+/WalletFiles
+/HotAddressesFiles
+/Sync
+/Tmp/*
+# Files types to ignore
+*.exe
+*.o
+*.log
+*.dat
+*.ini
+# Directories to ignore
+rawtest
