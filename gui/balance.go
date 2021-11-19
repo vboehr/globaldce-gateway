@@ -19,8 +19,6 @@ import (
 	"github.com/globaldce/globaldce/daemon"
 )
 
-
-
 func balanceScreen() fyne.CanvasObject {
 	tabs := container.NewAppTabs(
 		//container.NewTabItem("Balance",  welcomeScreen()),
