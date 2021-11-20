@@ -11,7 +11,7 @@ import (
 	//"fyne.io/fyne/v2/data/validation"
 	"fyne.io/fyne/v2/widget"
 	//"fyne.io/fyne/v2/canvas"
-	"net/url"
+	//"net/url"
 	//"net/url"
 	//"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2"
@@ -66,7 +66,7 @@ func settingsScreen() fyne.CanvasObject {
 //		widget.NewSlider(0, 100),
 //	)
 //}
-
+/*
 func parseURL(urlStr string) *url.URL {
 	link, err := url.Parse(urlStr)
 	if err != nil {
@@ -76,7 +76,7 @@ func parseURL(urlStr string) *url.URL {
 	return link
 }
 
-
+*/
 
 
 

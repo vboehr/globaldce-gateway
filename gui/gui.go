@@ -24,6 +24,9 @@ import (
 
 const appscreenWidth =800
 const appscreenHeight = 600
+//var winredraw bool 
+//var searchtext string
+
 
 
 func Start(appname string) {
@@ -67,22 +70,42 @@ func Start(appname string) {
 	daemon.Wlt=wlt
 	go daemon.Mainloop()
 	/////////////////////////////////////
-	
-	tabs := container.NewAppTabs(
-		//container.NewTabItemWithIcon("Wallet",theme.FolderIcon(),  overviewScreen()),
-		container.NewTabItem("Home",  homeScreen(myWindow)),
-		container.NewTabItem("Balance",  balanceScreen()),
-		container.NewTabItem("Registration",  registrationScreen(myWindow)),
-		//container.NewTabItem("Send",  sendScreen()),//txbuilderScreen()
-		container.NewTabItem("Send to",  txbuilderScreen()),
-		container.NewTabItem("Settings",  settingsScreen()),	
-	)
+	//winredraw=true
+	////////////////////////////////////
+	//go func() {
+	//	for {
+	//		if winredraw {
+			//hometab=homeScreen(myWindow)
+			tabs := container.NewAppTabs(
+				//container.NewTabItemWithIcon("Wallet",theme.FolderIcon(),  overviewScreen()),
+				container.NewTabItem("Home",  homeScreen(myWindow)),
+				container.NewTabItem("Balance",  balanceScreen()),
+				container.NewTabItem("Registration",  registrationScreen(myWindow)),
+				//container.NewTabItem("Send",  sendScreen()),//txbuilderScreen()
+				container.NewTabItem("Send to",  txbuilderScreen()),
+				container.NewTabItem("Settings",  settingsScreen()),	
+			)
+		
+			//tabs.Append(container.NewTabItemWithIcon("Home", theme.HomeIcon(), widget.NewLabel("Home tab")))
+		
+			tabs.SetTabLocation(container.TabLocationTop)
+			
+			myWindow.SetContent(tabs)
+		
+			//winredraw=false
+			//time.Sleep(time.Minute * 2)
+			//}
+	//	}
+	//}()
+	/*
+	go func() {
+		for {
+			tabs.Refresh()
+			time.Sleep(time.Second * 2)
+		}
+	}()
+	*/
 
-	//tabs.Append(container.NewTabItemWithIcon("Home", theme.HomeIcon(), widget.NewLabel("Home tab")))
-
-	tabs.SetTabLocation(container.TabLocationTop)
-	
-	myWindow.SetContent(tabs)
 	/*
 	myWindow.SetCloseIntercept(func() { //SetOnClosed(func())
 		dialog.ShowConfirm("Quitting", "Do you want to quit ?",

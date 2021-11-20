@@ -12,7 +12,7 @@ How to compile from source
 1. If you have not already done so. Install Go (at least version 1.12)
 2. Use the following commands to download, and build this source code: 
 ```bash
-git clone https://github.com/globaldce/globaldce-toolbox-toolbox
+git clone https://github.com/globaldce/globaldce-toolbox
 cd globaldce-toolbox
 go build -o globaldce-toolbox
 ```

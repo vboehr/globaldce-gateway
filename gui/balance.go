@@ -28,11 +28,7 @@ func balanceScreen() fyne.CanvasObject {
 
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
-
-
-
 	return tabs
-
 }
 
 func overviewScreen() fyne.CanvasObject {
@@ -58,7 +54,7 @@ func overviewScreen() fyne.CanvasObject {
 		}
 	}()
 
-	/////////////////////////
+		///////////////////////
 		///////////////////////
 		assestsdestails := binding.BindStringList(
 			&[]string{},
