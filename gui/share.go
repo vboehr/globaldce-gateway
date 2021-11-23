@@ -75,14 +75,10 @@ func shareScreen(win fyne.Window) fyne.CanvasObject {
 		if publicsharename!=""{
 			publicsharetext:=input.Text
 			fmt.Printf("creating a new public post for %s : %s\n",publicsharename,publicsharetext)
-			cli.Sendpublicpost(daemon.Wireswarm,daemon.Mn,daemon.Wlt,publicsharename,publicsharetext)
+			cli.Sendpublicpost(daemon.Wireswarm,daemon.Mn,daemon.Wlt,publicsharename,"",publicsharetext)
 			dialog.ShowInformation("Public Post", "Public post is being broadcasted", win)
 			input.SetText("")
 		}
-        
-
-
-		
     })
 	nameregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),nameregistrationbutton)
 	//nameregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),nameregistrationbutton)

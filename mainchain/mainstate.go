@@ -17,7 +17,6 @@ const (
 	StateIdentifierActifNameRegistration=4
 	StateIdentifierInactifNameRegistration=5
 	StateIdentifierData=6
-	StateIdentifierDataFile=7
 )
 
 
@@ -109,14 +108,17 @@ func (mn *Maincore) GetNameState(name []byte) uint32 {
 	return stateidentifier
 }
 
-func (mn *Maincore) PutDataState(datahash utility.Hash,id uint32) error{
+func (mn *Maincore) PutPublicPostState(datahash utility.Hash,namebytes []byte,id uint32) error{
+
 	tmpbw:=utility.NewBufferWriter()
 	tmpbw.PutUint32(StateIdentifierData)// transaction type
+	tmpbw.PutVarUint(uint64(len(namebytes)))
+	tmpbw.PutBytes(namebytes)
 	tmpbw.PutUint32(id)
 	err := mn.mainstatedb.Put(datahash[:], tmpbw.GetContent(), nil)
 	return err
 }
-func (mn *Maincore) GetDataState(datahash utility.Hash)( uint32, error){
+func (mn *Maincore) GetPublicPostState(datahash utility.Hash)([]byte, uint32, error){
 	
 
 	tmpkeybw:=utility.NewBufferWriter()
@@ -126,15 +128,17 @@ func (mn *Maincore) GetDataState(datahash utility.Hash)( uint32, error){
 	valuebytes, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
 	if err != nil {
 		//applog.Trace("GetNameState - txhash %x - index %d : %v",txhash,index, err)
-		return 0,err
+		return nil,0,err
 	}
 	tmpbr:=utility.NewBufferReader(valuebytes)
 	stateidentifier:=tmpbr.GetUint32()
 	if stateidentifier!=StateIdentifierData{
-		return 0,fmt.Errorf("Found an incorrect stateidentifier associated with data hash %x - identifier found")
+		return nil,0,fmt.Errorf("Found an incorrect stateidentifier associated with data hash %x - identifier found")
 	}
+	namebyteslen:=tmpbr.GetVarUint()
+	namebytes:=tmpbr.GetBytes(uint(namebyteslen))
 	id:=tmpbr.GetUint32()
-	return id,nil
+	return namebytes,id,nil
 }
 /*
 func (mn *Maincore) GetNameState(name []byte) uint32 {

@@ -30,7 +30,7 @@ func (myTheme) Color(c fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
 	case theme.ColorNameHover:
 		return color.NRGBA{R: 0xff, G: 0xff, B: 0xff, A: 0xf}
 	case theme.ColorNameInputBackground:
-		return color.NRGBA{R: 0x03, G: 0xff, B: 0x12, A: 0x19}//it was {R: 0xff, G: 0xff, B: 0xff, A: 0x19}
+		return color.NRGBA{R: 0xff, G: 0xff, B: 0xff, A: 0x19}//it was {R: 0xff, G: 0xff, B: 0xff, A: 0x19}
 	case theme.ColorNamePlaceHolder:
 		return color.NRGBA{R: 0xb2, G: 0xb2, B: 0xb2, A: 0xff}
 	case theme.ColorNamePressed:

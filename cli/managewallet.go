@@ -85,12 +85,12 @@ func managewallet(ws *wire.Swarm,mn *mainchain.Maincore,wlt * wallet.Wallet){
 				
 				Sendnameregistration(ws,mn,wlt,requestarguments[1],requestarguments[2])
 			case "sendpublicpost":
-				if len(requestarguments)<3{
+				if len(requestarguments)<4{
 					sendpublicposthelp()
 					continue
 				}
 				
-				Sendpublicpost(ws,mn,wlt,requestarguments[1],requestarguments[2])
+				Sendpublicpost(ws,mn,wlt,requestarguments[1],requestarguments[2],requestarguments[3])
 			case "displaybalance":
 				displaybalance(mn,wlt)
 			case "displayaddresses":
@@ -298,11 +298,11 @@ func sendnameregistrationhelp(){
 }
 func sendpublicposthelp(){
     fmt.Printf("\nError: sendpublicpost inappropiate usage\n")
-    fmt.Printf("In order to proceed with a public post for the registred name X with a string of Y, enter as follows:\n")
-    fmt.Printf("sendpublicpost X Y \n")
+    fmt.Printf("In order to proceed with a public post for the registred name X with a web link of Y and a text Z, enter as follows:\n")
+    fmt.Printf("sendpublicpost X Y Z\n")
     //
 }
-func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,datastring string){
+func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,linkstring string,textstring string){
 	/*
 	a,aerr:=wlt.GetAssetFromRegisteredName(namestring)
     if aerr!=nil{
@@ -310,7 +310,18 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
         return
     }*/
 	amountfee:=100//TODO customizable fees based on bytes - fee = 1 to 10 coins * transaction bytes
-	databytes:=[]byte(datastring)//
+	
+	
+	tmpbw:=utility.NewBufferWriter()
+	tmpbw.PutUint32(mainchain.DataIdentifierPublicPost)
+	tmpbw.PutVarUint(uint64(len([]byte(linkstring))))
+	tmpbw.PutBytes([]byte(linkstring))
+
+	tmpbw.PutVarUint(uint64(len([]byte(textstring))))
+	tmpbw.PutBytes([]byte(textstring))
+
+	//databytes:=[]byte(datastring)//
+	databytes:=tmpbw.GetContent()
 	ed:=utility.NewExtradataFromBytes(databytes)
 
 	tx,err:=wlt.SetupTransactionForNamePublicPost(namestring,ed,uint64 (amountfee))
@@ -320,7 +331,7 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
     }
     fmt.Printf("new public post seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
-		mn.AddPublicPostData(namestring,ed.Hash,databytes)
+		mn.AddLocalPublicPostData(namestring,ed.Hash,databytes)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
     }

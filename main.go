@@ -8,13 +8,13 @@ import(
 func main(){
 	if len(os.Args)>=2{
 		// cli is needed
-		cli.Start("globaldce")
+		cli.Start("globaldce-toolbox")
 		/*for {
 			time.Sleep(time.Minute)
 	    	}*/
 	} else {
 		//fmt.Println("Launching the gui")
-		gui.Start("globaldce")
+		gui.Start("globaldce-toolbox")
 
 	}
 

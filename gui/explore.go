@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"encoding/json"
 	//"time"
+	//"strings"
 	"fyne.io/fyne/v2"
 	//"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/widget"
@@ -12,6 +13,8 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/data/binding"
+	"github.com/globaldce/globaldce-toolbox/mainchain"
+	"github.com/globaldce/globaldce-toolbox/daemon"
 )
 
 //////////////////////////////////////////////////
@@ -29,19 +32,13 @@ func parseURL(urlStr string) *url.URL {
 const iconSize = float32(100)
 type post struct {
 	Name string
+	Link string
 	Content string
 	//user    *user
 }
 
-func StringFromPost(p post) string{
-
-	//json.Unmarshal([]byte(stringData), &data)
-	b,_:=json.Marshal(p)
-	return string(b)
-	
-}
-func PostFromString(s string) post{
-	var p post
+func PostInfoFromString(s string) mainchain.PostInfo{
+	var p mainchain.PostInfo
 	json.Unmarshal([]byte(s), &p)
 	return p
 }
@@ -63,10 +60,13 @@ func (m *postRenderer) Layout(s fyne.Size) {
 	m.top.Move(fyne.NewPos(remainStart, -theme.Padding()))
 	m.top.Resize(fyne.NewSize(remainWidth, m.top.MinSize().Height))
 
-	m.link.Move(fyne.NewPos(remainStart,150 -theme.Padding()))//100 is the height of the cell
-	m.link.Resize(fyne.NewSize(remainWidth, m.top.MinSize().Height))
+	m.link.Move(fyne.NewPos(remainStart, m.top.MinSize().Height-theme.Padding()*4))//100 is the height of the cell
+	if m.m.msg.Link!=""{
+		m.link.Resize(fyne.NewSize(remainWidth, m.top.MinSize().Height))
+	}
+	
 
-	m.main.Move(fyne.NewPos(remainStart, m.top.MinSize().Height-theme.Padding()*4))
+	m.main.Move(fyne.NewPos(remainStart, m.top.MinSize().Height+2*theme.Padding()))
 	m.main.Resize(fyne.NewSize(remainWidth, m.main.MinSize().Height))
 	m.sep.Move(fyne.NewPos(0, s.Height-theme.SeparatorThicknessSize()))
 	m.sep.Resize(fyne.NewSize(s.Width, theme.SeparatorThicknessSize()))
@@ -78,7 +78,7 @@ func (m *postRenderer) MinSize() fyne.Size {
 	//return fyne.NewSize(w+iconSize+theme.Padding()*2,
 	//	s1.Height+s2.Height-theme.Padding()*4)
 	_=w
-	return fyne.NewSize(500,200)
+	return fyne.NewSize(1000,200)
 }
 func (m *postRenderer) Objects() []fyne.CanvasObject {
 	return []fyne.CanvasObject{m.top, m.main, m.pic,m.link, m.sep}
@@ -86,10 +86,14 @@ func (m *postRenderer) Objects() []fyne.CanvasObject {
 
 func (m *postRenderer) Refresh() {
 	m.top.SetText(m.m.msg.Name)
-	m.pic.SetResource(theme.FyneLogo())
+	///////////////////////////////////
+	//m.pic.SetResource(theme.FyneLogo())
+	///////////////////////////////////
+	m.pic.SetResource(nil)
 	m.main.SetText(m.m.msg.Content)
 	
-	m.link=widget.NewHyperlink("linktext", parseURL("https://www.github.com/globaldce"))
+	m.link=widget.NewHyperlink(m.m.msg.Link, parseURL(m.m.msg.Link))
+	//fmt.Printf("link is %s",m.m.msg.Link)
 	/*
 	if m.m.msg.user.name != "" {
 		m.top.SetText(m.m.msg.user.name)
@@ -111,7 +115,7 @@ func (m *postCell) CreateRenderer() fyne.WidgetRenderer {
 	name.Wrapping = fyne.TextTruncate
 	body := widget.NewLabel(m.msg.Content)
 	body.Wrapping = fyne.TextWrapWord
-	emptylink:=widget.NewHyperlink("", parseURL(""))
+	emptylink:=widget.NewHyperlink(m.msg.Link, parseURL(m.msg.Link))
 	return &postRenderer{m: m,
 		top:  name,
 		main: body, pic: widget.NewIcon(nil),link:emptylink, sep: widget.NewSeparator()}
@@ -119,9 +123,11 @@ func (m *postCell) CreateRenderer() fyne.WidgetRenderer {
 
 func (m *postCell) UpdatePost(s string)  {
 	//m.Unbind()
-	p:=PostFromString(s)
+	p:=PostInfoFromString(s)
 	m.msg.Name=p.Name
+	m.msg.Link=p.Link
 	m.msg.Content=p.Content
+
 
 }
 func newPostCell(m *post) *postCell {
@@ -192,18 +198,28 @@ list := widget.NewTable(
 }
 
 func getPosts(keywords string)[]string{
-
 	_=keywords
-	var sarray[]string
-	//if keywords=="1"{
-		sarray=append(sarray,StringFromPost(post{Name:"cool1",Content:"11111cool1 content text"}))
-	//}
-	//if keywords=="2"{
-		sarray=append(sarray,StringFromPost(post{Name:"cool2",Content:"cool2222 content text"}))
-	//}
+	//GetPostInfoStringArray []string
+	/*
 	
-	sarray=append(sarray,StringFromPost(post{Name:"cool33",Content:"cool33 content text"}))
+	
+	s1:=StringFromPostInfo(PostInfo{Name:"cool1",Link:"",Content:"11111cool1 content text"})
+	if strings.Index(s1,keywords)>=0{
+		sarray=append(sarray,s1)
+	}
+	s2:=StringFromPostInfo(PostInfo{Name:"cool2",Link:"https://www.google.com",Content:"cool2222 content text"})
+	if strings.Index(s2,keywords)>=0{
+		sarray=append(sarray,s2)
+	}
+	
+	sarray=append(sarray,StringFromPostInfo(PostInfo{Name:"cool33",Link:"",Content:"cool33 content text"}))
 	//bindings.Set(sarray)
 	return sarray
+	*/
+	if daemon.Mn==nil{
+		return nil
+	}
+	return daemon.Mn.GetPostInfoStringArray(30) 
+	//
 }
 
