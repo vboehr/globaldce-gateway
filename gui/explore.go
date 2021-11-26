@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"fmt"
 	"encoding/json"
-	//"time"
+	"time"
 	//"strings"
 	"fyne.io/fyne/v2"
 	//"fyne.io/fyne/v2/app"
@@ -141,6 +141,7 @@ func newPostCell(m *post) *postCell {
 //var bindings []binding.DataMap
 
 var MaxDisplayedPost =50
+var searchtext string =""
 func exploreScreen(w fyne.Window)  fyne.CanvasObject{
 	bindings := binding.BindStringList(
 		&[]string{},
@@ -152,7 +153,9 @@ func exploreScreen(w fyne.Window)  fyne.CanvasObject{
 //  bindings = append(bindings, binding.BindStruct(&todo))
 //}
 //getPosts("")
-bindings.Set(getPosts(""))
+
+
+
 list := widget.NewTable(
   func() (int, int) {
     //return len(bindings), 1
@@ -182,14 +185,27 @@ list := widget.NewTable(
   })
 
 
+
+go func() {
+	for {
+		//fmt.Println("*******!!!!!!!!",registerednames)
+		time.Sleep(time.Second * 2)
+		//assestsdestails.Set(daemon.Wlt.GetAssetsDetails())
+		bindings.Set(getPosts(searchtext))
+		list.Refresh()
+		//str.Set(fmt.Sprintf("WALLET BALANCE is %d", daemon.Wlt.ComputeBalance()))
+		
+	}
+}()
 	
 	
 	searchentry:=widget.NewEntry()
 	searchentry.SetPlaceHolder("Seach for ...")
 	searchentry.OnSubmitted=func(s string) {
 		fmt.Println("Search submitted",s)
-		
+		searchtext=s
 		bindings.Set(getPosts(s))
+		list.Refresh()
 	}
 
 
@@ -201,25 +217,29 @@ func getPosts(keywords string)[]string{
 	_=keywords
 	//GetPostInfoStringArray []string
 	/*
+	var sarray []string
 	
-	
-	s1:=StringFromPostInfo(PostInfo{Name:"cool1",Link:"",Content:"11111cool1 content text"})
-	if strings.Index(s1,keywords)>=0{
+	s1:=mainchain.StringFromPostInfo(mainchain.PostInfo{Name:"cool1",Link:"",Content:"11111cool1 content text"})
+	//if strings.Index(s1,keywords)>=0{
 		sarray=append(sarray,s1)
-	}
-	s2:=StringFromPostInfo(PostInfo{Name:"cool2",Link:"https://www.google.com",Content:"cool2222 content text"})
-	if strings.Index(s2,keywords)>=0{
+	//}
+	s2:=mainchain.StringFromPostInfo(mainchain.PostInfo{Name:"cool2",Link:"https://www.google.com",Content:"cool2222 content text"})
+	//if strings.Index(s2,keywords)>=0{
 		sarray=append(sarray,s2)
-	}
+	//}
 	
-	sarray=append(sarray,StringFromPostInfo(PostInfo{Name:"cool33",Link:"",Content:"cool33 content text"}))
+	sarray=append(sarray,mainchain.StringFromPostInfo(mainchain.PostInfo{Name:"cool33",Link:"",Content:"cool33 content text"}))
 	//bindings.Set(sarray)
 	return sarray
 	*/
+	
 	if daemon.Mn==nil{
 		return nil
 	}
-	return daemon.Mn.GetPostInfoStringArray(30) 
-	//
+	sarray:=daemon.Mn.GetPostInfoStringArray(30) 
+	fmt.Printf("********%v",sarray)
+	return sarray
+	
+	//return nil
 }
 

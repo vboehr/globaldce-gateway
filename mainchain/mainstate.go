@@ -201,6 +201,14 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction) {
 		switch moduleid {
 			case utility.ModuleIdentifierECDSATxIn:
 				mn.PutTxOutputState(tx.Vin[l].Hash,tx.Vin[l].Index,StateIdentifierSpentTxOutput)
+			case utility.ModuleIdentifierECDSANamePublicPost:
+				_,height,number:=mn.GetTxState(tx.Vin[l].Hash)
+				//applog.Trace("height%d,number%d",height,number)
+				tmpinpututxo:=mn.GetMainblock(int(height)).Transactions[number].Vout[tx.Vin[l].Index]
+				_,name,_,_:=utility.DecodeECDSANameRegistration(tmpinpututxo.Bytecode)
+			
+				_,ed,_:=utility.DecodeECDSANamePublicPost(tx.Vin[l].Bytecode)
+				mn.PutPublicPostState(ed.Hash,name,uint32(0))
 			//default:
 		}
 		

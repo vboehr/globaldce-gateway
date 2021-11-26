@@ -112,6 +112,7 @@ func (mn *Maincore) LoadMaincore(){
 	if _, err := os.Stat( filepath.Join(mn.path,"Data","Data000")); os.IsNotExist(err) {
 		// path does not exist
 		mn.dataf = utility.OpenChunkStorage( filepath.Join(mn.path,"Data","Data"))
+		mn.dataf.AddChunk([]byte("emptydata"))
 	} else {
 		mn.dataf = utility.OpenChunkStorage(filepath.Join(mn.path,"Data","Data"))
 	}

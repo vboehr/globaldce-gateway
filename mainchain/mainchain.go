@@ -311,9 +311,9 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				}
 				_,height,number:=mn.GetTxState(tmptxin.Hash)
 				////////////////////////////////////////////
-				if (mn.GetConfirmedMainchainLength()-height)>500000{
-					return 0,fmt.Errorf("Unregistration is too soon")
-				}
+				//if (mn.GetConfirmedMainchainLength()-height)>500000{
+				//	return 0,fmt.Errorf("Unregistration is too soon")
+				//}
 				////////////////////////////////////////////
 				inpututxo:=mn.GetMainblock(int(height)).Transactions[number].Vout[tmptxin.Index]
 				pubkeycompressedbytes,_,err:=utility.DecodeECDSANameUnregistration(tmptxin.Bytecode) //DecodeECDSANameUnregistration(bytecode []byte) ([]byte,*Extradata,error){

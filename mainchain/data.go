@@ -23,7 +23,7 @@ import (
 
 const (
 	DataIdentifierPublicPost=1
-	//DataIdentifierFile=
+	//DataIdentifierDynamicPublicPost
 
 )
 type PostInfo struct {
@@ -51,21 +51,30 @@ func (mn *Maincore) GetPostInfoStringArray(maxposts int)[]string{
 	}
 
 	for i:=starti;i<nbdata;i++{
-		
-		tmpbr:=utility.NewBufferReader(mn.GetDataById(i))
+		databytes:=mn.GetDataById(i)
+		tmpbr:=utility.NewBufferReader(databytes)
 
 		dataidentifier:=tmpbr.GetUint32()
 		if dataidentifier==DataIdentifierPublicPost{
-			namebyteslen:=tmpbr.GetVarUint()
-			namebytes:=tmpbr.GetBytes(uint(namebyteslen))
-			namestring:=string(namebytes)
+			//namebyteslen:=tmpbr.GetVarUint()
+			//namebytes:=tmpbr.GetBytes(uint(namebyteslen))
+			//namestring:=string(namebytes)
+	
 			linkbyteslen:=tmpbr.GetVarUint()
 			linkbytes:=tmpbr.GetBytes(uint(linkbyteslen))
 			linkstring:=string(linkbytes)
 			textbyteslen:=tmpbr.GetVarUint()
 			textbytes:=tmpbr.GetBytes(uint(textbyteslen))
 			textstring:=string(textbytes)
+			ed:=utility.NewExtradataFromBytes(databytes)
 
+			namebytes,_,err:=mn.GetPublicPostState(ed.Hash)
+			_=err
+			//if err!=nil {
+			//	applog.Warning("Cannot add data - hash %s - error %v",hash,err)
+			//	return
+			//}
+			namestring:=string(namebytes)
 			tmpstring:=StringFromPostInfo(PostInfo{Name:namestring,Link:linkstring,Content:textstring})
 			postsstringarray=append(postsstringarray,tmpstring)
 		}
@@ -77,15 +86,16 @@ func (mn *Maincore) GetPostInfoStringArray(maxposts int)[]string{
 
 func (mn *Maincore) AddLocalPublicPostData(namestring string,hash utility.Hash,databytes []byte) {
 	namebytes:=[]byte(namestring)
-	tmpbw:=utility.NewBufferWriter()
-	tmpbw.PutUint32(DataIdentifierPublicPost)
+	//tmpbw:=utility.NewBufferWriter()
+	//tmpbw.PutUint32(DataIdentifierPublicPost)
 	//tmpbw.PutRegistredNameKey()
 	//tmpbw.PutVarUint(uint64(len(namebytes)))
 	//tmpbw.PutBytes(namebytes)
-	tmpbw.PutVarUint(uint64(len(databytes)))
-	tmpbw.PutBytes(databytes)
+	//tmpbw.PutVarUint(uint64(len(databytes)))
+	//tmpbw.PutBytes(databytes)
 	// localy generated data can be directly stored
-	mn.dataf.AddChunk(tmpbw.GetContent())
+	//mn.dataf.AddChunk(tmpbw.GetContent())
+	mn.dataf.AddChunk(databytes)
 	mn.PutPublicPostState(hash,namebytes,uint32(mn.dataf.NbChunks()-1))
 
 }
@@ -102,11 +112,11 @@ func (mn *Maincore) addData(hash utility.Hash,bytes []byte) {
 		applog.Warning("Cannot add data - hash %s - data already exist stored with id %d",hash,id)
 		return
 	}
-	name,data,_:=mn.GetPublicPostData(hash)
-	if data!=nil {
-		applog.Warning("Cannot add data - hash %s - data already exist",hash)
-		return
-	}
+	//name,data,_:=mn.GetPublicPostData(hash)
+	//if data!=nil {
+	//	applog.Warning("Cannot add data - hash %s - data already exist",hash)
+	//	return
+	//}
 	mn.dataf.AddChunk(bytes)
 	mn.PutPublicPostState(hash,name,uint32(mn.dataf.NbChunks()-1))
 }
@@ -122,7 +132,7 @@ func (mn *Maincore) GetDataById(id int)  []byte {
 	return mn.dataf.GetChunkById(id)
 }
 func (mn *Maincore) GetNbData() uint32{
-	applog.Trace("-------%v",mn)
+	//applog.Trace("-------%v",mn)
 	if mn.dataf == nil{
 		return uint32(0)
 	}
