@@ -12,6 +12,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	//"net/url"
 	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"
 	"github.com/globaldce/globaldce-toolbox/daemon"
@@ -21,6 +22,8 @@ import (
 )
 
 var publicsharename string
+var attachmentpathArray []string//
+var selectedattachmentid=-1
 
 func shareScreen(win fyne.Window) fyne.CanvasObject {
 	/*
@@ -67,26 +70,37 @@ func shareScreen(win fyne.Window) fyne.CanvasObject {
 			}
 		}()
 	
-	input := widget.NewMultiLineEntry()
-	input.SetPlaceHolder("Enter public post text...")
+	linkinput := widget.NewEntry()
+	linkinput.SetPlaceHolder("Enter public post link...")
+
+	textinput := widget.NewMultiLineEntry()
+	textinput.SetPlaceHolder("Enter public post text...")
 	
 
-	nameregistrationbutton:= widget.NewButton("SHARE PUBLIC POST", func() {
+	sharebutton:= widget.NewButton("SHARE PUBLIC POST", func() {
 		if publicsharename!=""{
-			publicsharetext:=input.Text
-			fmt.Printf("creating a new public post for %s : %s\n",publicsharename,publicsharetext)
-			cli.Sendpublicpost(daemon.Wireswarm,daemon.Mn,daemon.Wlt,publicsharename,"",publicsharetext)
+			publicsharetext:=textinput.Text
+			publicsharelink:=linkinput.Text
+			fmt.Printf("creating a new public post for %s : %s\n",publicsharename,publicsharelink,publicsharetext)
+			cli.Sendpublicpost(daemon.Wireswarm,daemon.Mn,daemon.Wlt,publicsharename,publicsharelink,publicsharetext,attachmentpathArray)
 			dialog.ShowInformation("Public Post", "Public post is being broadcasted", win)
-			input.SetText("")
+			textinput.SetText("")
+			linkinput.SetText("")
 		}
     })
-	nameregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),nameregistrationbutton)
-	//nameregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),nameregistrationbutton)
+	sharebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),sharebutton)
+	//sharebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),sharebutton)
 
 	//layout:=container.New(layout.NewPaddedLayout(),container.NewVBox(registrednameslist,nameregistrationcontainer))
 	///////////registrednameslistcontainer:=container.New(layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth, appscreenHeight/4)),registrednameslist)
-	sharelayout:=container.NewVBox(input,nameregistrationbuttoncontainer)
-	return container.NewHBox(registrednameslist, sharelayout)//layout
+	//attachmentcontainer:=container.New(layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth*2/3, appscreenHeight*2/3)),attachmentbuilderScreen(win))
+
+	//sharelayout:=container.NewVBox(input,attachmentcontainer,sharebuttoncontainer)
+
+	basicshare:=container.NewVBox(linkinput,textinput,sharebuttoncontainer)
+	attachmentshare:=attachmentbuilderScreen(win)
+	sharelayout:=container.NewVSplit(attachmentshare,basicshare)
+	return container.NewHSplit(registrednameslist, sharelayout)//layout
 	//container.New(layout.NewFormLayout(), label1, value1, label2, value2)
 }
 /*
@@ -119,3 +133,95 @@ func  requestNameRegistrationDialog(win fyne.Window){
 }
 
 */
+
+func attachmentbuilderScreen(win fyne.Window) fyne.CanvasObject{
+
+	componentsTree := widget.NewList(
+		 func() int {
+			 return len(attachmentpathArray)
+		 },
+		 func() fyne.CanvasObject {
+ 
+ 
+			 return widget.NewLabel("template")
+		 },
+		 func(i widget.ListItemID, o fyne.CanvasObject) {
+ 
+ 
+ 
+			 o.(*widget.Label).SetText("Attachement path "+attachmentpathArray[i]) // i need to update this when attachmentpathArray was updated
+		 })
+	 componentsTree.OnSelected = func(id widget.ListItemID) {
+		 selectedattachmentid=id
+	 }
+ 
+ 
+	 addbutton:= widget.NewButton("Add attachment file", func() {
+ 
+		 //
+		 selectImageFileDialog(win,componentsTree)
+		 //componentsTree.Refresh()
+	 })
+  
+ 
+	 rmvbutton:= widget.NewButton("Remove selection", func() {
+		 if selectedattachmentid!=-1 && 0<len(attachmentpathArray) {
+			 
+			 attachmentpathArray=removeattachment(attachmentpathArray,selectedattachmentid)
+			 
+			 componentsTree.Refresh()
+		 }
+		 
+	 })
+	 
+	/*
+	 completebutton:= widget.NewButton("SEND", func() {
+		 fmt.Println("got :",attachmentpathArray)
+ 
+	 })
+ */
+ 
+	 //completebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(float32(appscreenWidth/4), 40)),completebutton)
+ 
+	 buttonscontainer:=container.NewHBox(addbutton,rmvbutton)
+	 label:= container.NewBorder(buttonscontainer, nil, nil,nil,componentsTree)
+	 
+	 //completiontext:=widget.NewLabel("  ")// TODO Add balance information
+	 //formlayout:=container.New(layout.NewPaddedLayout(),container.NewVBox(completiontext,completebuttoncontainer))
+ 
+   
+ 
+	 //return container.NewVSplit(label,formlayout)
+	 return label
+ }
+ 
+ func removeattachment(s []string, i int) []string {
+	 //s[len(s)-1], s[i] = s[i], s[len(s)-1]
+	 //return s[:len(s)-1]
+	 return append(s[:i], s[i+1:]...)
+ }
+ 
+ func selectImageFileDialog(win fyne.Window,componentsTree fyne.Widget) {
+	 fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
+		 if err != nil {
+			 //dialog.ShowError(err, win)
+			 //noimageFoundDialog(win,"")
+			 fmt.Printf("selectImageFile error %v",err)
+			 return
+		 }
+		 if reader == nil {
+			 fmt.Println("Cancelled")
+			 //noimageFoundDialog(win,"")
+			 return
+		 }
+ 
+		 fileuri:= reader.URI()
+		 reader.Close()
+		 
+		 fmt.Println("Wallet file path",fileuri.Path())
+		 attachmentpathArray = append(attachmentpathArray,fileuri.Path())
+		 componentsTree.Refresh()
+	 }, win)
+	 fd.SetFilter(storage.NewExtensionFileFilter([]string{".jpg"}))
+	 fd.Show()
+ }

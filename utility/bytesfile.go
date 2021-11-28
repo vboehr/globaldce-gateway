@@ -16,12 +16,12 @@ func SaveBytesFile(bytesfilebytes []byte,bytesfilepath string) error{
 	binary.LittleEndian.PutUint32(bufferBytesfileseize, uint32(len(bytesfilebytes)))
 	
 	f, err := os.OpenFile(bytesfilepath, os.O_WRONLY|os.O_CREATE, 0755)
-
+	
 	if err != nil {
 		//
 		fmt.Println("error:", err)
 	}
-
+	//defer f.Close()
 	_, wterr := f.Write(bufferBytesfiletype)
 	if wterr != nil {
 		//
@@ -43,11 +43,12 @@ func SaveBytesFile(bytesfilebytes []byte,bytesfilepath string) error{
 func LoadBytesFile(path string) (*[]byte,error){
 	
 	f, err := os.OpenFile(path, os.O_RDONLY, 0755)
+	
 	if err != nil {
 		//
 		fmt.Println("error:", err)
 	}
-	
+	//defer f.Close()
 	bufferBytesfiletype := make([]byte, 4)
 	_, rterr := f.Read(bufferBytesfiletype)
 	if rterr != nil {

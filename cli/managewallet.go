@@ -89,8 +89,12 @@ func managewallet(ws *wire.Swarm,mn *mainchain.Maincore,wlt * wallet.Wallet){
 					sendpublicposthelp()
 					continue
 				}
+				var filepatharray []string
+				for i:=4;i<len(requestarguments);i++{
+					filepatharray=append(filepatharray,requestarguments[i]) 
+				}
 				
-				Sendpublicpost(ws,mn,wlt,requestarguments[1],requestarguments[2],requestarguments[3])
+				Sendpublicpost(ws,mn,wlt,requestarguments[1],requestarguments[2],requestarguments[3],filepatharray)
 			case "displaybalance":
 				displaybalance(mn,wlt)
 			case "displayaddresses":
@@ -298,11 +302,11 @@ func sendnameregistrationhelp(){
 }
 func sendpublicposthelp(){
     fmt.Printf("\nError: sendpublicpost inappropiate usage\n")
-    fmt.Printf("In order to proceed with a public post for the registred name X with a web link of Y and a text Z, enter as follows:\n")
-    fmt.Printf("sendpublicpost X Y Z\n")
+    fmt.Printf("In order to proceed with a public post for the registred name X with a web link of Y, a text Z and attached files F1 F2 ... Fn, enter as follows:\n")
+    fmt.Printf("sendpublicpost X Y Z F1 F2 ... Fn\n")
     //
 }
-func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,linkstring string,textstring string){
+func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,linkstring string,textstring string,filepatharray []string){
 	/*
 	a,aerr:=wlt.GetAssetFromRegisteredName(namestring)
     if aerr!=nil{
@@ -310,7 +314,9 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
         return
     }*/
 	amountfee:=100//TODO customizable fees based on bytes - fee = 1 to 10 coins * transaction bytes
-	
+	for _, filepath := range filepatharray {
+	mn.CacheExistingFile(filepath)
+	}
 	
 	tmpbw:=utility.NewBufferWriter()
 	tmpbw.PutUint32(mainchain.DataIdentifierPublicPost)
@@ -319,6 +325,9 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
 
 	tmpbw.PutVarUint(uint64(len([]byte(textstring))))
 	tmpbw.PutBytes([]byte(textstring))
+	/////////////////////////////////
+	//tmpbw.PutVarUint(uint64(0))
+	/////////////////////////////////
 
 	//databytes:=[]byte(datastring)//
 	databytes:=tmpbw.GetContent()
