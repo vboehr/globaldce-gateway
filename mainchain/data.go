@@ -30,7 +30,8 @@ type PostInfo struct {
 	Name string
 	Link string
 	Content string
-
+	AttachmentSizeArray []int
+	AttachmentHashArray []utility.Hash
 	//user    *user
 }
 
@@ -50,7 +51,7 @@ func (mn *Maincore) GetPostInfoStringArray(maxposts int)[]string{
 		starti=0
 	}
 
-	for i:=starti;i<nbdata;i++{
+	for i:=nbdata-1;i>=starti;i--{
 		databytes:=mn.GetDataById(i)
 		tmpbr:=utility.NewBufferReader(databytes)
 
@@ -66,6 +67,16 @@ func (mn *Maincore) GetPostInfoStringArray(maxposts int)[]string{
 			textbyteslen:=tmpbr.GetVarUint()
 			textbytes:=tmpbr.GetBytes(uint(textbyteslen))
 			textstring:=string(textbytes)
+			nbattachement:=tmpbr.GetVarUint()
+			var tmpAttachmentSizeArray []int
+			var tmpAttachmentHashArray []utility.Hash
+			for j:=0;j<int(nbattachement);j++ {
+				tmpAttachmentSize:=int(tmpbr.GetVarUint())
+				tmpAttachmentHash:=tmpbr.GetHash()
+				tmpAttachmentSizeArray=append(tmpAttachmentSizeArray,tmpAttachmentSize)
+				tmpAttachmentHashArray=append(tmpAttachmentHashArray,tmpAttachmentHash)
+			}
+			//
 			ed:=utility.NewExtradataFromBytes(databytes)
 
 			namebytes,_,err:=mn.GetPublicPostState(ed.Hash)
@@ -75,7 +86,13 @@ func (mn *Maincore) GetPostInfoStringArray(maxposts int)[]string{
 			//	return
 			//}
 			namestring:=string(namebytes)
-			tmpstring:=StringFromPostInfo(PostInfo{Name:namestring,Link:linkstring,Content:textstring})
+			tmpstring:=StringFromPostInfo(PostInfo{
+				Name:namestring,
+				Link:linkstring,
+				Content:textstring,
+				AttachmentSizeArray:tmpAttachmentSizeArray,
+				AttachmentHashArray:tmpAttachmentHashArray,
+			})
 			postsstringarray=append(postsstringarray,tmpstring)
 		}
 

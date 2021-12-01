@@ -149,7 +149,7 @@ func attachmentbuilderScreen(win fyne.Window) fyne.CanvasObject{
  
  
  
-			 o.(*widget.Label).SetText("Attachement path "+attachmentpathArray[i]) // i need to update this when attachmentpathArray was updated
+			 o.(*widget.Label).SetText("Attachment path "+attachmentpathArray[i]) // i need to update this when attachmentpathArray was updated
 		 })
 	 componentsTree.OnSelected = func(id widget.ListItemID) {
 		 selectedattachmentid=id

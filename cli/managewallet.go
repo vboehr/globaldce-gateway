@@ -314,9 +314,7 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
         return
     }*/
 	amountfee:=100//TODO customizable fees based on bytes - fee = 1 to 10 coins * transaction bytes
-	for _, filepath := range filepatharray {
-	mn.CacheExistingFile(filepath)
-	}
+
 	
 	tmpbw:=utility.NewBufferWriter()
 	tmpbw.PutUint32(mainchain.DataIdentifierPublicPost)
@@ -326,7 +324,16 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
 	tmpbw.PutVarUint(uint64(len([]byte(textstring))))
 	tmpbw.PutBytes([]byte(textstring))
 	/////////////////////////////////
-	//tmpbw.PutVarUint(uint64(0))
+	tmpbw.PutVarUint(uint64(len(filepatharray)))
+	for _, filepath := range filepatharray {
+		cfed,cerr:=mn.CacheExistingFile(filepath)
+		if cerr!=nil{
+			fmt.Printf("%v",cerr)
+			return
+		}
+		tmpbw.PutVarUint((*cfed).Size)
+		tmpbw.PutHash((*cfed).Hash)
+	}
 	/////////////////////////////////
 
 	//databytes:=[]byte(datastring)//

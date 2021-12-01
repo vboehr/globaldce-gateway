@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"path/filepath"
 	"net/url"
 	"fmt"
 	"encoding/json"
@@ -9,17 +10,17 @@ import (
 	"fyne.io/fyne/v2"
 	//"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/widget"
-	//"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/data/binding"
 	"github.com/globaldce/globaldce-toolbox/mainchain"
 	"github.com/globaldce/globaldce-toolbox/daemon"
+	"github.com/globaldce/globaldce-toolbox/utility"
 )
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
-
 func parseURL(urlStr string) *url.URL {
 	link, err := url.Parse(urlStr)
 	if err != nil {
@@ -28,12 +29,28 @@ func parseURL(urlStr string) *url.URL {
 
 	return link
 }
+func displayPostDetails(p *post) func() {
+	return func() {
+		if p!=nil{
+			fmt.Println("post",p)
+			win := guiApp.NewWindow("Public post details")
+			win.SetContent(widget.NewLabel(p.Content))
+			win.Resize(fyne.NewSize(200, 200))
+			win.Show()
+
+		}
+	  
+	}
+  }
+
 
 const iconSize = float32(100)
 type post struct {
 	Name string
 	Link string
 	Content string
+	AttachmentSizeArray []int
+	AttachmentHashArray []utility.Hash
 	//user    *user
 }
 
@@ -42,12 +59,19 @@ func PostInfoFromString(s string) mainchain.PostInfo{
 	json.Unmarshal([]byte(s), &p)
 	return p
 }
+func DataFilePathFromHash(h utility.Hash) string{
+	var s string//
+	s=filepath.Join("Data","DataFiles",fmt.Sprintf("%x",h))
+	//s="./Data/DataFiles/77d730d337fdb932c267d602343c0f2cb271c3572a5a4fd91f083cf66aae83a6"
+	return s
+}
 
 type postRenderer struct {
 	m         *postCell
 	top, main *widget.Label
-	pic       *widget.Icon
+	pic       *canvas.Image
 	link 	  *widget.Hyperlink
+	details   *widget.Button
 	sep       *widget.Separator
 }
 func (m *postRenderer) Destroy() {
@@ -57,6 +81,8 @@ func (m *postRenderer) Layout(s fyne.Size) {
 	remainStart := iconSize + theme.Padding()*2
 	m.pic.Resize(fyne.NewSize(iconSize, iconSize))
 	m.pic.Move(fyne.NewPos(theme.Padding(), theme.Padding()))
+	m.details.Resize(fyne.NewSize(iconSize, iconSize/3))
+	m.details.Move(fyne.NewPos(theme.Padding(), theme.Padding()+iconSize))
 	m.top.Move(fyne.NewPos(remainStart, -theme.Padding()))
 	m.top.Resize(fyne.NewSize(remainWidth, m.top.MinSize().Height))
 
@@ -68,6 +94,7 @@ func (m *postRenderer) Layout(s fyne.Size) {
 
 	m.main.Move(fyne.NewPos(remainStart, m.top.MinSize().Height+2*theme.Padding()))
 	m.main.Resize(fyne.NewSize(remainWidth, m.main.MinSize().Height))
+	
 	m.sep.Move(fyne.NewPos(0, s.Height-theme.SeparatorThicknessSize()))
 	m.sep.Resize(fyne.NewSize(s.Width, theme.SeparatorThicknessSize()))
 }
@@ -81,15 +108,20 @@ func (m *postRenderer) MinSize() fyne.Size {
 	return fyne.NewSize(1000,200)
 }
 func (m *postRenderer) Objects() []fyne.CanvasObject {
-	return []fyne.CanvasObject{m.top, m.main, m.pic,m.link, m.sep}
+	return []fyne.CanvasObject{m.top, m.main, m.pic,m.link,m.details, m.sep}
 }
 
 func (m *postRenderer) Refresh() {
 	m.top.SetText(m.m.msg.Name)
+	m.details= widget.NewButton("Click me", displayPostDetails(m.m.msg))
 	///////////////////////////////////
 	//m.pic.SetResource(theme.FyneLogo())
+	if m.m.msg.AttachmentHashArray!=nil{
+		m.pic=canvas.NewImageFromFile(DataFilePathFromHash(m.m.msg.AttachmentHashArray[0]))
+	}
+	
 	///////////////////////////////////
-	m.pic.SetResource(nil)
+	//m.pic.SetResource(nil)
 	m.main.SetText(m.m.msg.Content)
 	
 	m.link=widget.NewHyperlink(m.m.msg.Link, parseURL(m.m.msg.Link))
@@ -115,10 +147,12 @@ func (m *postCell) CreateRenderer() fyne.WidgetRenderer {
 	name.Wrapping = fyne.TextTruncate
 	body := widget.NewLabel(m.msg.Content)
 	body.Wrapping = fyne.TextWrapWord
+	emptybutton:=widget.NewButton("", displayPostDetails(nil))
 	emptylink:=widget.NewHyperlink(m.msg.Link, parseURL(m.msg.Link))
 	return &postRenderer{m: m,
-		top:  name,
-		main: body, pic: widget.NewIcon(nil),link:emptylink, sep: widget.NewSeparator()}
+		top:  name,//canvas.NewImageFromFile("./rawtest/unnamed.jpg")
+		//main: body, pic: widget.NewIcon(nil),link:emptylink, sep: widget.NewSeparator()}
+		main: body, pic:canvas.NewImageFromFile(""),link:emptylink,details:emptybutton, sep: widget.NewSeparator()}
 }
 
 func (m *postCell) UpdatePost(s string)  {
@@ -127,7 +161,8 @@ func (m *postCell) UpdatePost(s string)  {
 	m.msg.Name=p.Name
 	m.msg.Link=p.Link
 	m.msg.Content=p.Content
-
+	m.msg.AttachmentSizeArray=p.AttachmentSizeArray
+	m.msg.AttachmentHashArray=p.AttachmentHashArray
 
 }
 func newPostCell(m *post) *postCell {

@@ -27,7 +27,7 @@ const appscreenHeight = 600
 //var winredraw bool 
 //var searchtext string
 
-
+var guiApp fyne.App
 
 func Start(appname string) {
 	applog.Init()
@@ -44,11 +44,11 @@ func Start(appname string) {
 
 
 	/////////////////////////////////////////
-	myApp := app.New()
-	//myApp := app.NewWithID("***.**") //TOBETESTED
-	//myApp.SetIcon(resourceDPng) //TOBETESTED can be used to set icon
-	myWindow := myApp.NewWindow(appname)
-	myApp.Settings().SetTheme(&myTheme{})
+	guiApp = app.New()
+	//guiApp := app.NewWithID("***.**") //TOBETESTED
+	//guiApp.SetIcon(resourceDPng) //TOBETESTED can be used to set icon
+	myWindow := guiApp.NewWindow(appname)
+	guiApp.Settings().SetTheme(&myTheme{})
 	myWindow.Resize(fyne.NewSize(appscreenWidth, appscreenHeight))
 	//myWindow.SetFixedSize(true)//TODO FOR MOBILE
 	myWindow.SetIcon(resourceLogoPng)
