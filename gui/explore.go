@@ -32,16 +32,30 @@ func parseURL(urlStr string) *url.URL {
 func displayPostDetails(p *post) func() {
 	return func() {
 		if p!=nil{
-			fmt.Println("post",p)
+			//fmt.Println("post",p)
 			win := guiApp.NewWindow("Public post details")
-			win.SetContent(widget.NewLabel(p.Content))
-			win.Resize(fyne.NewSize(200, 200))
+			postdetailsCanvas := win.Canvas()
+			txtContent:=widget.NewLabel(p.Content)
+			postdetailscontainer:=container.NewVBox()
+			postdetailscontainer.Add(txtContent)
+			for j:=0;j<len(p.AttachmentHashArray);j++{
+				i:=canvas.NewImageFromFile(DataFilePathFromHash(p.AttachmentHashArray[j]))
+				i.FillMode = canvas.ImageFillContain
+				i.SetMinSize(fyne.Size{500, 500})
+				postdetailscontainer.Add(i)
+			}
+
+			
+			//win.SetContent(widget.NewLabel(p.Content))
+			postdetailsScroll := container.NewScroll(postdetailscontainer)
+			//myCanvas.SetContent(container.NewVBox(i,i2))
+			postdetailsCanvas.SetContent(postdetailsScroll)
+			win.Resize(fyne.NewSize(800, 600))
 			win.Show()
 
 		}
-	  
 	}
-  }
+}
 
 
 const iconSize = float32(100)
@@ -113,7 +127,7 @@ func (m *postRenderer) Objects() []fyne.CanvasObject {
 
 func (m *postRenderer) Refresh() {
 	m.top.SetText(m.m.msg.Name)
-	m.details= widget.NewButton("Click me", displayPostDetails(m.m.msg))
+	m.details= widget.NewButton("Details", displayPostDetails(m.m.msg))
 	///////////////////////////////////
 	//m.pic.SetResource(theme.FyneLogo())
 	if m.m.msg.AttachmentHashArray!=nil{
@@ -272,7 +286,7 @@ func getPosts(keywords string)[]string{
 		return nil
 	}
 	sarray:=daemon.Mn.GetPostInfoStringArray(30) 
-	fmt.Printf("********%v",sarray)
+	//fmt.Printf("********%v",sarray)
 	return sarray
 	
 	//return nil

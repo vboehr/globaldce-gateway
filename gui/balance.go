@@ -48,8 +48,9 @@ func overviewScreen() fyne.CanvasObject {
 	go func() {
 		for {	
 			//fmt.Println("*******",daemon.Wlt.ComputeBalance())
-			
-			str.Set(fmt.Sprintf("Wallet balance is %f", float64(daemon.Wlt.ComputeBalance()/1000000.0)))
+			walletpathstr:=fmt.Sprintf("Wallet path: %s",daemon.MainwalletFilePath)
+			walletbalancestr:=fmt.Sprintf("Wallet balance is %f", float64(daemon.Wlt.ComputeBalance()/1000000.0))
+			str.Set(walletpathstr+"\n"+walletbalancestr)
 			time.Sleep(time.Second * 2)
 		}
 	}()

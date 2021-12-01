@@ -48,7 +48,7 @@ func  passwordDialog(win fyne.Window){
 		//})),
 	}
 
-	dialog.ShowForm("Password required to load wallet          ", "Okay  ", "Cancel", items, func(b bool) {
+	dialog.ShowForm("Password required to load wallet at:"+daemon.MainwalletFilePath, "Okay  ", "Cancel", items, func(b bool) {
 		if !b {
 			fmt.Println("canceled")
 			nowalletFoundDialog(win,"")
@@ -66,7 +66,8 @@ func  passwordDialog(win fyne.Window){
 				}
 				lerr:=daemon.Wlt.LoadJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
 				if lerr!=nil{
-					nowalletFoundDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
+					//nowalletFoundDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
+					passwordDecryptionFailedDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
 				} else {
 					daemon.Walletloaded=true
 				}
@@ -128,6 +129,25 @@ func  passwordCreationDialog(win fyne.Window) {
 	}, win)
 
 
+}
+
+func passwordDecryptionFailedDialog(win fyne.Window,err string){
+	selectWalletFileCallback := func(response bool){
+		fmt.Println("Responded with", response)
+		if response {
+			//selectWalletFileDialog(win)
+			passwordDialog(win)
+		} else {
+			//s
+			//passwordCreationDialog(win)
+			nowalletFoundDialog(win,err)
+		}
+		
+	}
+	cnf := dialog.NewConfirm(err, "Would you like to re enter the wallet password", selectWalletFileCallback, win)
+	cnf.SetDismissText("No  ")
+	cnf.SetConfirmText("Yes ")
+	cnf.Show()
 }
 
 func nowalletFoundDialog(win fyne.Window,err string){
