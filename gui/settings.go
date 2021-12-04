@@ -2,26 +2,44 @@ package gui
 
 
 import (
-	"log"
+	//"log"
 	//"fmt"
 	//"image/color"
 	//"fyne.io/fyne/v2/app"
-	//"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/container"
 	//"fyne.io/fyne/v2/theme"
 	//"fyne.io/fyne/v2/data/validation"
-	"fyne.io/fyne/v2/widget"
+	//"fyne.io/fyne/v2/widget"
 	//"fyne.io/fyne/v2/canvas"
 	//"net/url"
 	//"net/url"
 	//"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2"
-	"github.com/globaldce/globaldce-toolbox/cli"
+	//"github.com/globaldce/globaldce-toolbox/cli"
 )
 
 
 
+func settingsScreen(win fyne.Window) fyne.CanvasObject {
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Wallet",  walletSettingsScreen(win)),
+		//container.NewTabItem("Search",  contactslistScreen()),
+		//container.NewTabItem("Share",  shareScreen(win)),
 
+	)
+	/*
+	//tabsisTransitioning
+	tabs.OnChanged = func(_ *container.TabItem) {
+		//list.Refresh()
+		fmt.Println("!!!!!!",list)
+	}
+	*/
+	tabs.SetTabLocation(container.TabLocationTop)
+	return tabs
 
+}
+
+/*
 func settingsScreen() fyne.CanvasObject {
 
 	entrymainwalletpath := widget.NewEntry()
@@ -45,7 +63,7 @@ func settingsScreen() fyne.CanvasObject {
 	return form
 
 }
-
+*/
 //func settingsScreen() fyne.CanvasObject {
 //	selectEntry := widget.NewSelectEntry([]string{"Option A", "Option B", "Option C"})
 //	selectEntry.PlaceHolder = "Type or select"

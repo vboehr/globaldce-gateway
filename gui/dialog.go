@@ -167,28 +167,6 @@ func nowalletFoundDialog(win fyne.Window,err string){
 	cnf.SetConfirmText("Yes ")
 	cnf.Show()
 }
-/*
-func selectWalletFileDialog(win fyne.Window) {
-	dialog.ShowFolderOpen(func(list fyne.ListableURI, err error) {
-		if err != nil {
-			dialog.ShowError(err, win)
-			return
-		}
-		if list == nil {
-			fmt.Println("Cancelled")
-			return
-		}
-
-		children, err := list.List()
-		if err != nil {
-			dialog.ShowError(err, win)
-			return
-		}
-		out := fmt.Sprintf("Folder %s (%d children):\n%s", list.Name(), len(children), list.String())
-		dialog.ShowInformation("Folder Open", out, win)
-	}, win)
-}
-*/
 func selectWalletFileDialog(win fyne.Window) {
 	fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 		if err != nil {
@@ -208,9 +186,16 @@ func selectWalletFileDialog(win fyne.Window) {
 		//}
 		filepath:= reader.URI()
 		reader.Close()
-		//TODO read the wallet file
+		//
 		fmt.Println("Wallet file path",filepath)
-		
+		walletsettingsDisplayedMainwalletFilePath.Set(filepath.Path())
+		cli.Usersettings.MainwalletFilePath=filepath.Path()
+		if !daemon.Walletloaded{
+			daemon.MainwalletFilePath=filepath.Path()
+			passwordDialog(win)
+		} else {
+			dialog.ShowInformation("New wallet path selection", "New wallet path selection will be used once the app restart", win)
+		}
 	}, win)
 	fd.SetFilter(storage.NewExtensionFileFilter([]string{".dat"}))
 	fd.Show()

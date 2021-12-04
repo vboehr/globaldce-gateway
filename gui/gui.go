@@ -22,7 +22,7 @@ import (
 	"github.com/globaldce/globaldce-toolbox/cli"
 )
 
-const appscreenWidth =800
+const appscreenWidth =1000
 const appscreenHeight = 600
 //var winredraw bool 
 //var searchtext string
@@ -58,16 +58,22 @@ func Start(appname string) {
 	//passwordDialog(myWindow)
 	/////////////////////////////////////
 	wlt:=new(wallet.Wallet)
-	if _, err := os.Stat( daemon.MainwalletFilePath); !os.IsNotExist(err) {
-		//for {
-			passwordDialog(myWindow)
+	//wlt.SetupDone=false
+	
+	//for (!daemon.Walletloaded) {
 
-		//}
-	} else {
+		if _, err := os.Stat( daemon.MainwalletFilePath); !os.IsNotExist(err) {
 		
-		nowalletFoundDialog(myWindow,"walletfile "+daemon.MainwalletFilePath+" does not exist.")
-	}
+				passwordDialog(myWindow)
+
+			//}
+		} else {
+			
+			nowalletFoundDialog(myWindow,"walletfile "+daemon.MainwalletFilePath+" does not exist.")
+		}
+	//}
 	daemon.Wlt=wlt
+	fmt.Printf("Starting main loop\n")
 	go daemon.Mainloop()
 	/////////////////////////////////////
 	//winredraw=true
@@ -83,7 +89,7 @@ func Start(appname string) {
 				container.NewTabItem("Registration",  registrationScreen(myWindow)),
 				//container.NewTabItem("Send",  sendScreen()),//txbuilderScreen()
 				container.NewTabItem("Send to",  txbuilderScreen()),
-				container.NewTabItem("Settings",  settingsScreen()),	
+				container.NewTabItem("Settings",  settingsScreen(myWindow)),	
 			)
 		
 			//tabs.Append(container.NewTabItemWithIcon("Home", theme.HomeIcon(), widget.NewLabel("Home tab")))

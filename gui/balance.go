@@ -133,7 +133,7 @@ func addressesScreen() fyne.CanvasObject {
 	//////////////////////
 	//icon := widget.NewIcon(nil)
 	input := widget.NewEntry()
-	input.SetPlaceHolder("Selected adr ...")
+	input.SetPlaceHolder("Selected address ...")
 	
 	input.Disable()
 	saveButton:= widget.NewButton("Copy", func() {
@@ -141,7 +141,7 @@ func addressesScreen() fyne.CanvasObject {
 	})
 
 	label := container.NewVBox(
-			widget.NewLabel("The top row of the VBox                                           "),
+			widget.NewLabel("Selected address                                           "),
 				input,)
 	label.Add(saveButton)
 	hbox := container.NewVBox( widget.NewIcon(nil), label)

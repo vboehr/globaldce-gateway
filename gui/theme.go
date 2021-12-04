@@ -41,6 +41,8 @@ func (myTheme) Color(c fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
 		return color.NRGBA{R: 0x0, G: 0x0, B: 0x0, A: 0x99}
 	case theme.ColorNameShadow:
 		return color.NRGBA{R: 0x0, G: 0x0, B: 0x0, A: 0x66}
+	case theme.ColorNameSelection:// Newly added
+		return color.NRGBA{R: 0x99, G: 0x99, B: 0x99, A: 0x66}// Newly added
 	default:
 		return theme.DefaultTheme().Color(c, v)
 	}

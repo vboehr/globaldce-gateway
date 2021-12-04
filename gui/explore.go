@@ -13,6 +13,7 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/data/binding"
 	"github.com/globaldce/globaldce-toolbox/mainchain"
 	"github.com/globaldce/globaldce-toolbox/daemon"
@@ -58,7 +59,7 @@ func displayPostDetails(p *post) func() {
 }
 
 
-const iconSize = float32(100)
+const iconSize = float32(150)
 type post struct {
 	Name string
 	Link string
@@ -95,7 +96,7 @@ func (m *postRenderer) Layout(s fyne.Size) {
 	remainStart := iconSize + theme.Padding()*2
 	m.pic.Resize(fyne.NewSize(iconSize, iconSize))
 	m.pic.Move(fyne.NewPos(theme.Padding(), theme.Padding()))
-	m.details.Resize(fyne.NewSize(iconSize, iconSize/3))
+	m.details.Resize(fyne.NewSize(iconSize, 30))
 	m.details.Move(fyne.NewPos(theme.Padding(), theme.Padding()+iconSize))
 	m.top.Move(fyne.NewPos(remainStart, -theme.Padding()))
 	m.top.Resize(fyne.NewSize(remainWidth, m.top.MinSize().Height))
@@ -119,7 +120,7 @@ func (m *postRenderer) MinSize() fyne.Size {
 	//return fyne.NewSize(w+iconSize+theme.Padding()*2,
 	//	s1.Height+s2.Height-theme.Padding()*4)
 	_=w
-	return fyne.NewSize(1000,200)
+	return fyne.NewSize(appscreenWidth,200)
 }
 func (m *postRenderer) Objects() []fyne.CanvasObject {
 	return []fyne.CanvasObject{m.top, m.main, m.pic,m.link,m.details, m.sep}
@@ -256,10 +257,34 @@ go func() {
 		bindings.Set(getPosts(s))
 		list.Refresh()
 	}
-
-
-	return container.NewBorder(searchentry, nil, nil, nil,list)
-
+	/*
+	searchentry.ActionItem = widget.NewButtonWithIcon("  ", theme.SearchIcon(), func() {
+		searchtext=searchentry.Text
+		fmt.Println("Search submitted",searchtext)
+		bindings.Set(getPosts(searchtext))
+		list.Refresh()
+	})
+	*/
+	
+	//widget.NewIcon(theme.SearchIcon())
+	searchButton:= widget.NewButtonWithIcon("",theme.SearchIcon(), func() {
+		
+		searchtext=searchentry.Text
+		fmt.Println("Search submitted",searchtext)
+		bindings.Set(getPosts(searchtext))
+		list.Refresh()
+	})
+	searchButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(40, 40)),searchButton)
+	searchentryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth, 40)),searchentry)
+	searchcontainer:=container.NewHBox(searchentryContainer,searchButtonContainer)
+	
+	
+	
+	//return container.NewBorder(searchcontainer, nil, nil, nil,list)
+	pagecontainer:=container.NewVBox(searchcontainer,list)
+	//return  container.NewBorder(nil, nil, nil, nil,pagecontainer)
+	centered := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), pagecontainer, layout.NewSpacer())
+	return centered
 }
 
 func getPosts(keywords string)[]string{

@@ -37,7 +37,7 @@ func SaveBytesFile(bytesfilebytes []byte,bytesfilepath string) error{
 		//
 		fmt.Println("error:", wserr)
 	}
-	fmt.Println("Bytes saved.")
+	//fmt.Println("Bytes saved.")
 	return nil
 }
 func LoadBytesFile(path string) (*[]byte,error){

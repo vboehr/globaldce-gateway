@@ -42,6 +42,7 @@ func SetDefaultSettings(){
 		Sendtoaddressestxfee:500,
 	}
 }
+
 func ApplyUsersettings(){
 
 	daemon.MainwalletFilePath=Usersettings.MainwalletFilePath//MainwalletFilePathDefault//"./WalletFiles/MainWallet.dat"
@@ -60,7 +61,7 @@ func SaveUsersettingsFile() error{
 		return err
 	}
 	_=utility.SaveBytesFile(usersettingsfilebytes,"./settings.ini")
-
+	fmt.Println("Usersettings saved.")
 	return nil
 }
 func LoadUsersettingsFile() error{
@@ -70,5 +71,6 @@ func LoadUsersettingsFile() error{
 		fmt.Println("error:", uerr)
 		return uerr
 	}
+
 	return nil
 }
