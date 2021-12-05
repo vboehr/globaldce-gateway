@@ -8,6 +8,12 @@ import(
 	"github.com/globaldce/globaldce-toolbox/daemon"
 )
 var MainwalletFilePathDefault=filepath.Join("WalletFiles","Wallet.dat")
+var (
+	MaxDisplayedPostDefault=30
+	NameregistrationtxfeeDefault=300
+	PublicposttxfeeDefault=500
+	SendtoaddressarraytxfeeDefault=500
+)
 
 type UsersettingsType struct {
 	//CloudWallet bool
@@ -22,7 +28,7 @@ type UsersettingsType struct {
 	MaxDisplayedPost int
 	Nameregistrationtxfee int
 	Publicposttxfee int
-	Sendtoaddressestxfee int
+	Sendtoaddressarraytxfee int
 	//Lastknownblock uint32
 	//Broadcastedtxarray [] Broadcastedtx
 	//mu sync.Mutex
@@ -36,10 +42,10 @@ func SetDefaultSettings(){
 		/////////////////////////////////
 		//Confirmationlayer: uint32(200),
 		/////////////////////////////////
-		MaxDisplayedPost:30,
-		Nameregistrationtxfee: 300,
-		Publicposttxfee:500,
-		Sendtoaddressestxfee:500,
+		MaxDisplayedPost:MaxDisplayedPostDefault,
+		Nameregistrationtxfee:NameregistrationtxfeeDefault,
+		Publicposttxfee:PublicposttxfeeDefault,
+		Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
 	}
 }
 

@@ -8,6 +8,8 @@ import (
     "fyne.io/fyne/v2/layout"
     //"log"
     "fmt"
+    "github.com/globaldce/globaldce-toolbox/cli"
+    "github.com/globaldce/globaldce-toolbox/daemon"
 )
 
  	
@@ -113,6 +115,13 @@ searchButton:=widget.NewButton("Fixed size window", func() {
     //layout := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 500)),label , form)
     completebutton:= widget.NewButton("SEND", func() {
         fmt.Println("got :",componentsList)
+        var addressarray []string
+        var amountarray []string
+        for i,_:=range componentsList{
+            addressarray=append(addressarray,componentsList[i].address)
+            amountarray=append(amountarray,componentsList[i].amount)
+        }
+        cli.Sendtoaddressarray(daemon.Wireswarm, daemon.Wlt,addressarray,amountarray,"100")
 
     })
 

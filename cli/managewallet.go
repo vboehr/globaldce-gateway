@@ -250,7 +250,65 @@ func displayregistrednames(wlt * wallet.Wallet){
 		fmt.Printf("Registred name %d : %s\n",i,name)
 	}
 }
-// sendtoaddesses
+// 
+//
+func Sendtoaddressarray(ws *wire.Swarm,wlt *wallet.Wallet,addrstringarray []string,amountstringarray []string,feestring string){
+    //applog.Trace("Wallet ballance %f",float64 (wlt.ComputeBalance())/1000000.0)
+    //applog.Trace("Wallet Lastknownblock %d",wlt.Lastknownblock)
+
+	var addressarray []utility.Hash
+	var amountarray []uint64
+
+	for _,addrstring:=range addrstringarray {
+	
+		//address:=[]byte(addrstring)
+		addressbytes,addrerr:=hex.DecodeString(addrstring)
+		if addrerr!=nil{
+			fmt.Printf("\nError: inappropriate address provided - %v",addrerr)
+			return
+		}
+		if len(addressbytes)!=32{
+			fmt.Printf("Error: inappropriate address length")
+			return
+		}
+		addressarray=append(addressarray,*utility.NewHash(addressbytes)) 
+		//applog.Notice("Sending to address %x an amount of %d coins",address,amount)
+
+	}
+	for _,amountstring:=range amountstringarray {
+		amount, err := strconv.ParseInt(amountstring, 10, 64)
+		amount*=1000000
+		if err!=nil{
+			fmt.Printf("Error: inappropriate amount provided - %v",err)
+			return
+		}
+		amountarray=append(amountarray,uint64(amount))
+	}
+	//
+    //amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 coins * transaction bytes
+	fee, ferr := strconv.ParseInt(feestring, 10, 64)
+    fee*=1000000
+    if ferr!=nil{
+        fmt.Printf("Error: inappropriate fee provided - %v",ferr)
+        //os.Exit(0)
+		return
+    }
+	//
+	tx,err:=wlt.SetupTransactionToPublicKeyHashArray(addressarray,amountarray,uint64 (fee))
+    if err!=nil{
+        fmt.Printf("%v",err)
+        //os.Exit(0)
+		return
+    }
+	fmt.Printf("new sendtoaddress tx seize %d tx %x",len(tx.Serialize()),tx)
+    if tx!=nil{
+        wlt.AddBroadcastedtx(*tx)
+		ws.BroadcastTransaction(tx)
+    }
+    
+}
+
+//
 func sendtoaddress(ws *wire.Swarm,wlt *wallet.Wallet,addrstring string,amountstring string){
     //applog.Trace("Wallet ballance %f",float64 (wlt.ComputeBalance())/1000000.0)
     //applog.Trace("Wallet Lastknownblock %d",wlt.Lastknownblock)
@@ -259,7 +317,8 @@ func sendtoaddress(ws *wire.Swarm,wlt *wallet.Wallet,addrstring string,amountstr
     amount*=1000000
     if err!=nil{
         fmt.Printf("Error: inappropriate amount provided - %v",err)
-        os.Exit(0)
+        //os.Exit(0)
+		return
     }
     //address:=[]byte(addrstring)
     address,addrerr:=hex.DecodeString(addrstring)

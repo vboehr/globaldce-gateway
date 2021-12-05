@@ -48,7 +48,7 @@ func  passwordDialog(win fyne.Window){
 		//})),
 	}
 
-	dialog.ShowForm("Password required to load wallet at:"+daemon.MainwalletFilePath, "Okay  ", "Cancel", items, func(b bool) {
+	dialog.ShowForm("Password required to load wallet at: "+daemon.MainwalletFilePath, "Okay  ", "Cancel", items, func(b bool) {
 		if !b {
 			fmt.Println("canceled")
 			nowalletFoundDialog(win,"")
@@ -117,6 +117,7 @@ func  passwordCreationDialog(win fyne.Window) {
 					// If the key length is 32, the key is hashed first
 					daemon.MainwalletFileKey=utility.ComputeHashBytes(key)
 				}
+				walletsettingsDisplayedMainwalletFilePath.Set(daemon.MainwalletFilePath)
 				daemon.Walletloaded=true	
 		} else {
 			nowalletFoundDialog(win,"Wallet creation abroted entred password do not match")
@@ -193,9 +194,8 @@ func selectWalletFileDialog(win fyne.Window) {
 		if !daemon.Walletloaded{
 			daemon.MainwalletFilePath=filepath.Path()
 			passwordDialog(win)
-		} else {
-			dialog.ShowInformation("New wallet path selection", "New wallet path selection will be used once the app restart", win)
-		}
+		} 
+
 	}, win)
 	fd.SetFilter(storage.NewExtensionFileFilter([]string{".dat"}))
 	fd.Show()

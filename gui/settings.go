@@ -1,123 +1,103 @@
 package gui
 
-
 import (
 	//"log"
-	//"fmt"
+	"fmt"
+	"strconv"
 	//"image/color"
 	//"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	//"fyne.io/fyne/v2/theme"
 	//"fyne.io/fyne/v2/data/validation"
-	//"fyne.io/fyne/v2/widget"
+	"fyne.io/fyne/v2/widget"
 	//"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/data/validation"
 	//"net/url"
 	//"net/url"
-	//"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2"
-	//"github.com/globaldce/globaldce-toolbox/cli"
+	"github.com/globaldce/globaldce-toolbox/cli"
 )
 
-
+var walletsettingsDisplayedMainwalletFilePath binding.String
 
 func settingsScreen(win fyne.Window) fyne.CanvasObject {
-	tabs := container.NewAppTabs(
-		container.NewTabItem("Wallet",  walletSettingsScreen(win)),
-		//container.NewTabItem("Search",  contactslistScreen()),
-		//container.NewTabItem("Share",  shareScreen(win)),
+	// wallet path section
+	walletsettingsDisplayedMainwalletFilePath=binding.NewString()
+	walletsettingsDisplayedMainwalletFilePath.Set(cli.Usersettings.MainwalletFilePath)
+	walletpathentry:=widget.NewEntryWithData(walletsettingsDisplayedMainwalletFilePath)
+	walletpathentry.Validator=nil
+	selectwalletpathButton:= widget.NewButton("Select wallet path", func() {
+		selectWalletFileDialog(win)
+	})
+	selectwalletpathButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(180, 40)),selectwalletpathButton)
+	walletpathentryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth-150, 40)),walletpathentry)
+	walletpathContainer:=container.NewHBox(walletpathentryContainer,selectwalletpathButtonContainer)
+	//
+	//Nameregistrationtxfee:NameregistrationtxfeeDefault,
+	nameregistrationtxfeeEntry:=widget.NewEntry()
+	nameregistrationtxfeeEntry.Text=fmt.Sprintf("%d",cli.Usersettings.Nameregistrationtxfee)
+	nameregistrationtxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
+	nameregistrationtxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
+		nameregistrationtxfeeEntry.SetText(fmt.Sprintf("%d",cli.Usersettings.Nameregistrationtxfee))
+	})
+	nameregistrationtxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),nameregistrationtxfeeSetDefaultButton)
+	nameregistrationtxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),nameregistrationtxfeeEntry)
+	nameregistrationtxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Name registration fee"))
+	nameregistrationtxfeeContainer:=container.NewHBox(nameregistrationtxfeeLabelContainer,nameregistrationtxfeeEntryContainer,nameregistrationtxfeeSetDefaultButtonContainer)
 
-	)
-	/*
-	//tabsisTransitioning
-	tabs.OnChanged = func(_ *container.TabItem) {
-		//list.Refresh()
-		fmt.Println("!!!!!!",list)
-	}
-	*/
-	tabs.SetTabLocation(container.TabLocationTop)
-	return tabs
+	//Publicposttxfee:PublicposttxfeeDefault,
+	publicposttxfeeEntry:=widget.NewEntry()
+	publicposttxfeeEntry.Text=fmt.Sprintf("%d",cli.Usersettings.Publicposttxfee)
+	publicposttxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
+	publicposttxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
+		publicposttxfeeEntry.SetText(fmt.Sprintf("%d",cli.Usersettings.Publicposttxfee))
+	})
+	publicposttxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),publicposttxfeeSetDefaultButton)
+	publicposttxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),publicposttxfeeEntry)
+	publicposttxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Public post fee"))
+	publicposttxfeeContainer:=container.NewHBox(publicposttxfeeLabelContainer,publicposttxfeeEntryContainer,publicposttxfeeSetDefaultButtonContainer)
+	//Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
+	sendtoaddressarraytxfeeEntry:=widget.NewEntry()
+	sendtoaddressarraytxfeeEntry.Text=fmt.Sprintf("%d",cli.Usersettings.Sendtoaddressarraytxfee)
+	sendtoaddressarraytxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
+	sendtoaddressarraytxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
+		sendtoaddressarraytxfeeEntry.SetText(fmt.Sprintf("%d",cli.Usersettings.Sendtoaddressarraytxfee))
+	})
+	sendtoaddressarraytxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),sendtoaddressarraytxfeeSetDefaultButton)
+	sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
+	sendtoaddressarraytxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Send to addresses fee"))
+	sendtoaddressarraytxfeeContainer:=container.NewHBox(sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeEntryContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer)
 
+	// save settings button section
+	saveSettingsButton:= widget.NewButton("Save settings", func() {
+		fmt.Println("Saving settings")
+		nameregistrationtxfeeNewValue, nameregistrationtxfeeNewValueErr := strconv.ParseInt(nameregistrationtxfeeEntry.Text, 10, 64)
+		if nameregistrationtxfeeNewValueErr!=nil{
+			dialog.ShowInformation("Error", "Entred value for name registration fee is inappropriete ", win)
+			return
+		}
+		cli.Usersettings.Nameregistrationtxfee=int(nameregistrationtxfeeNewValue)
+		publicposttxfeeNewValue, publicposttxfeeNewValueErr := strconv.ParseInt(publicposttxfeeEntry.Text, 10, 64)
+		if publicposttxfeeNewValueErr!=nil{
+			dialog.ShowInformation("Error", "Entred value for public post fee is inappropriete ", win)
+			return
+		}
+		cli.Usersettings.Publicposttxfee=int(publicposttxfeeNewValue)
+		
+
+		sendtoaddressarraytxfeeNewValue, sendtoaddressarraytxfeeNewValueErr := strconv.ParseInt(sendtoaddressarraytxfeeEntry.Text, 10, 64)
+		if sendtoaddressarraytxfeeNewValueErr!=nil{
+			dialog.ShowInformation("Error", "Entred value for send to addresses fee is inappropriete ", win)
+			return
+		}
+		cli.Usersettings.Sendtoaddressarraytxfee=int(sendtoaddressarraytxfeeNewValue)
+		_=cli.SaveUsersettingsFile()
+		dialog.ShowInformation("Saved settings", "Saved settings will take effect once the app starts", win)
+	})
+	saveSettingsButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),saveSettingsButton)
+	//
+	return container.NewVBox(walletpathContainer,nameregistrationtxfeeContainer,publicposttxfeeContainer,sendtoaddressarraytxfeeContainer,saveSettingsButtonContainer)
 }
-
-/*
-func settingsScreen() fyne.CanvasObject {
-
-	entrymainwalletpath := widget.NewEntry()
-	entrymainwalletpath.Text=cli.Usersettings.MainwalletFilePath
-	//entry1.Validator = validation.NewRegexp(`^[0-9]+$`, "deposited amount can only contain numbers")
-	//entry2 := widget.NewEntry()
-	//entry2.Validator = validation.NewRegexp(`^[0-9]+$`, "deposited amount can only contain numbers")
-
-	form := &widget.Form{
-		Items: []*widget.FormItem{ // we can specify items in the constructor
-			{Text: "main wallet file path", Widget:entrymainwalletpath},
-			//{Text: "Cool2", Widget: entry2},
-		},
-		OnSubmit: func() { // optional, handle form submission
-			log.Println("Main wallet file path set to:", entrymainwalletpath.Text)
-			//log.Println("entry 2:", entry2.Text)
-			cli.Usersettings.MainwalletFilePath=entrymainwalletpath.Text
-		},
-	}
-
-	return form
-
-}
-*/
-//func settingsScreen() fyne.CanvasObject {
-//	selectEntry := widget.NewSelectEntry([]string{"Option A", "Option B", "Option C"})
-//	selectEntry.PlaceHolder = "Type or select"
-//	disabledCheck := widget.NewCheck("Disabled check", func(bool) {})
-//	disabledCheck.Disable()
-//	radio := widget.NewRadioGroup([]string{"Radio Item 1", "Radio Item 2"}, func(s string) { fmt.Println("selected", s) })
-//	radio.Horizontal = true
-//	disabledRadio := widget.NewRadioGroup([]string{"Disabled radio"}, func(string) {})
-//	disabledRadio.Disable()
-//
-//	return container.NewVBox(
-//		widget.NewSelect([]string{"Option 1", "Option 2", "Option 3"}, func(s string) { fmt.Println("selected", s) }),
-//		selectEntry,
-//		widget.NewCheck("Check", func(on bool) { fmt.Println("checked", on) }),
-//		disabledCheck,
-//		radio,
-//		disabledRadio,
-//		widget.NewSlider(0, 100),
-//	)
-//}
-/*
-func parseURL(urlStr string) *url.URL {
-	link, err := url.Parse(urlStr)
-	if err != nil {
-		fyne.LogError("Could not parse URL", err)
-	}
-
-	return link
-}
-
-*/
-
-
-
-
-//func welcomeScreen() fyne.CanvasObject {
-	//logo := canvas.NewImageFromResource(data.FyneScene)//
-	//logo.FillMode = canvas.ImageFillContain
-	//if fyne.CurrentDevice().IsMobile() {
-	//	logo.SetMinSize(fyne.NewSize(171, 125))
-	//} else {
-	//	logo.SetMinSize(fyne.NewSize(228, 167))
-	//}
-
-//	return container.NewCenter(container.NewVBox(
-//		widget.NewLabelWithStyle("Welcome to the Fyne toolkit demo app", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
-		//logo,
-//		container.NewHBox(
-//			widget.NewHyperlink("fyne.io", parseURL("https://fyne.io/")),
-//			widget.NewLabel("-"),
-//			widget.NewHyperlink("documentation", parseURL("https://fyne.io/develop/")),
-//			widget.NewLabel("-"),
-//			widget.NewHyperlink("sponsor", parseURL("https://github.com/sponsors/fyne-io")),
-//		),
-//	))
-//}
-
