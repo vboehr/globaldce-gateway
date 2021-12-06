@@ -30,6 +30,15 @@ func parseURL(urlStr string) *url.URL {
 
 	return link
 }
+func banPostName(name string) func() {
+	return func() {
+		if name!=""{
+			//fmt.Println("post",p)
+			daemon.Usersettings.BannedNameArray=append(daemon.Usersettings.BannedNameArray,name)
+			daemon.Mn.BannedNameArray=append(daemon.Mn.BannedNameArray,name)
+		}
+	}
+}
 func displayPostDetails(p *post) func() {
 	return func() {
 		if p!=nil{
@@ -59,6 +68,7 @@ func displayPostDetails(p *post) func() {
 }
 
 
+
 const iconSize = float32(150)
 type post struct {
 	Name string
@@ -82,106 +92,95 @@ func DataFilePathFromHash(h utility.Hash) string{
 }
 
 type postRenderer struct {
-	m         *postCell
+	pc *postCell
 	top, main *widget.Label
-	pic       *canvas.Image
-	link 	  *widget.Hyperlink
-	details   *widget.Button
-	sep       *widget.Separator
+	pic *canvas.Image
+	link *widget.Hyperlink
+	details *widget.Button
+	ban *widget.Button
+	sep *widget.Separator
 }
-func (m *postRenderer) Destroy() {
+func (pr *postRenderer) Destroy() {
 }
-func (m *postRenderer) Layout(s fyne.Size) {
+func (pr *postRenderer) Layout(s fyne.Size) {
 	remainWidth := s.Width - iconSize - theme.Padding()*2
 	remainStart := iconSize + theme.Padding()*2
-	m.pic.Resize(fyne.NewSize(iconSize, iconSize))
-	m.pic.Move(fyne.NewPos(theme.Padding(), theme.Padding()))
-	m.details.Resize(fyne.NewSize(iconSize, 30))
-	m.details.Move(fyne.NewPos(theme.Padding(), theme.Padding()+iconSize))
-	m.top.Move(fyne.NewPos(remainStart, -theme.Padding()))
-	m.top.Resize(fyne.NewSize(remainWidth, m.top.MinSize().Height))
+	pr.pic.Resize(fyne.NewSize(iconSize, iconSize))
+	pr.pic.Move(fyne.NewPos(theme.Padding(), theme.Padding()))
+	pr.details.Resize(fyne.NewSize(iconSize, 30))
+	pr.details.Move(fyne.NewPos(theme.Padding(), theme.Padding()+iconSize))
+	pr.ban.Resize(fyne.NewSize(iconSize, 30))
+	pr.ban.Move(fyne.NewPos(appscreenWidth-theme.Padding()-200, theme.Padding()))
 
-	m.link.Move(fyne.NewPos(remainStart, m.top.MinSize().Height-theme.Padding()*4))//100 is the height of the cell
-	if m.m.msg.Link!=""{
-		m.link.Resize(fyne.NewSize(remainWidth, m.top.MinSize().Height))
+	pr.top.Move(fyne.NewPos(remainStart, -theme.Padding()))
+	pr.top.Resize(fyne.NewSize(remainWidth, pr.top.MinSize().Height))
+
+	pr.link.Move(fyne.NewPos(remainStart, pr.top.MinSize().Height-theme.Padding()*4))//100 is the height of the cell
+	if pr.pc.p.Link!=""{
+		pr.link.Resize(fyne.NewSize(remainWidth, pr.top.MinSize().Height))
 	}
 	
 
-	m.main.Move(fyne.NewPos(remainStart, m.top.MinSize().Height+2*theme.Padding()))
-	m.main.Resize(fyne.NewSize(remainWidth, m.main.MinSize().Height))
+	pr.main.Move(fyne.NewPos(remainStart, pr.top.MinSize().Height+2*theme.Padding()))
+	pr.main.Resize(fyne.NewSize(remainWidth, pr.main.MinSize().Height))
 	
-	m.sep.Move(fyne.NewPos(0, s.Height-theme.SeparatorThicknessSize()))
-	m.sep.Resize(fyne.NewSize(s.Width, theme.SeparatorThicknessSize()))
+	pr.sep.Move(fyne.NewPos(0, s.Height-theme.SeparatorThicknessSize()))
+	pr.sep.Resize(fyne.NewSize(s.Width, theme.SeparatorThicknessSize()))
 }
-func (m *postRenderer) MinSize() fyne.Size {
-	s1 := m.top.MinSize()
-	s2 := m.main.MinSize()
-	w := fyne.Max(s1.Width, s2.Width)
-	//return fyne.NewSize(w+iconSize+theme.Padding()*2,
-	//	s1.Height+s2.Height-theme.Padding()*4)
-	_=w
+func (pr *postRenderer) MinSize() fyne.Size {
+
 	return fyne.NewSize(appscreenWidth,200)
 }
-func (m *postRenderer) Objects() []fyne.CanvasObject {
-	return []fyne.CanvasObject{m.top, m.main, m.pic,m.link,m.details, m.sep}
+func (pr *postRenderer) Objects() []fyne.CanvasObject {
+	return []fyne.CanvasObject{pr.top, pr.main, pr.pic,pr.link,pr.details,pr.ban, pr.sep}
 }
 
-func (m *postRenderer) Refresh() {
-	m.top.SetText(m.m.msg.Name)
-	m.details= widget.NewButton("Details", displayPostDetails(m.m.msg))
+func (pr *postRenderer) Refresh() {
+	pr.top.SetText(pr.pc.p.Name)
+	pr.details= widget.NewButton("Details", displayPostDetails(pr.pc.p))
+	pr.ban= widget.NewButton("Ban", banPostName(pr.pc.p.Name))
 	///////////////////////////////////
-	//m.pic.SetResource(theme.FyneLogo())
-	if m.m.msg.AttachmentHashArray!=nil{
-		m.pic=canvas.NewImageFromFile(DataFilePathFromHash(m.m.msg.AttachmentHashArray[0]))
+	if pr.pc.p.AttachmentHashArray!=nil{
+		pr.pic=canvas.NewImageFromFile(DataFilePathFromHash(pr.pc.p.AttachmentHashArray[0]))
 	}
 	
 	///////////////////////////////////
-	//m.pic.SetResource(nil)
-	m.main.SetText(m.m.msg.Content)
+	pr.main.SetText(pr.pc.p.Content)
 	
-	m.link=widget.NewHyperlink(m.m.msg.Link, parseURL(m.m.msg.Link))
-	//fmt.Printf("link is %s",m.m.msg.Link)
-	/*
-	if m.m.msg.user.name != "" {
-		m.top.SetText(m.m.msg.user.name)
-	} else {
-		m.top.SetText(m.m.msg.user.username)
-	}
-	m.main.SetText(m.m.msg.Content)
-	go m.pic.SetResource(m.m.avatarResource())
-	*/
+	pr.link=widget.NewHyperlink(pr.pc.p.Link, parseURL(pr.pc.p.Link))
 	
 }
 type postCell struct {
 	widget.BaseWidget
-	msg *post
+	p *post
 }
 
-func (m *postCell) CreateRenderer() fyne.WidgetRenderer {
-	name := widget.NewLabelWithStyle(m.msg.Name, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
+func (pc *postCell) CreateRenderer() fyne.WidgetRenderer {
+	name := widget.NewLabelWithStyle(pc.p.Name, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 	name.Wrapping = fyne.TextTruncate
-	body := widget.NewLabel(m.msg.Content)
+	body := widget.NewLabel(pc.p.Content)
 	body.Wrapping = fyne.TextWrapWord
-	emptybutton:=widget.NewButton("", displayPostDetails(nil))
-	emptylink:=widget.NewHyperlink(m.msg.Link, parseURL(m.msg.Link))
-	return &postRenderer{m: m,
+	emptydetailsbutton:=widget.NewButton("", displayPostDetails(nil))
+	emptybanbutton:=widget.NewButton("", banPostName(""))
+	emptylink:=widget.NewHyperlink(pc.p.Link, parseURL(pc.p.Link))
+	return &postRenderer{pc: pc,
 		top:  name,//canvas.NewImageFromFile("./rawtest/unnamed.jpg")
 		//main: body, pic: widget.NewIcon(nil),link:emptylink, sep: widget.NewSeparator()}
-		main: body, pic:canvas.NewImageFromFile(""),link:emptylink,details:emptybutton, sep: widget.NewSeparator()}
+		main: body, pic:canvas.NewImageFromFile(""),link:emptylink,details:emptydetailsbutton,ban:emptybanbutton, sep: widget.NewSeparator()}
 }
 
-func (m *postCell) UpdatePost(s string)  {
+func (pc *postCell) UpdatePost(s string)  {
 	//m.Unbind()
-	p:=PostInfoFromString(s)
-	m.msg.Name=p.Name
-	m.msg.Link=p.Link
-	m.msg.Content=p.Content
-	m.msg.AttachmentSizeArray=p.AttachmentSizeArray
-	m.msg.AttachmentHashArray=p.AttachmentHashArray
+	up:=PostInfoFromString(s)
+	pc.p.Name=up.Name
+	pc.p.Link=up.Link
+	pc.p.Content=up.Content
+	pc.p.AttachmentSizeArray=up.AttachmentSizeArray
+	pc.p.AttachmentHashArray=up.AttachmentHashArray
 
 }
-func newPostCell(m *post) *postCell {
-	ret := &postCell{msg: m}
+func newPostCell(np *post) *postCell {
+	ret := &postCell{p: np}
 	ret.ExtendBaseWidget(ret)
 	return ret
 }
@@ -214,7 +213,8 @@ list := widget.NewTable(
   },
   func() fyne.CanvasObject {
     //return widget.NewLabel("wide Content")
-	m2:=&post{Content:"TMPCONTENT"}
+	//m2:=&post{Content:""}
+	m2:=&post{}
 	return newPostCell(m2)
   },
   func(i widget.TableCellID, o fyne.CanvasObject) {
@@ -239,10 +239,11 @@ list := widget.NewTable(
 go func() {
 	for {
 		//fmt.Println("*******!!!!!!!!",registerednames)
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Second * 5)
 		//assestsdestails.Set(daemon.Wlt.GetAssetsDetails())
 		bindings.Set(getPosts(searchtext))
-		list.Refresh()
+		list.Refresh()// weird removing this one improved the display !!
+		time.Sleep(time.Second * 30)
 		//str.Set(fmt.Sprintf("WALLET BALANCE is %d", daemon.Wlt.ComputeBalance()))
 		
 	}
@@ -281,10 +282,10 @@ go func() {
 	
 	
 	//return container.NewBorder(searchcontainer, nil, nil, nil,list)
-	pagecontainer:=container.NewVBox(searchcontainer,list)
-	//return  container.NewBorder(nil, nil, nil, nil,pagecontainer)
-	centered := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), pagecontainer, layout.NewSpacer())
-	return centered
+	//pagecontainer:=container.NewVBox(searchcontainer,list)
+	return  container.NewBorder(searchcontainer, nil, nil, nil,list)
+	//centered := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), pagecontainer, layout.NewSpacer())
+	//return centered
 }
 
 func getPosts(keywords string)[]string{

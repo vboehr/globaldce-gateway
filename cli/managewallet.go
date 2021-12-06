@@ -21,7 +21,7 @@ func GenerateNewMainwalletFilePath(){
 		filepath:=filepath.Join("WalletFiles",fmt.Sprintf("Wallet%02d.dat",activewalletfileid))//fmt.Sprintf("WalletFiles/Wallet%02d",activewalletfileid)
 		if _, err := os.Stat(filepath); os.IsNotExist(err) {
 			daemon.MainwalletFilePath=filepath
-			Usersettings.MainwalletFilePath=filepath
+			daemon.Usersettings.MainwalletFilePath=filepath
 			break
 		} 
 		if (activewalletfileid==1000){
@@ -440,6 +440,9 @@ func Sendnameregistration(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wall
     }
 	fmt.Printf("new nameregistration seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
+		_,fee:= mn.ValidateTransaction(tx)
+		priority:=int(fee)
+		mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
     }

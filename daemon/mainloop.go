@@ -48,7 +48,7 @@ func Mainloop(){
     Mn.PutPath( AppPath)
 	Mn.LoadMaincore()
 	defer Mn.UnloadMaincore()
-
+    Mn.BannedNameArray=Usersettings.BannedNameArray
     Wireswarm=wire.NewSwarm()
 
     if Seed {
@@ -174,7 +174,10 @@ func Mainloop(){
             AppIsClosing = true 
             applog.UnlockDisplay()
             applog.Notice("Quitting ...")
-            Wlt.SaveJSONFile(MainwalletFilePath,MainwalletFileKey)
+            if Walletloaded {
+                Wlt.SaveJSONFile(MainwalletFilePath,MainwalletFileKey)
+            }
+            _=SaveUsersettingsFile()
             os.Exit(0)
         }
     }    

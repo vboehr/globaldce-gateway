@@ -4,6 +4,8 @@ import (
 	"github.com/globaldce/globaldce-toolbox/utility"
 	"github.com/globaldce/globaldce-toolbox/wallet"
 	"strings"
+	//"fmt"
+	//"os"
 )
 
 func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
@@ -34,15 +36,23 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 								//utility.DecodeBytecodeId(mb.Transactions[j].Vin[k].Bytecode)
 								if wlt.Assetarray[m].StateString=="UNSPENT" {
 									wlt.Assetarray[m].StateString="SPENT"
-								} else if strings.Index(wlt.Assetarray[m].StateString,"NAMEREGISTERED_")==0{
-									r := strings.NewReplacer("NAMEREGISTERED_", "NAMEUNREGISTERED_")
-									wlt.Assetarray[m].StateString=r.Replace(wlt.Assetarray[m].StateString)
-
+								} else {
+									moduleid:=utility.DecodeBytecodeId(mb.Transactions[j].Vin[k].Bytecode)
+									
+									if strings.Index(wlt.Assetarray[m].StateString,"NAMEREGISTERED_")==0 && moduleid==utility.ModuleIdentifierECDSANameUnregistration{
+										r := strings.NewReplacer("NAMEREGISTERED_", "NAMEUNREGISTERED_")
+										wlt.Assetarray[m].StateString=r.Replace(wlt.Assetarray[m].StateString)
+										//fmt.Println("Unregistration occured",j,k)
+										//os.Exit(0)
+									}
 								}
+								
+	
 								
 								//
 								wlt.Assetarray[m].SpendingTxHash=mb.Transactions[j].ComputeHash()
 								wlt.Assetarray[m].SpendingIndex=uint32(k)
+
 							}
 						}
 				//

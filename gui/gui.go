@@ -19,7 +19,7 @@ import (
     //"strings"
     //"path/filepath"
     "github.com/globaldce/globaldce-toolbox/daemon"
-	"github.com/globaldce/globaldce-toolbox/cli"
+	//"github.com/globaldce/globaldce-toolbox/cli"
 )
 
 const appscreenWidth =1000
@@ -31,13 +31,13 @@ var guiApp fyne.App
 
 func Start(appname string) {
 	applog.Init()
-	settingserr:=cli.LoadUsersettingsFile()
+	settingserr:=daemon.LoadUsersettingsFile()
 	if settingserr!=nil{
 		//
-		cli.SetDefaultSettings()
+		daemon.SetDefaultSettings()
 	}
-	cli.ApplyUsersettings()
-	applog.Notice("Mainwalletpath %s",cli.Usersettings.MainwalletFilePath)
+	daemon.ApplyUsersettings()
+	applog.Notice("Mainwalletpath %s",daemon.MainwalletFilePath)
 	daemon.Miningrequested=true
 	daemon.Seed=true
 	
@@ -132,8 +132,10 @@ func Start(appname string) {
 	
 	myWindow.ShowAndRun()
 		fmt.Println("Closing")
-		daemon.Wlt.SaveJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
-		_=cli.SaveUsersettingsFile()
+		if daemon.Walletloaded {
+			daemon.Wlt.SaveJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
+		}
+		_=daemon.SaveUsersettingsFile()
 }
 
 /*

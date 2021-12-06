@@ -22,6 +22,7 @@ func (wlt *Wallet) GetRegisteredNames() []string{
 				tmpstatestring:=asset.StateString
 				tmpregisteredname:=r.Replace(tmpstatestring)
 				registerednames=append(registerednames,tmpregisteredname)
+				fmt.Printf("Registred Name %s\n",tmpregisteredname)
 			}
 
 	}
@@ -42,7 +43,7 @@ func (wlt *Wallet) GetAssetsDetails() []string{
 	//fmt.Printf("\nNumber of addresses %d\n",len(wlt.Privatekeyarray))
 	for _, tmpasset := range wlt.Assetarray {
 		
-		assestsdestails=append(assestsdestails,fmt.Sprintf(" %d ",tmpasset.Value)+tmpasset.StateString)
+		assestsdestails=append(assestsdestails,fmt.Sprintf(" %f ",(float64(tmpasset.Value)/1000000.0))+tmpasset.StateString)
 	}
 	return assestsdestails
 

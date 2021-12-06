@@ -18,7 +18,8 @@ import (
 	//"net/url"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2"
-	"github.com/globaldce/globaldce-toolbox/cli"
+	//"github.com/globaldce/globaldce-toolbox/cli"
+	"github.com/globaldce/globaldce-toolbox/daemon"
 )
 
 var walletsettingsDisplayedMainwalletFilePath binding.String
@@ -26,7 +27,7 @@ var walletsettingsDisplayedMainwalletFilePath binding.String
 func settingsScreen(win fyne.Window) fyne.CanvasObject {
 	// wallet path section
 	walletsettingsDisplayedMainwalletFilePath=binding.NewString()
-	walletsettingsDisplayedMainwalletFilePath.Set(cli.Usersettings.MainwalletFilePath)
+	walletsettingsDisplayedMainwalletFilePath.Set(daemon.Usersettings.MainwalletFilePath)
 	walletpathentry:=widget.NewEntryWithData(walletsettingsDisplayedMainwalletFilePath)
 	walletpathentry.Validator=nil
 	selectwalletpathButton:= widget.NewButton("Select wallet path", func() {
@@ -38,10 +39,10 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 	//
 	//Nameregistrationtxfee:NameregistrationtxfeeDefault,
 	nameregistrationtxfeeEntry:=widget.NewEntry()
-	nameregistrationtxfeeEntry.Text=fmt.Sprintf("%d",cli.Usersettings.Nameregistrationtxfee)
+	nameregistrationtxfeeEntry.Text=fmt.Sprintf("%d",daemon.Usersettings.Nameregistrationtxfee)
 	nameregistrationtxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
 	nameregistrationtxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
-		nameregistrationtxfeeEntry.SetText(fmt.Sprintf("%d",cli.Usersettings.Nameregistrationtxfee))
+		nameregistrationtxfeeEntry.SetText(fmt.Sprintf("%d",daemon.Usersettings.Nameregistrationtxfee))
 	})
 	nameregistrationtxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),nameregistrationtxfeeSetDefaultButton)
 	nameregistrationtxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),nameregistrationtxfeeEntry)
@@ -50,10 +51,10 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 
 	//Publicposttxfee:PublicposttxfeeDefault,
 	publicposttxfeeEntry:=widget.NewEntry()
-	publicposttxfeeEntry.Text=fmt.Sprintf("%d",cli.Usersettings.Publicposttxfee)
+	publicposttxfeeEntry.Text=fmt.Sprintf("%d",daemon.Usersettings.Publicposttxfee)
 	publicposttxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
 	publicposttxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
-		publicposttxfeeEntry.SetText(fmt.Sprintf("%d",cli.Usersettings.Publicposttxfee))
+		publicposttxfeeEntry.SetText(fmt.Sprintf("%d",daemon.Usersettings.Publicposttxfee))
 	})
 	publicposttxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),publicposttxfeeSetDefaultButton)
 	publicposttxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),publicposttxfeeEntry)
@@ -61,10 +62,10 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 	publicposttxfeeContainer:=container.NewHBox(publicposttxfeeLabelContainer,publicposttxfeeEntryContainer,publicposttxfeeSetDefaultButtonContainer)
 	//Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
 	sendtoaddressarraytxfeeEntry:=widget.NewEntry()
-	sendtoaddressarraytxfeeEntry.Text=fmt.Sprintf("%d",cli.Usersettings.Sendtoaddressarraytxfee)
+	sendtoaddressarraytxfeeEntry.Text=fmt.Sprintf("%d",daemon.Usersettings.Sendtoaddressarraytxfee)
 	sendtoaddressarraytxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
 	sendtoaddressarraytxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
-		sendtoaddressarraytxfeeEntry.SetText(fmt.Sprintf("%d",cli.Usersettings.Sendtoaddressarraytxfee))
+		sendtoaddressarraytxfeeEntry.SetText(fmt.Sprintf("%d",daemon.Usersettings.Sendtoaddressarraytxfee))
 	})
 	sendtoaddressarraytxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),sendtoaddressarraytxfeeSetDefaultButton)
 	sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
@@ -79,13 +80,13 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 			dialog.ShowInformation("Error", "Entred value for name registration fee is inappropriete ", win)
 			return
 		}
-		cli.Usersettings.Nameregistrationtxfee=int(nameregistrationtxfeeNewValue)
+		daemon.Usersettings.Nameregistrationtxfee=int(nameregistrationtxfeeNewValue)
 		publicposttxfeeNewValue, publicposttxfeeNewValueErr := strconv.ParseInt(publicposttxfeeEntry.Text, 10, 64)
 		if publicposttxfeeNewValueErr!=nil{
 			dialog.ShowInformation("Error", "Entred value for public post fee is inappropriete ", win)
 			return
 		}
-		cli.Usersettings.Publicposttxfee=int(publicposttxfeeNewValue)
+		daemon.Usersettings.Publicposttxfee=int(publicposttxfeeNewValue)
 		
 
 		sendtoaddressarraytxfeeNewValue, sendtoaddressarraytxfeeNewValueErr := strconv.ParseInt(sendtoaddressarraytxfeeEntry.Text, 10, 64)
@@ -93,8 +94,8 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 			dialog.ShowInformation("Error", "Entred value for send to addresses fee is inappropriete ", win)
 			return
 		}
-		cli.Usersettings.Sendtoaddressarraytxfee=int(sendtoaddressarraytxfeeNewValue)
-		_=cli.SaveUsersettingsFile()
+		daemon.Usersettings.Sendtoaddressarraytxfee=int(sendtoaddressarraytxfeeNewValue)
+		_=daemon.SaveUsersettingsFile()
 		dialog.ShowInformation("Saved settings", "Saved settings will take effect once the app starts", win)
 	})
 	saveSettingsButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),saveSettingsButton)

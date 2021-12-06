@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"math"
 	"fmt"
+	//"os"
 )
 
 const (
@@ -329,6 +330,8 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 					return 0,fmt.Errorf("Corrupt transaction input - input public key do not match its associated output hash")
 				}
 				//applog.Trace("Value",inpututxo.Value)
+				//fmt.Println("UNregistration **********")
+				//os.Exit(0)
 				return inpututxo.Value,nil
 		case utility.ModuleIdentifierECDSANamePublicPost:
 				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateIdentifierActifNameRegistration){
@@ -339,7 +342,7 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				inpututxo:=mn.GetMainblock(int(height)).Transactions[number].Vout[tmptxin.Index]
 				pubkeycompressedbytes,_,err:=utility.DecodeECDSANamePublicPost(tmptxin.Bytecode)
 				if err!=nil{
-					return 0,fmt.Errorf("DecodeECDSANameUnregistration Error %v",err)
+					return 0,fmt.Errorf("DecodeECDSANamePublicPost Error %v",err)
 				}
 				verr:=utility.VerifySignature(signinghash,tmptxin.Signature,pubkeycompressedbytes)
 				if verr!=nil{

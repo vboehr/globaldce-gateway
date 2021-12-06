@@ -20,6 +20,7 @@ import (
 	"sync"
 )
 type Maincore struct{
+	BannedNameArray []string
 	path string
 	genesisblock Mainblock
 	mainheaders [] Mainheader

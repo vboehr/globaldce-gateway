@@ -20,6 +20,13 @@ func Start(cliname string){
     //for i:=0;i<len(os.Args);i++{
     //    applog.Notice("arg %d %s",i,os.Args[i])
     //}
+    settingserr:=daemon.LoadUsersettingsFile()
+	if settingserr!=nil{
+		//
+		daemon.SetDefaultSettings()
+	}
+	daemon.ApplyUsersettings()
+
     appName=cliname
 
     if len(os.Args)<2{
@@ -56,7 +63,11 @@ func Start(cliname string){
         case "createnewaddress":
             applog.Notice("User requested a new address")
             createnewaddressCMD()
-
+        case "addbannedname":
+            applog.Notice("User requested a bannedname")
+            daemon.Usersettings.BannedNameArray=append(daemon.Usersettings.BannedNameArray,os.Args[2])
+            _=daemon.SaveUsersettingsFile()
+            os.Exit(0)
         default:
             emptyCMD()
     }
@@ -180,7 +191,7 @@ func askuserwalletfilekey() []byte{
 }
 func askuserwalletfilepath() string{
     var entredpath string
-    fmt.Printf("Please enter wallet file path (default: %s) :",filepath.Join(daemon.AppPath,MainwalletFilePathDefault))
+    fmt.Printf("Please enter wallet file path (default: %s) :",filepath.Join(daemon.AppPath,daemon.MainwalletFilePathDefault))
     fmt.Scanln(&entredpath)
     if entredpath!=""{
         return entredpath
@@ -190,7 +201,7 @@ func askuserwalletfilepath() string{
             os.Mkdir(walletfilesdirpath, os.ModePerm)
             //TODO better error handling
         }
-        return filepath.Join(daemon.AppPath,MainwalletFilePathDefault)
+        return filepath.Join(daemon.AppPath,daemon.MainwalletFilePathDefault)
     }
 
 }

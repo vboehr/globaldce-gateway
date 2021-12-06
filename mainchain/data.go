@@ -86,6 +86,10 @@ func (mn *Maincore) GetPostInfoStringArray(maxposts int)[]string{
 			//	return
 			//}
 			namestring:=string(namebytes)
+			//Block namestring should not be displayed
+			if mn.IsBannedName(namestring) {
+				continue
+			}
 			tmpstring:=StringFromPostInfo(PostInfo{
 				Name:namestring,
 				Link:linkstring,
@@ -99,6 +103,14 @@ func (mn *Maincore) GetPostInfoStringArray(maxposts int)[]string{
 		
 	}
 	return postsstringarray
+}
+func (mn *Maincore) IsBannedName(name string) bool{
+	for _ , bn:= range mn.BannedNameArray{
+		if bn==name{
+			return true
+		}
+	}
+	return false
 }
 
 func (mn *Maincore) AddLocalPublicPostData(namestring string,hash utility.Hash,databytes []byte) {

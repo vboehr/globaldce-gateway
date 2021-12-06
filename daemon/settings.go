@@ -1,11 +1,11 @@
-package cli
+package daemon
 
 import(
 	"fmt"
 	"encoding/json"
 	"path/filepath"
 	"github.com/globaldce/globaldce-toolbox/utility"
-	"github.com/globaldce/globaldce-toolbox/daemon"
+	//"github.com/globaldce/globaldce-toolbox/daemon"
 )
 var MainwalletFilePathDefault=filepath.Join("WalletFiles","Wallet.dat")
 var (
@@ -32,6 +32,7 @@ type UsersettingsType struct {
 	//Lastknownblock uint32
 	//Broadcastedtxarray [] Broadcastedtx
 	//mu sync.Mutex
+	BannedNameArray []string
 }
 var Usersettings UsersettingsType
 	
@@ -46,12 +47,13 @@ func SetDefaultSettings(){
 		Nameregistrationtxfee:NameregistrationtxfeeDefault,
 		Publicposttxfee:PublicposttxfeeDefault,
 		Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
+		BannedNameArray:nil,
 	}
 }
 
 func ApplyUsersettings(){
 
-	daemon.MainwalletFilePath=Usersettings.MainwalletFilePath//MainwalletFilePathDefault//"./WalletFiles/MainWallet.dat"
+	MainwalletFilePath=Usersettings.MainwalletFilePath//MainwalletFilePathDefault//"./WalletFiles/MainWallet.dat"
 }
 
 //func GetMainwalletPath() string{
@@ -61,6 +63,11 @@ func ApplyUsersettings(){
 //	Usersettings.MainwalletFilePath=path
 //}
 func SaveUsersettingsFile() error{
+	if Mn!=nil{
+		Usersettings.BannedNameArray=Mn.BannedNameArray
+	}
+	
+	//
 	usersettingsfilebytes, err := json.Marshal(Usersettings)
 	if err != nil {
 		fmt.Println("error:", err)

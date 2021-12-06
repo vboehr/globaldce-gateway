@@ -190,7 +190,7 @@ func selectWalletFileDialog(win fyne.Window) {
 		//
 		fmt.Println("Wallet file path",filepath)
 		walletsettingsDisplayedMainwalletFilePath.Set(filepath.Path())
-		cli.Usersettings.MainwalletFilePath=filepath.Path()
+		daemon.MainwalletFilePath=filepath.Path()
 		if !daemon.Walletloaded{
 			daemon.MainwalletFilePath=filepath.Path()
 			passwordDialog(win)
