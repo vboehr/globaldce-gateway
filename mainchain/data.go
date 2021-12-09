@@ -18,7 +18,7 @@ import (
 	//"fmt"
 	//"path/filepath"
 	//"sync"
-	//"strings"
+	"strings"
 )
 
 const (
@@ -43,8 +43,10 @@ func StringFromPostInfo(p PostInfo) string{
 	
 }
 
-func (mn *Maincore) GetPostInfoStringArray(maxposts int)[]string{
+func (mn *Maincore) GetPostInfoStringArray(keywords string,maxposts int)[]string{
+	var keywordarray []string
 	var postsstringarray []string
+	keywordarray=strings.Split(keywords, " ")
 	nbdata:=int(mn.GetNbData())
 	starti:=nbdata-maxposts
 	if starti<0{
@@ -97,7 +99,17 @@ func (mn *Maincore) GetPostInfoStringArray(maxposts int)[]string{
 				AttachmentSizeArray:tmpAttachmentSizeArray,
 				AttachmentHashArray:tmpAttachmentHashArray,
 			})
-			postsstringarray=append(postsstringarray,tmpstring)
+			if len(keywordarray)!=0{
+				for _,k:=range keywordarray{
+					if strings.Index(tmpstring,k)>=0{
+						postsstringarray=append(postsstringarray,tmpstring)
+					}
+				}
+			} else {
+				postsstringarray=append(postsstringarray,tmpstring)
+			}
+
+			
 		}
 
 		

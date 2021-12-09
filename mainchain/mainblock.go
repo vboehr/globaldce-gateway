@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"encoding/binary"
 	"github.com/globaldce/globaldce-toolbox/utility"
-	"math/rand"
 )
 type Mainblock struct {
 	// 
@@ -26,7 +25,7 @@ type Mainheader struct {
 	Hash utility.Hash
 }
 func (mb *Mainblock) Mine( prevtime int64, prevblockhash utility.Hash, bits uint32) bool {
-	rand.Seed(time.Now().UnixNano())//
+
 	fmt.Println("Minining")
 	mb.Header.Bits=bits
 	targetbigint:=utility.BigIntFromCompact(bits)
@@ -36,7 +35,6 @@ func (mb *Mainblock) Mine( prevtime int64, prevblockhash utility.Hash, bits uint
 	for starttime-time.Now().Unix()<60{//TODO optimize//
 	for loopcounter:=0;loopcounter<10000;loopcounter++{//TODO optimize
  	
-
 		mb.Header.Timestamp=int64 (time.Now().Unix())
 		
 		mb.Header.Nonce++

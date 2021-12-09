@@ -272,7 +272,7 @@ func Sendtoaddressarray(ws *wire.Swarm,wlt *wallet.Wallet,addrstringarray []stri
 			return
 		}
 		addressarray=append(addressarray,*utility.NewHash(addressbytes)) 
-		//applog.Notice("Sending to address %x an amount of %d coins",address,amount)
+		//applog.Notice("Sending to address %x an amount of %d globals",address,amount)
 
 	}
 	for _,amountstring:=range amountstringarray {
@@ -285,7 +285,7 @@ func Sendtoaddressarray(ws *wire.Swarm,wlt *wallet.Wallet,addrstringarray []stri
 		amountarray=append(amountarray,uint64(amount))
 	}
 	//
-    //amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 coins * transaction bytes
+    //amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
 	fee, ferr := strconv.ParseInt(feestring, 10, 64)
     fee*=1000000
     if ferr!=nil{
@@ -327,13 +327,13 @@ func sendtoaddress(ws *wire.Swarm,wlt *wallet.Wallet,addrstring string,amountstr
         //os.Exit(0)
 		return
     }
-    applog.Notice("Sending to address %x an amount of %d coins",address,amount)
+    applog.Notice("Sending to address %x an amount of %d globals",address,amount)
     if len(address)!=32{
         fmt.Printf("Error: inappropriate address length")
         //os.Exit(0)
 		return
     }
-    amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 coins * transaction bytes
+    amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
     tx,err:=wlt.SetupTransactionToPublicKeyHash(*utility.NewHash(address),uint64 (amount),uint64 (amountfee))
     if err!=nil{
         fmt.Printf("%v",err)
@@ -349,13 +349,13 @@ func sendtoaddress(ws *wire.Swarm,wlt *wallet.Wallet,addrstring string,amountstr
 }
 func sendtoaddresshelp(){
     fmt.Printf("\nError: sendtoaddress inappropiate usage\n")
-    fmt.Printf("In order to send an address X an amount of N coins, enter as follows:\n")
+    fmt.Printf("In order to send an address X an amount of N globals, enter as follows:\n")
     fmt.Printf("sendtoaddress X N \n")
     //
 }
 func sendnameregistrationhelp(){
     fmt.Printf("\nError: sendnameregistration inappropiate usage\n")
-    fmt.Printf("In order to proceed with registration of name X with an amount of N coins, enter as follows:\n")
+    fmt.Printf("In order to proceed with registration of name X with an amount of N globals, enter as follows:\n")
     fmt.Printf("sendnameregistration X N \n")
     //
 }
@@ -372,7 +372,7 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
         fmt.Printf("%v",aerr)
         return
     }*/
-	amountfee:=100//TODO customizable fees based on bytes - fee = 1 to 10 coins * transaction bytes
+	amountfee:=100//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
 
 	
 	tmpbw:=utility.NewBufferWriter()
@@ -424,14 +424,14 @@ func Sendnameregistration(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wall
 
     name:=[]byte(namestring)
 
-    fmt.Printf("Sending name registration for %x with amount of %d coins\n",name,amount)
+    fmt.Printf("Sending name registration for %x with amount of %d globals\n",name,amount)
 	validationerr:=mn.ValidateNameRegistration(name)
 	if validationerr!=nil{
 		fmt.Printf("Validation error: %v\n",validationerr)
 		return fmt.Errorf("Validation error: %v\n",validationerr)
 	}
 
-    amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 coins * transaction bytes
+    amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
 	pubkeyhash:=wlt.GenerateKeyPair()
     tx,err:=wlt.SetupTransactionForNameRegistration(name,pubkeyhash,uint64 (amount),uint64 (amountfee))
     if err!=nil{

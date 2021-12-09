@@ -12,7 +12,7 @@ func (sw *Swarm)  Bootstrap(){
 	bootstrapaddrs :=[]string{"***","***"}
 	applog.Notice("Bootstraping ... ")
 	for _,addr := range bootstrapaddrs {
-		sw.HintNewPeer(addr)
+		sw.HintNewPeer(addr)//TODO add connection pass
 		/*
 		conn,err:=net.Dial("tcp","****.ddns.net:15555")
 		if err!=nil {

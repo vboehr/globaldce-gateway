@@ -59,6 +59,7 @@ func displayPostDetails(p *post) func() {
 			//win.SetContent(widget.NewLabel(p.Content))
 			postdetailsScroll := container.NewScroll(postdetailscontainer)
 			//myCanvas.SetContent(container.NewVBox(i,i2))
+
 			postdetailsCanvas.SetContent(postdetailsScroll)
 			win.Resize(fyne.NewSize(800, 600))
 			win.Show()
@@ -242,7 +243,7 @@ go func() {
 		time.Sleep(time.Second * 5)
 		//assestsdestails.Set(daemon.Wlt.GetAssetsDetails())
 		bindings.Set(getPosts(searchtext))
-		list.Refresh()// weird removing this one improved the display !!
+		list.Refresh()//
 		time.Sleep(time.Second * 30)
 		//str.Set(fmt.Sprintf("WALLET BALANCE is %d", daemon.Wlt.ComputeBalance()))
 		
@@ -283,7 +284,29 @@ go func() {
 	
 	//return container.NewBorder(searchcontainer, nil, nil, nil,list)
 	//pagecontainer:=container.NewVBox(searchcontainer,list)
-	return  container.NewBorder(searchcontainer, nil, nil, nil,list)
+	//  listScroll := container.NewScroll(list)
+	//////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////
+	//TODO if Table.Scroll will be exposed use it
+	//listScroll.OnScrolled= func(offset fyne.Position) {
+	//			  fmt.Printf("*******************Scrollled %f\n",offset.Y)
+	//  }		
+	/*
+	//Until have acces to Table.Scroll 
+	morepostsButton:= widget.NewButton("More", func() {
+		//fmt.Printf("more*******************\n")
+		MaxDisplayedPost+=10
+		bindings.Set(getPosts(searchtext))
+		list.Refresh()//
+	})
+	morepostsButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),morepostsButton)
+	*/
+	///////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////
+	//exploreContainer:= container.NewBorder(searchcontainer,morepostsButtonContainer, layout.NewSpacer(), layout.NewSpacer(),list)
+	exploreContainer:= container.NewBorder(searchcontainer,nil, nil, nil,list)
+	return container.New(layout.NewHBoxLayout(), layout.NewSpacer(), exploreContainer, layout.NewSpacer())//exploreContainer
 	//centered := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), pagecontainer, layout.NewSpacer())
 	//return centered
 }
@@ -311,7 +334,7 @@ func getPosts(keywords string)[]string{
 	if daemon.Mn==nil{
 		return nil
 	}
-	sarray:=daemon.Mn.GetPostInfoStringArray(30) 
+	sarray:=daemon.Mn.GetPostInfoStringArray(keywords,MaxDisplayedPost) 
 	//fmt.Printf("********%v",sarray)
 	return sarray
 	

@@ -95,6 +95,8 @@ func Start(appname string) {
 			//tabs.Append(container.NewTabItemWithIcon("Home", theme.HomeIcon(), widget.NewLabel("Home tab")))
 		
 			tabs.SetTabLocation(container.TabLocationTop)
+
+
 			
 			myWindow.SetContent(tabs)
 		

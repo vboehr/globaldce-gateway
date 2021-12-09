@@ -86,6 +86,9 @@ func shareScreen(win fyne.Window) fyne.CanvasObject {
 			dialog.ShowInformation("Public Post", "Public post is being broadcasted", win)
 			textinput.SetText("")
 			linkinput.SetText("")
+			attachmentpathArray=make([]string,0)
+			 
+			componentsTree.Refresh()
 		}
     })
 	sharebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),sharebutton)
@@ -133,10 +136,11 @@ func  requestNameRegistrationDialog(win fyne.Window){
 }
 
 */
+var componentsTree *widget.List
 
 func attachmentbuilderScreen(win fyne.Window) fyne.CanvasObject{
 
-	componentsTree := widget.NewList(
+	componentsTree = widget.NewList(
 		 func() int {
 			 return len(attachmentpathArray)
 		 },
