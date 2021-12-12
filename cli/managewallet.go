@@ -448,3 +448,27 @@ func Sendnameregistration(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wall
     }
 	return nil
 }
+func Sendnameunregistration(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string) error{
+    //applog.Trace("Wallet ballance %f",float64 (wlt.ComputeBalance())/1000000.0)
+    //applog.Trace("Wallet Lastknownblock %d",wlt.Lastknownblock)
+
+
+    //name:=[]byte(namestring)
+	
+    fmt.Printf("Sending name unregistration for %x \n",namestring)
+	amountfee:=100*1000000//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
+    tx,err:=wlt.SetupTransactionForNameUnregistration(namestring,uint64 (amountfee))
+    if err!=nil{
+        fmt.Printf("%v",err)
+        return fmt.Errorf("%v",err)
+    }
+	fmt.Printf("new nameunregistration seize %d tx %x",len(tx.Serialize()),tx)
+    if tx!=nil{
+		_,fee:= mn.ValidateTransaction(tx)
+		priority:=int(fee)
+		mn.AddTransactionToTxsPool(tx,fee,priority)
+        wlt.AddBroadcastedtx(*tx)
+		ws.BroadcastTransaction(tx)
+    }
+	return nil
+}

@@ -73,7 +73,11 @@ func overviewScreen() fyne.CanvasObject {
 				for {
 					//fmt.Println("*******!!!!!!!!",registerednames)
 					time.Sleep(time.Second * 2)
-					assestsdestails.Set(daemon.Wlt.GetAssetsDetails())
+					updatedassestsdestails:=daemon.Wlt.GetAssetsDetails()
+					if updatedassestsdestails!=nil{
+						assestsdestails.Set(updatedassestsdestails)
+					}
+					time.Sleep(time.Second * 10)
 					//str.Set(fmt.Sprintf("WALLET BALANCE is %d", daemon.Wlt.ComputeBalance()))
 					
 				}

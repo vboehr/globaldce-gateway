@@ -106,13 +106,13 @@ func (pr *postRenderer) Destroy() {
 func (pr *postRenderer) Layout(s fyne.Size) {
 	remainWidth := s.Width - iconSize - theme.Padding()*2
 	remainStart := iconSize + theme.Padding()*2
-	pr.pic.Resize(fyne.NewSize(iconSize, iconSize))
+	
 	pr.pic.Move(fyne.NewPos(theme.Padding(), theme.Padding()))
-	pr.details.Resize(fyne.NewSize(iconSize, 30))
+	pr.pic.Resize(fyne.NewSize(iconSize, iconSize))
 	pr.details.Move(fyne.NewPos(theme.Padding(), theme.Padding()+iconSize))
-	pr.ban.Resize(fyne.NewSize(iconSize, 30))
+	pr.details.Resize(fyne.NewSize(iconSize, 30))
 	pr.ban.Move(fyne.NewPos(appscreenWidth-theme.Padding()-200, theme.Padding()))
-
+	pr.ban.Resize(fyne.NewSize(iconSize, 30))
 	pr.top.Move(fyne.NewPos(remainStart, -theme.Padding()))
 	pr.top.Resize(fyne.NewSize(remainWidth, pr.top.MinSize().Height))
 
@@ -138,17 +138,24 @@ func (pr *postRenderer) Objects() []fyne.CanvasObject {
 
 func (pr *postRenderer) Refresh() {
 	pr.top.SetText(pr.pc.p.Name)
-	pr.details= widget.NewButton("Details", displayPostDetails(pr.pc.p))
-	pr.ban= widget.NewButton("Ban", banPostName(pr.pc.p.Name))
-	///////////////////////////////////
-	if pr.pc.p.AttachmentHashArray!=nil{
-		pr.pic=canvas.NewImageFromFile(DataFilePathFromHash(pr.pc.p.AttachmentHashArray[0]))
-	}
-	
-	///////////////////////////////////
+
 	pr.main.SetText(pr.pc.p.Content)
 	
-	pr.link=widget.NewHyperlink(pr.pc.p.Link, parseURL(pr.pc.p.Link))
+	
+	///////////////////////////////////
+
+	go func() {
+		pr.link=widget.NewHyperlink(pr.pc.p.Link, parseURL(pr.pc.p.Link))
+		pr.details= widget.NewButton("Details", displayPostDetails(pr.pc.p))
+		pr.ban= widget.NewButton("Ban", banPostName(pr.pc.p.Name))
+		if pr.pc.p.AttachmentHashArray!=nil{
+			pr.pic=canvas.NewImageFromFile(DataFilePathFromHash(pr.pc.p.AttachmentHashArray[0]))
+		} else {
+			pr.pic=canvas.NewImageFromFile("blank.png")
+		}
+	}()
+	///////////////////////////////////
+
 	
 }
 type postCell struct {
@@ -161,13 +168,19 @@ func (pc *postCell) CreateRenderer() fyne.WidgetRenderer {
 	name.Wrapping = fyne.TextTruncate
 	body := widget.NewLabel(pc.p.Content)
 	body.Wrapping = fyne.TextWrapWord
-	emptydetailsbutton:=widget.NewButton("", displayPostDetails(nil))
-	emptybanbutton:=widget.NewButton("", banPostName(""))
+	emptydetailsbutton:=widget.NewButton("Details", displayPostDetails(nil))
+	emptybanbutton:=widget.NewButton("Ban", banPostName(""))
 	emptylink:=widget.NewHyperlink(pc.p.Link, parseURL(pc.p.Link))
 	return &postRenderer{pc: pc,
 		top:  name,//canvas.NewImageFromFile("./rawtest/unnamed.jpg")
 		//main: body, pic: widget.NewIcon(nil),link:emptylink, sep: widget.NewSeparator()}
-		main: body, pic:canvas.NewImageFromFile(""),link:emptylink,details:emptydetailsbutton,ban:emptybanbutton, sep: widget.NewSeparator()}
+		main: body, 
+		pic:canvas.NewImageFromFile("blank.png"),
+		link:emptylink,
+		details:emptydetailsbutton,
+		ban:emptybanbutton, 
+		sep: widget.NewSeparator(),
+	}
 }
 
 func (pc *postCell) UpdatePost(s string)  {
@@ -188,21 +201,15 @@ func newPostCell(np *post) *postCell {
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
-//var bindings []binding.DataMap
 
-var MaxDisplayedPost =50
+var MaxDisplayedPost =5
 var searchtext string =""
+var ListRefreshNeeded bool =false
 func exploreScreen(w fyne.Window)  fyne.CanvasObject{
 	bindings := binding.BindStringList(
 		&[]string{},
 	)
-	//var newbindings []binding.DataMap
-	//bindings=&newbindings
 
-//for _, todo := range data {
-//  bindings = append(bindings, binding.BindStruct(&todo))
-//}
-//getPosts("")
 
 
 
@@ -227,11 +234,16 @@ list := widget.NewTable(
 	//o.(*postCell.Label).Bind(title.(binding.String))
 	//_=title
 	//o.(*postCell).Cool("xxxx")
+
 	bs,_:=bindings.GetValue(i.Row)
 	o.(*postCell).UpdatePost(bs)
 	//fmt.Printf("*********************bs",bs)
 	o.(*postCell).Refresh()
-
+	if (i.Row==MaxDisplayedPost-1) && (i.Col==0){
+		fmt.Printf("More ************************\n")
+		MaxDisplayedPost+=10
+		ListRefreshNeeded=true
+	}
 	//////////////////////////////////////
   })
 
@@ -244,9 +256,20 @@ go func() {
 		//assestsdestails.Set(daemon.Wlt.GetAssetsDetails())
 		bindings.Set(getPosts(searchtext))
 		list.Refresh()//
-		time.Sleep(time.Second * 30)
+		time.Sleep(time.Second * 120)
 		//str.Set(fmt.Sprintf("WALLET BALANCE is %d", daemon.Wlt.ComputeBalance()))
 		
+	}
+}()
+go func(){
+	for {
+		if ListRefreshNeeded{
+			bindings.Set(getPosts(searchtext))
+			list.Refresh()
+			ListRefreshNeeded=false
+			time.Sleep(time.Second * 30)
+		}
+		time.Sleep(time.Second * 5)
 	}
 }()
 	

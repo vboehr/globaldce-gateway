@@ -73,12 +73,12 @@ func SaveUsersettingsFile() error{
 		fmt.Println("error:", err)
 		return err
 	}
-	_=utility.SaveBytesFile(usersettingsfilebytes,"./settings.ini")
+	_=utility.SaveBytesFile(usersettingsfilebytes,"settings.ini")
 	fmt.Println("Usersettings saved.")
 	return nil
 }
 func LoadUsersettingsFile() error{
-	usersettingsfilebytes,_:=utility.LoadBytesFile("./settings.ini")
+	usersettingsfilebytes,_:=utility.LoadBytesFile("settings.ini")
 	uerr:=json.Unmarshal(*usersettingsfilebytes,&Usersettings)
 	if uerr != nil {
 		fmt.Println("error:", uerr)

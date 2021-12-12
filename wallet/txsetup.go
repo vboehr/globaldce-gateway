@@ -19,7 +19,16 @@ func (wlt * Wallet) ComputeBalance() (uint64){
 
 	return totalbalance
 }
-func (wlt * Wallet) SetupTransactionForNameUnregistration(hash utility.Hash,index uint32,amount uint64,prvkeyindex uint32,fee uint64)  (*utility.Transaction,error){
+func (wlt * Wallet) SetupTransactionForNameUnregistration(name string,fee uint64)  (*utility.Transaction,error){
+	a,aerr:=wlt.GetAssetFromRegisteredName(name)
+	if aerr!=nil{
+		return nil,aerr
+	}
+	hash:=a.Hash
+	index:=a.Index
+	prvkeyindex:=a.Privatekeyindex
+	amount:=a.Value//TODO if amount less than fee add automatically new assets in the input
+
 	pubkey:=wlt.Privatekeyarray[prvkeyindex].PubKey().SerializeCompressed()
 	tmptxin:=utility.NewECDSANameUnregistration(hash,index,pubkey)
 	//tx,err:=wlt.SetupTransactionAmount(amount,fee,&tmptxin,nil)

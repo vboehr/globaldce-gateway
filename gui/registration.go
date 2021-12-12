@@ -24,6 +24,7 @@ import (
 //    name string
 //}
 
+var selectednameregistration string
 
 func registrationScreen(win fyne.Window) fyne.CanvasObject {
 	/*
@@ -51,6 +52,16 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 		func(i binding.DataItem, o fyne.CanvasObject) {
 			o.(*widget.Label).Bind(i.(binding.String))
 		})
+		//
+		registrednameslist.OnSelected = func(id widget.ListItemID) {
+			//label.SetText(data[id])
+			//icon.SetResource(theme.DocumentIcon())
+		//input := widget.NewEntry()
+		textvalue,_:=registerednames.GetValue(id)
+		selectednameregistration=textvalue
+
+		}
+		//
 		go func() {
 			for {
 				//fmt.Println("*******!!!!!!!!",registerednames)
@@ -68,9 +79,25 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 		requestNameRegistrationDialog(win)
     })
 	nameregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),nameregistrationbutton)
+	//
+	//
+	nameunregistrationbutton:= widget.NewButton("NAME UNREGISTRATION", func() {
+        fmt.Println("name unregistration")
+		//requestNameUnregistrationDialog(win)
+		//
+		err:=cli.Sendnameunregistration(daemon.Wireswarm,daemon.Mn,daemon.Wlt,selectednameregistration)
+		if err!=nil{
+			dialog.ShowError(err,win)
+		} else {
+			dialog.ShowInformation("Name Unregistration", "Name unregistration is being broadcasted", win)
+
+		}
+
+    })
+	nameunregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),nameunregistrationbutton)
 	//layout:=container.New(layout.NewPaddedLayout(),container.NewVBox(registrednameslist,nameregistrationcontainer))
 	registrednameslistcontainer:=container.New(layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth, appscreenHeight*3/4)),registrednameslist)
-	layout:=container.NewVBox(registrednameslistcontainer,nameregistrationbuttoncontainer)
+	layout:=container.NewVBox(registrednameslistcontainer,nameunregistrationbuttoncontainer,nameregistrationbuttoncontainer)
 	return layout
 
 }
