@@ -155,3 +155,37 @@ func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,*Extradata,error
 	return &pubkeyhash,name,extradata,nil
 
 }
+//
+func DecodeEngagement(bytecode []byte) (uint32,[]byte,*Extradata,error){
+	tmpbr:=NewBufferReader(bytecode)
+	primitivemoduleid:=tmpbr.GetUint32()
+	if primitivemoduleid != ModuleIdentifierEngagement{
+		return 0,nil,nil,fmt.Errorf("Not an Engagement bytecode")
+	}
+	eid:=tmpbr.GetUint32()
+	namelen:=tmpbr.GetVarUint()
+	if namelen>RegistredNameMaxSize{
+		return 0,nil,nil,fmt.Errorf("Name in Engagement bytecode is too long - %d",namelen)
+	}
+	name:=tmpbr.GetBytes(uint(namelen)) 
+	
+	/*
+	extradatalen:=tmpbr.GetVarUint()
+	if extradatalen>ExtradataMaxSize{
+		return nil,nil,nil,fmt.Errorf("ExtradataMaxSize exceeded")
+	}
+	var extradata Extradata
+	if extradatalen!=0{
+		extradata.Size=extradatalen
+		extradata.Hash=tmpbr.GetHash()
+	}
+	*/
+	extradata:=tmpbr.GetExtradata()
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
+		return 0,nil,nil,tmpbrerr
+	}
+	return eid,name,extradata,nil
+
+}
+

@@ -14,6 +14,11 @@ const (
 	ModuleIdentifierECDSANameRegistration=3
 	ModuleIdentifierECDSANameUnregistration=4
 	ModuleIdentifierECDSANamePublicPost=5
+	ModuleIdentifierEngagement=6
+)
+const (
+	EngagementIdentifierLikeName=1
+	EngagementIdentifierDislikeName=2
 )
 
 type TxOut struct {
@@ -102,6 +107,31 @@ func NewECDSANameUnregistration(inhash Hash,index uint32,pubkeycompressedbytes [
 	return tmptxin
 }
 
+
+func NewECDSAEngagementLikeName(name []byte) TxOut{
+	var tmptxout TxOut
+	tmptxout.Value=0
+	tmpbw:=NewBufferWriter()
+	tmpbw.PutUint32(ModuleIdentifierEngagement)// 
+	tmpbw.PutUint32(EngagementIdentifierLikeName)
+	tmpbw.PutVarUint(uint64(len(name)))
+	tmpbw.PutBytes(name)
+	tmpbw.PutVarUint(0)// No extradata
+	tmptxout.Bytecode=tmpbw.GetContent()
+	return tmptxout
+}
+func NewECDSAEngagementDislikeName(name []byte) TxOut{
+	var tmptxout TxOut
+	tmptxout.Value=0
+	tmpbw:=NewBufferWriter()
+	tmpbw.PutUint32(ModuleIdentifierEngagement)// 
+	tmpbw.PutUint32(EngagementIdentifierDislikeName)
+	tmpbw.PutVarUint(uint64(len(name)))
+	tmpbw.PutBytes(name)
+	tmpbw.PutVarUint(0)// No extradata
+	tmptxout.Bytecode=tmpbw.GetContent()
+	return tmptxout
+}
 func (txout * TxOut) CompareWithAddress(addr Hash) bool{
 	//
 	primitivemoduleid:=DecodeBytecodeId(txout.Bytecode)

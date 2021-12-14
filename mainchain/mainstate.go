@@ -18,6 +18,7 @@ const (
 	StateIdentifierInactifNameRegistration=5
 	StateIdentifierData=6
 	StateIdentifierDataFile=7
+	StateIdentifierEngagement=8
 )
 
 
@@ -177,6 +178,44 @@ func (mn *Maincore) GetDataFileState(datafilehash utility.Hash)(uint64, error){
 }
 
 
+//
+func (mn *Maincore) PutEngagementState(name []byte,engagementidentifier uint32,value uint32) error {
+
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutRegistredNameKey(name)
+
+	tmpkeybw.PutUint32(engagementidentifier)
+
+	tmpbw:=utility.NewBufferWriter()
+	tmpbw.PutUint32(StateIdentifierEngagement)
+	tmpbw.PutUint32(value)
+
+	err := mn.mainstatedb.Put(tmpkeybw.GetContent(), tmpbw.GetContent(), nil)
+
+	return err
+}
+
+func (mn *Maincore) GetEngagementState(name []byte,engagementidentifier uint32) uint32 {
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutRegistredNameKey(name)
+	tmpkeybw.PutUint32(engagementidentifier)
+
+	data, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
+	if err != nil {
+		//applog.Trace("GetNameState - txhash %x - index %d : %v",txhash,index, err)
+		return StateIdentifierNotFound
+	}
+	tmpbr:=utility.NewBufferReader(data)
+
+	stateidentifier:=tmpbr.GetUint32()
+	if stateidentifier!=StateIdentifierEngagement{
+		//return nil,0,fmt.Errorf("Found an incorrect stateidentifier associated with data hash %x - identifier found")
+		return 0
+	}
+	value:=tmpbr.GetUint32()
+	return value
+}
+
 /*
 func (mn *Maincore) GetNameState(name []byte) uint32 {
 	tmpkeybw:=utility.NewBufferWriter()
@@ -224,6 +263,14 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction) {
 				mn.PutTxOutputState(txhash,uint32(k),StateIdentifierActifNameRegistration)
 				applog.Trace("Puttting %x %d %d",txhash,uint32(k),StateIdentifierActifNameRegistration)
 				mn.PutNameState(name,StateIdentifierActifNameRegistration)
+			case utility.ModuleIdentifierEngagement:
+				eid,name,_,_:=utility.DecodeEngagement(tx.Vout[k].Bytecode)
+				if eid==utility.EngagementIdentifierLikeName {
+					mn.AddEngagementLikeName(name)
+				}
+				if eid==utility.EngagementIdentifierDislikeName {
+					mn.AddEngagementDislikeName(name)
+				}
 			//default:
 			//
 			//	ModuleIdentifierECDSANameRegistration=3

@@ -379,6 +379,12 @@ func (mn *Maincore) ValidateTxOut(tmptxout utility.TxOut)(uint64,error){
 				return 0,verr
 			}
 			return tmptxout.Value,nil
+		case utility.ModuleIdentifierEngagement:
+			_,_,_,err:=utility.DecodeEngagement(tmptxout.Bytecode)
+			if err!=nil {
+				return 0,err
+			}
+			return 0,nil
 		//default:
 		//	return 0,fmt.Errorf("Unknown moduleid of TxOut")
 		}
