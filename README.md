@@ -7,10 +7,11 @@ This project is still experimental, development and testing is ongoing.
 + Tested on Go 1.5
 + Tested on Windows, Linux and MacOSX
 
-## Instructions
-How to compile from source
-1. If you have not already done so. Install Go (at least version 1.12)
-2. Use the following commands to download, and build this source code: 
+## How to compile from source
+1. If you have not already done so, install Go (at least version 1.12)
+2. As this code includes a graphical user interface, you will need to install a C compiler (to handle graphics drivers) and graphics drivers. More information on how to do this, depending on your operating system, can be found here:
+https://developer.fyne.io/started/
+3. Use the following commands to download, and build this source code: 
 ```bash
 git clone https://github.com/globaldce/globaldce-toolbox
 cd globaldce-toolbox
