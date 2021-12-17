@@ -142,6 +142,8 @@ func addressesScreen() fyne.CanvasObject {
 	input.Disable()
 	saveButton:= widget.NewButton("Copy", func() {
 		fmt.Println("Content was:", input.Text)
+		clipboard := fyne.CurrentApp().Driver().AllWindows()[0].Clipboard()
+		clipboard.SetContent(input.Text)
 	})
 
 	label := container.NewVBox(

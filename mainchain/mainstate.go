@@ -10,33 +10,51 @@ import (
 )
 
 const (
-	StateIdentifierNotFound=0
-	StateIdentifierUnspentTxOutput=1
-	StateIdentifierSpentTxOutput=2
-	StateIdentifierTx=3
-	StateIdentifierActifNameRegistration=4
-	StateIdentifierInactifNameRegistration=5
-	StateIdentifierData=6
-	StateIdentifierDataFile=7
-	StateIdentifierEngagement=8
+	StateValueIdentifierNotFound=0
+	StateValueIdentifierUnspentTxOutput=1
+	StateValueIdentifierSpentTxOutput=2
+	StateValueIdentifierTx=3
+	StateValueIdentifierActifNameRegistration=4
+	StateValueIdentifierInactifNameRegistration=5
+	StateValueIdentifierData=6
+	StateValueIdentifierDataFile=7
+	StateValueIdentifierEngagement=8
+)
+
+const (
+	StateKeyIdentifierTxOutput=1
+	StateKeyIdentifierTx=3
+	StateKeyIdentifierNameRegistration=4
+	StateKeyIdentifierData=6
+	StateKeyIdentifierDataFile=7
+	StateKeyIdentifierEngagement=8
 )
 
 
-
 func (mn *Maincore) PutTxState(txhash utility.Hash,height uint32,number uint32) error{
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierTx)
+	tmpkeybw.PutBytes(txhash[:])
+	//tmpkeybw.GetContent()
+
 	tmpbw:=utility.NewBufferWriter()
-	tmpbw.PutUint32(StateIdentifierTx)// transaction type
+	tmpbw.PutUint32(StateValueIdentifierTx)// transaction type
 	tmpbw.PutUint32(height)
 	tmpbw.PutUint32(number)
-	err := mn.mainstatedb.Put(txhash[:], tmpbw.GetContent(), nil)
+	err := mn.mainstatedb.Put(tmpkeybw.GetContent(), tmpbw.GetContent(), nil)
 	return err
 }
 
 func (mn *Maincore) GetTxState(txhash utility.Hash) (uint32,uint32,uint32) {
-	data, err := mn.mainstatedb.Get(txhash[:], nil)
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierTx)
+	tmpkeybw.PutBytes(txhash[:])
+	//tmpkeybw.GetContent()
+
+	data, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
 	if err != nil {
 		applog.Trace("GetTxState - txhash %x : %v",txhash, err)
-		return StateIdentifierNotFound,0,0
+		return StateValueIdentifierNotFound,0,0
 	}
 	tmpbr:=utility.NewBufferReader(data)
 
@@ -52,6 +70,7 @@ func (mn *Maincore) GetTxState(txhash utility.Hash) (uint32,uint32,uint32) {
 func (mn *Maincore) PutTxOutputState(txhash utility.Hash,index uint32,stateidentifier uint32) error {
 
 	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierTxOutput)
 	tmpkeybw.PutBytes(txhash[:])
 	tmpkeybw.PutUint32(index)
 
@@ -65,13 +84,14 @@ func (mn *Maincore) PutTxOutputState(txhash utility.Hash,index uint32,stateident
 
 func (mn *Maincore) GetTxOutputState(txhash utility.Hash,index uint32) uint32 {
 	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierTxOutput)
 	tmpkeybw.PutBytes(txhash[:])
 	tmpkeybw.PutUint32(index)
 
 	data, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
 	if err != nil {
 		applog.Trace("GetTxOutputState - txhash %x - index %d : %v",txhash,index, err)
-		return StateIdentifierNotFound
+		return StateValueIdentifierNotFound
 	}
 	tmpbr:=utility.NewBufferReader(data)
 
@@ -83,6 +103,7 @@ func (mn *Maincore) GetTxOutputState(txhash utility.Hash,index uint32) uint32 {
 func (mn *Maincore) PutNameState(name []byte,stateidentifier uint32) error {
 
 	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierNameRegistration)
 	tmpkeybw.PutRegistredNameKey(name)
 	//tmpkeybw.PutUint32(index)
 
@@ -96,13 +117,14 @@ func (mn *Maincore) PutNameState(name []byte,stateidentifier uint32) error {
 
 func (mn *Maincore) GetNameState(name []byte) uint32 {
 	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierNameRegistration)
 	tmpkeybw.PutRegistredNameKey(name)
 	//tmpkeybw.PutUint32(index)
 
 	data, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
 	if err != nil {
 		//applog.Trace("GetNameState - txhash %x - index %d : %v",txhash,index, err)
-		return StateIdentifierNotFound
+		return StateValueIdentifierNotFound
 	}
 	tmpbr:=utility.NewBufferReader(data)
 
@@ -111,19 +133,24 @@ func (mn *Maincore) GetNameState(name []byte) uint32 {
 }
 
 func (mn *Maincore) PutPublicPostState(datahash utility.Hash,namebytes []byte,id uint32) error{
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierData)
+	tmpkeybw.PutHash(datahash)
+	//tmpkeybw.GetContent()
 
 	tmpbw:=utility.NewBufferWriter()
-	tmpbw.PutUint32(StateIdentifierData)// transaction type
+	tmpbw.PutUint32(StateValueIdentifierData)// 
 	tmpbw.PutVarUint(uint64(len(namebytes)))
 	tmpbw.PutBytes(namebytes)
 	tmpbw.PutUint32(id)
-	err := mn.mainstatedb.Put(datahash[:], tmpbw.GetContent(), nil)
+	err := mn.mainstatedb.Put(tmpkeybw.GetContent(), tmpbw.GetContent(), nil)
 	return err
 }
 func (mn *Maincore) GetPublicPostState(datahash utility.Hash)([]byte, uint32, error){
 	
 
 	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierData)
 	tmpkeybw.PutHash(datahash)
 	//tmpkeybw.PutUint32(index)
 
@@ -134,7 +161,7 @@ func (mn *Maincore) GetPublicPostState(datahash utility.Hash)([]byte, uint32, er
 	}
 	tmpbr:=utility.NewBufferReader(valuebytes)
 	stateidentifier:=tmpbr.GetUint32()
-	if stateidentifier!=StateIdentifierData{
+	if stateidentifier!=StateValueIdentifierData{
 		return nil,0,fmt.Errorf("Found an incorrect stateidentifier associated with data hash %x - identifier found")
 	}
 	namebyteslen:=tmpbr.GetVarUint()
@@ -147,11 +174,15 @@ func (mn *Maincore) GetPublicPostState(datahash utility.Hash)([]byte, uint32, er
 
 
 func (mn *Maincore) PutDataFileState(datafilehash utility.Hash,size uint64) error{
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierDataFile)
+	tmpkeybw.PutHash(datafilehash)
+	//tmpkeybw.GetContent()
 
 	tmpbw:=utility.NewBufferWriter()
-	tmpbw.PutUint32(StateIdentifierData)// transaction type
+	tmpbw.PutUint32(StateValueIdentifierData)// transaction type
 	tmpbw.PutVarUint(size)
-	err := mn.mainstatedb.Put(datafilehash[:], tmpbw.GetContent(), nil)
+	err := mn.mainstatedb.Put(tmpkeybw.GetContent(), tmpbw.GetContent(), nil)
 	return err
 }
 
@@ -159,6 +190,7 @@ func (mn *Maincore) GetDataFileState(datafilehash utility.Hash)(uint64, error){
 	
 
 	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierDataFile)
 	tmpkeybw.PutHash(datafilehash)
 	//tmpkeybw.PutUint32(index)
 
@@ -169,7 +201,7 @@ func (mn *Maincore) GetDataFileState(datafilehash utility.Hash)(uint64, error){
 	}
 	tmpbr:=utility.NewBufferReader(valuebytes)
 	stateidentifier:=tmpbr.GetUint32()
-	if stateidentifier!=StateIdentifierDataFile{
+	if stateidentifier!=StateValueIdentifierDataFile{
 		return 0,fmt.Errorf("Found an incorrect stateidentifier associated with data file hash %x - identifier found")
 	}
 	size:=tmpbr.GetVarUint()
@@ -182,12 +214,13 @@ func (mn *Maincore) GetDataFileState(datafilehash utility.Hash)(uint64, error){
 func (mn *Maincore) PutEngagementState(name []byte,engagementidentifier uint32,value uint32) error {
 
 	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierEngagement)
 	tmpkeybw.PutRegistredNameKey(name)
 
 	tmpkeybw.PutUint32(engagementidentifier)
 
 	tmpbw:=utility.NewBufferWriter()
-	tmpbw.PutUint32(StateIdentifierEngagement)
+	tmpbw.PutUint32(StateValueIdentifierEngagement)
 	tmpbw.PutUint32(value)
 
 	err := mn.mainstatedb.Put(tmpkeybw.GetContent(), tmpbw.GetContent(), nil)
@@ -197,18 +230,19 @@ func (mn *Maincore) PutEngagementState(name []byte,engagementidentifier uint32,v
 
 func (mn *Maincore) GetEngagementState(name []byte,engagementidentifier uint32) uint32 {
 	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierEngagement)
 	tmpkeybw.PutRegistredNameKey(name)
 	tmpkeybw.PutUint32(engagementidentifier)
 
 	data, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
 	if err != nil {
 		//applog.Trace("GetNameState - txhash %x - index %d : %v",txhash,index, err)
-		return StateIdentifierNotFound
+		return StateValueIdentifierNotFound
 	}
 	tmpbr:=utility.NewBufferReader(data)
 
 	stateidentifier:=tmpbr.GetUint32()
-	if stateidentifier!=StateIdentifierEngagement{
+	if stateidentifier!=StateValueIdentifierEngagement{
 		//return nil,0,fmt.Errorf("Found an incorrect stateidentifier associated with data hash %x - identifier found")
 		return 0
 	}
@@ -225,7 +259,7 @@ func (mn *Maincore) GetNameState(name []byte) uint32 {
 	data, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
 	if err != nil {
 		//applog.Trace("GetNameState - txhash %x - index %d : %v",txhash,index, err)
-		return StateIdentifierNotFound
+		return StateValueIdentifierNotFound
 	}
 	tmpbr:=utility.NewBufferReader(data)
 
@@ -256,13 +290,13 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction) {
 		moduleid:=utility.DecodeBytecodeId(tx.Vout[k].Bytecode)
 		switch moduleid {
 			case utility.ModuleIdentifierECDSATxOut:
-				mn.PutTxOutputState(txhash,uint32(k),StateIdentifierUnspentTxOutput)
-				applog.Trace("Puttting %x %d  stat %d",txhash,uint32(k),StateIdentifierUnspentTxOutput)
+				mn.PutTxOutputState(txhash,uint32(k),StateValueIdentifierUnspentTxOutput)
+				applog.Trace("Puttting %x %d  stat %d",txhash,uint32(k),StateValueIdentifierUnspentTxOutput)
 			case utility.ModuleIdentifierECDSANameRegistration:
 				_,name,_,_:=utility.DecodeECDSANameRegistration(tx.Vout[k].Bytecode) 
-				mn.PutTxOutputState(txhash,uint32(k),StateIdentifierActifNameRegistration)
-				applog.Trace("Puttting %x %d %d",txhash,uint32(k),StateIdentifierActifNameRegistration)
-				mn.PutNameState(name,StateIdentifierActifNameRegistration)
+				mn.PutTxOutputState(txhash,uint32(k),StateValueIdentifierActifNameRegistration)
+				applog.Trace("Puttting %x %d %d",txhash,uint32(k),StateValueIdentifierActifNameRegistration)
+				mn.PutNameState(name,StateValueIdentifierActifNameRegistration)
 			case utility.ModuleIdentifierEngagement:
 				eid,name,_,_:=utility.DecodeEngagement(tx.Vout[k].Bytecode)
 				if eid==utility.EngagementIdentifierLikeName {
@@ -284,7 +318,7 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction) {
 		moduleid:=utility.DecodeBytecodeId(tx.Vin[l].Bytecode)
 		switch moduleid {
 			case utility.ModuleIdentifierECDSATxIn:
-				mn.PutTxOutputState(tx.Vin[l].Hash,tx.Vin[l].Index,StateIdentifierSpentTxOutput)
+				mn.PutTxOutputState(tx.Vin[l].Hash,tx.Vin[l].Index,StateValueIdentifierSpentTxOutput)
 			case utility.ModuleIdentifierECDSANamePublicPost:
 				_,height,number:=mn.GetTxState(tx.Vin[l].Hash)
 				//applog.Trace("height%d,number%d",height,number)
@@ -329,7 +363,7 @@ func (mn *Maincore) GetUnconfirmedTxOutputState(txhash utility.Hash,index uint32
 			applog.Trace("GetUnconfirmedTxOutputState - txhash %x - index %d : %v",txhash,index, err)
 		}
 		
-		return StateIdentifierNotFound
+		return StateValueIdentifierNotFound
 	}
 	tmpbr:=utility.NewBufferReader(data)
 

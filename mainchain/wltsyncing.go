@@ -66,7 +66,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 
 		//applog.Trace("hash %x index %d value %d pkindex %d ",wlt.Assetarray[i].Hash,wlt.Assetarray[i].Index,wlt.Assetarray[i].Value,wlt.Assetarray[i].Privatekeyindex)
 		tmpstate,_,_:=mn.GetTxState(wlt.Broadcastedtxarray[i].Tx.ComputeHash())
-		if tmpstate==StateIdentifierTx{
+		if tmpstate==StateValueIdentifierTx{
 			//applog.Trace("unspents")
 			wlt.Broadcastedtxarray[i].ConfirmationString="CONFIRMED"
 		}
@@ -110,7 +110,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 			for k:=0;k<len(mb.Transactions[j].Vin);k++{
 				//tmpindex:=mb.Transactions[j].Vin[k].Index
 				//txstate,height,number:=mn.GetTxState(mb.Transactions[j].Vin[k].Hash)
-				//if txstate!=mainchain.StateIdentifierTx{
+				//if txstate!=mainchain.StateValueIdentifierTx{
 				//	applog.Warning("Error: Transaction not found - hash %x",mb.Transactions[j].Vin[k].Hash)
 				//	continue
 				//}
@@ -141,7 +141,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 	//for i:=0;i<len(wlt.Assetarray);i++{
 
 		//applog.Trace("hash %x index %d value %d pkindex %d ",wlt.Assetarray[i].Hash,wlt.Assetarray[i].Index,wlt.Assetarray[i].Value,wlt.Assetarray[i].Privatekeyindex)
-		//if mn.GetTxOutputState(wlt.Assetarray[i].Hash,wlt.Assetarray[i].Index)==StateIdentifierUnspentTxOutput{
+		//if mn.GetTxOutputState(wlt.Assetarray[i].Hash,wlt.Assetarray[i].Index)==StateValueIdentifierUnspentTxOutput{
 		//	//applog.Trace("unspents")
 		//	wlt.Assetarray[i].StateString="UNSPENT"
 		//}
@@ -153,7 +153,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 
 		//applog.Trace("hash %x index %d value %d pkindex %d ",wlt.Assetarray[i].Hash,wlt.Assetarray[i].Index,wlt.Assetarray[i].Value,wlt.Assetarray[i].Privatekeyindex)
 		tmpstate,_,_:=mn.GetTxState(wlt.Broadcastedtxarray[i].Tx.ComputeHash())
-		if tmpstate==StateIdentifierTx{
+		if tmpstate==StateValueIdentifierTx{
 			//applog.Trace("unspents")
 			wlt.Broadcastedtxarray[i].ConfirmationString="CONFIRMED"
 		}

@@ -9,6 +9,7 @@ import (
 	//"fyne.io/fyne/v2/theme"
 	//"fyne.io/fyne/v2/dialog"
 	//"fyne.io/fyne/v2/layout"
+	//"fyne.io/fyne/v2/widget"
 	"fyne.io/fyne/v2"
 	"github.com/globaldce/globaldce-toolbox/applog"
     "os"
@@ -38,7 +39,7 @@ func Start(appname string) {
 	}
 	daemon.ApplyUsersettings()
 	applog.Notice("Mainwalletpath %s",daemon.MainwalletFilePath)
-	daemon.Miningrequested=true
+	//daemon.Miningrequested=true
 	daemon.Seed=true
 	
 
@@ -95,8 +96,6 @@ func Start(appname string) {
 			//tabs.Append(container.NewTabItemWithIcon("Home", theme.HomeIcon(), widget.NewLabel("Home tab")))
 		
 			tabs.SetTabLocation(container.TabLocationTop)
-
-
 			
 			myWindow.SetContent(tabs)
 		

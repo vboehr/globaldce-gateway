@@ -6,4 +6,5 @@ rm -r ./HotAddressesFiles
 rm -r ./Sync
 rm -r ./Tmp/*
 rm info.log
+rm settings.ini
 mkdir ./WalletFiles

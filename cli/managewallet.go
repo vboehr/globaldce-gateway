@@ -189,7 +189,7 @@ func scanalltransactions(mn *mainchain.Maincore,wlt * wallet.Wallet){
 			for k:=0;k<len(mb.Transactions[j].Vin);k++{
 				tmpindex:=mb.Transactions[j].Vin[k].Index
 				txstate,height,number:=mn.GetTxState(mb.Transactions[j].Vin[k].Hash)
-				if txstate!=mainchain.StateIdentifierTx{
+				if txstate!=mainchain.StateValueIdentifierTx{
 					fmt.Printf("Error: Transaction not found - hash %x\n",mb.Transactions[j].Vin[k].Hash)
 					continue
 				}
@@ -218,7 +218,7 @@ func displaybroadcastedtransactions(wlt * wallet.Wallet){
 
 		//applog.Trace("hash %x index %d value %d pkindex %d ",wlt.Assetarray[i].Hash,wlt.Assetarray[i].Index,wlt.Assetarray[i].Value,wlt.Assetarray[i].Privatekeyindex)
 		//tmpstate,_,_:=mn.GetTxState(wlt.Broadcastedtxarray[i].Tx.ComputeHash())
-		//if tmpstate==StateIdentifierTx{
+		//if tmpstate==StateValueIdentifierTx{
 			//applog.Trace("unspents")
 			fmt.Printf("Transaction %d hash %x state %s\n",i,wlt.Broadcastedtxarray[i].Tx.ComputeHash(),wlt.Broadcastedtxarray[i].ConfirmationString)
 			fmt.Printf("Transaction %d - %s\n",i,wlt.Broadcastedtxarray[i].Tx.JSONSerialize())
@@ -302,6 +302,9 @@ func Sendtoaddressarray(ws *wire.Swarm,wlt *wallet.Wallet,addrstringarray []stri
     }
 	fmt.Printf("new sendtoaddress tx seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
+		_,fee:= daemon.Mn.ValidateTransaction(tx)
+		priority:=int(fee)
+		daemon.Mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
     }
@@ -342,6 +345,9 @@ func sendtoaddress(ws *wire.Swarm,wlt *wallet.Wallet,addrstring string,amountstr
     }
 	fmt.Printf("new sendtoaddress tx seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
+		_,fee:= daemon.Mn.ValidateTransaction(tx)
+		priority:=int(fee)
+		daemon.Mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
     }
@@ -407,6 +413,9 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
     fmt.Printf("new public post seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
 		mn.AddLocalPublicPostData(namestring,ed.Hash,databytes)
+		_,fee:= mn.ValidateTransaction(tx)
+		priority:=int(fee)
+		mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
     }

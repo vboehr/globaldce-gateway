@@ -287,7 +287,7 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 	applog.Trace("moduleid %d",moduleid)
 	switch moduleid {
 		case utility.ModuleIdentifierECDSATxIn:
-				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateIdentifierUnspentTxOutput){
+				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierUnspentTxOutput){
 					return 0,fmt.Errorf("invalide GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
 				}
 				_,height,number:=mn.GetTxState(tmptxin.Hash)
@@ -307,7 +307,7 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				//applog.Trace("Value",inpututxo.Value)
 				return inpututxo.Value,nil
 		case utility.ModuleIdentifierECDSANameUnregistration:
-				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateIdentifierActifNameRegistration){
+				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierActifNameRegistration){
 					return 0,fmt.Errorf("invalide ** GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
 				}
 				_,height,number:=mn.GetTxState(tmptxin.Hash)
@@ -334,7 +334,7 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				//os.Exit(0)
 				return inpututxo.Value,nil
 		case utility.ModuleIdentifierECDSANamePublicPost:
-				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateIdentifierActifNameRegistration){
+				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierActifNameRegistration){
 					return 0,fmt.Errorf("invalide ** GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
 				}
 				_,height,number:=mn.GetTxState(tmptxin.Hash)
@@ -397,7 +397,7 @@ func (mn *Maincore) ValidateNameRegistration(name []byte)(error){
 	if !CheckNameBytes(name){
 		return fmt.Errorf("Names can only have lower case letters and numbers")
 	}
-	if mn.GetNameState(name)==StateIdentifierActifNameRegistration{
+	if mn.GetNameState(name)==StateValueIdentifierActifNameRegistration{
 		return fmt.Errorf("Names is already taken")
 	}
 	return nil

@@ -16,7 +16,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"
 	"github.com/globaldce/globaldce-toolbox/daemon"
-	//"fyne.io/fyne/v2/data/validation"
+	"fyne.io/fyne/v2/data/validation"
 	"fyne.io/fyne/v2/dialog"
 	"github.com/globaldce/globaldce-toolbox/cli"
 )
@@ -100,7 +100,20 @@ func shareScreen(win fyne.Window) fyne.CanvasObject {
 
 	//sharelayout:=container.NewVBox(input,attachmentcontainer,sharebuttoncontainer)
 
-	basicshare:=container.NewVBox(linkinput,textinput,sharebuttoncontainer)
+	//
+	publicposttxfeeEntry:=widget.NewEntry()
+	publicposttxfeeEntry.Text=fmt.Sprintf("%d",daemon.Usersettings.Publicposttxfee)
+	publicposttxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
+	publicposttxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
+		publicposttxfeeEntry.SetText(fmt.Sprintf("%d",daemon.Usersettings.Publicposttxfee))
+	})
+	publicposttxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),publicposttxfeeSetDefaultButton)
+	publicposttxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),publicposttxfeeEntry)
+	publicposttxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Public post fee"))
+	publicposttxfeeContainer:=container.NewHBox(publicposttxfeeLabelContainer,publicposttxfeeEntryContainer,publicposttxfeeSetDefaultButtonContainer)
+	
+	//
+	basicshare:=container.NewVBox(linkinput,textinput,publicposttxfeeContainer,sharebuttoncontainer)
 	attachmentshare:=attachmentbuilderScreen(win)
 	sharelayout:=container.NewVSplit(attachmentshare,basicshare)
 	return container.NewHSplit(registrednameslist, sharelayout)//layout

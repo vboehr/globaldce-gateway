@@ -10,6 +10,7 @@ import (
     "fmt"
     "github.com/globaldce/globaldce-toolbox/cli"
     "github.com/globaldce/globaldce-toolbox/daemon"
+    "fyne.io/fyne/v2/data/validation"
 )
 
  	
@@ -113,6 +114,24 @@ searchButton:=widget.NewButton("Fixed size window", func() {
 	})
 	
     //layout := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 500)),label , form)
+
+
+    label:= container.NewBorder(rmvbutton, nil, nil,nil,componentsTree)
+    
+    completiontext:=widget.NewLabel("  ")// TODO Add balance information
+    sendtoaddressarraytxfeeEntry:=widget.NewEntry()
+	sendtoaddressarraytxfeeEntry.Text=fmt.Sprintf("%d",daemon.Usersettings.Sendtoaddressarraytxfee)
+	sendtoaddressarraytxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
+	sendtoaddressarraytxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
+		sendtoaddressarraytxfeeEntry.SetText(fmt.Sprintf("%d",daemon.Usersettings.Sendtoaddressarraytxfee))
+	})
+    sendtoaddressarraytxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),sendtoaddressarraytxfeeSetDefaultButton)
+
+    sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
+	sendtoaddressarraytxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Send to addresses fee"))
+	sendtoaddressarraytxfeeContainer:=container.NewHBox(sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeEntryContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer)
+	//
+    //
     completebutton:= widget.NewButton("SEND", func() {
         fmt.Println("got :",componentsList)
         var addressarray []string
@@ -121,19 +140,18 @@ searchButton:=widget.NewButton("Fixed size window", func() {
             addressarray=append(addressarray,componentsList[i].address)
             amountarray=append(amountarray,componentsList[i].amount)
         }
-        cli.Sendtoaddressarray(daemon.Wireswarm, daemon.Wlt,addressarray,amountarray,"100")
+        cli.Sendtoaddressarray(daemon.Wireswarm, daemon.Wlt,addressarray,amountarray,sendtoaddressarraytxfeeEntry.Text)
+        var emptycomponentsList []TxInfo
+        componentsList=emptycomponentsList
+            
+        componentsTree.Refresh()
 
     })
 
 
     completebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth/4, 40)),completebutton)
-
-
-    label:= container.NewBorder(rmvbutton, nil, nil,nil,componentsTree)
-    
-    completiontext:=widget.NewLabel("  ")// TODO Add balance information
-    formlayout:=container.New(layout.NewPaddedLayout(),container.NewVBox(outputform,completiontext,completebuttoncontainer))
-
+    //
+    formlayout:=container.New(layout.NewPaddedLayout(),container.NewVBox(outputform,completiontext,sendtoaddressarraytxfeeContainer,completebuttoncontainer))
     //layout:= container.NewHSplit(label,formlayout)
 
     return container.NewHSplit(label,formlayout)//layout

@@ -33,6 +33,7 @@ type UsersettingsType struct {
 	//Broadcastedtxarray [] Broadcastedtx
 	//mu sync.Mutex
 	BannedNameArray []string
+	Miningrequested bool
 }
 var Usersettings UsersettingsType
 	
@@ -48,12 +49,14 @@ func SetDefaultSettings(){
 		Publicposttxfee:PublicposttxfeeDefault,
 		Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
 		BannedNameArray:nil,
+		Miningrequested:true,
 	}
 }
 
 func ApplyUsersettings(){
 
 	MainwalletFilePath=Usersettings.MainwalletFilePath//MainwalletFilePathDefault//"./WalletFiles/MainWallet.dat"
+	Miningrequested=Usersettings.Miningrequested
 }
 
 //func GetMainwalletPath() string{

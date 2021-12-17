@@ -8,7 +8,6 @@ import (
 	//"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	//"fyne.io/fyne/v2/theme"
-	//"fyne.io/fyne/v2/data/validation"
 	"fyne.io/fyne/v2/widget"
 	//"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/dialog"
@@ -71,7 +70,9 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 	sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
 	sendtoaddressarraytxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Send to addresses fee"))
 	sendtoaddressarraytxfeeContainer:=container.NewHBox(sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeEntryContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer)
-
+	//
+	MiningrequestedCheck:=widget.NewCheck("Mining", func(checkstatus bool) { daemon.Usersettings.Miningrequested=checkstatus })
+	MiningrequestedCheck.SetChecked(daemon.Usersettings.Miningrequested)
 	// save settings button section
 	saveSettingsButton:= widget.NewButton("Save settings", func() {
 		fmt.Println("Saving settings")
@@ -100,5 +101,12 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 	})
 	saveSettingsButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),saveSettingsButton)
 	//
-	return container.NewVBox(walletpathContainer,nameregistrationtxfeeContainer,publicposttxfeeContainer,sendtoaddressarraytxfeeContainer,saveSettingsButtonContainer)
+	return container.NewVBox(
+		walletpathContainer,
+		nameregistrationtxfeeContainer,
+		publicposttxfeeContainer,
+		sendtoaddressarraytxfeeContainer,
+		MiningrequestedCheck,
+		saveSettingsButtonContainer,
+	)
 }
