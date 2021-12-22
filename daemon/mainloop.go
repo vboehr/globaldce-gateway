@@ -77,7 +77,7 @@ func Mainloop(){
    
     Wireswarm.Bootstrap()
     ticker1 := time.Tick(time.Second * 10)
-    ticker2 := time.Tick(time.Second * 30)
+    ticker2 := time.Tick(time.Second * 7)
     //
     for {
 
@@ -97,7 +97,8 @@ func Mainloop(){
         
         select{
         /////////////////////////////////////////////////
-        case <-ticker1://time.After(60 * time.Second):
+        case <-ticker1 ://time.After(60 * time.Second):
+        applog.Trace("Checking missing data")
         hash:=Mn.GetRandomMissingDataHash()
         if hash!=nil {
             Wireswarm.RequestData(*hash)

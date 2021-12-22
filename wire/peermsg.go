@@ -101,10 +101,13 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 	case (rmsg.CheckIdentifier( MsgIdentifierRequestData)):
 		applog.Trace("VERY Good request data")
 		correctness,phash :=DecodeRequestData(rmsg)
+		
 		//
 		if correctness && phash!=nil {
+			applog.Trace("Requested data hash %x",(*phash))
 			data,err:=mn.GetData(*phash)
 			//
+			applog.Trace("Data sent %s",data)
 			if err==nil {
 				replayedmsg:=EncodeReplyData(data) //
 				sw.ReplyMessage(replayedmsg,rmsg.OriginPeer)
@@ -118,9 +121,14 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 		if correctness {
 			hash:=utility.ComputeHash(data)
 			if mn.IsMissingData(hash){
+				applog.Trace("Adding data")
 				mn.AddData(hash,data)
+			} else {
+
+				applog.Trace("Data rejected")
+				//TODO decrease reputation of peer
 			}
-			//TODO decrease reputation of peer
+			
 	
 		}
 	//////////////////////////////////

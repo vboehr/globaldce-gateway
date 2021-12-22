@@ -42,7 +42,7 @@ func NewMaincore() *Maincore{
 	genesisheader:=mn.genesisblock.Header
 	mn.mainheaders=append(mn.mainheaders, genesisheader )
 
-	mn.confirmationlayer=400
+	mn.confirmationlayer=6
 	mn.txspool=NewTxsPool()
 	return mn
 }
