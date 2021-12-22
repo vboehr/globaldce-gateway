@@ -146,3 +146,67 @@ func DecodeRequestMainblockTransactions(msg *Message)(bool,uint32){
 	
 	return true,requestedblockheight
 }
+//
+//
+func EncodeRequestData(hash utility.Hash) (*Message){
+	msg:=NewMessage(MsgIdentifierRequestData )
+	contentbw:=utility.NewBufferWriter()
+	//contentbw.PutUint32(uint32(4+4))//content length
+	contentbw.PutHash(hash)
+	
+	
+	//data:=[]byte("coool")
+	
+	//tmpbw:=utility.NewBufferWriter()
+	//tmpbw.PutUint32(uint32(len(data)))
+	//tmpbw.PutBytes(data)
+
+	msg.PutContent(contentbw.GetContent())
+	return msg
+}
+func DecodeRequestData(msg *Message)(bool,*utility.Hash){
+	tmpbr:=utility.NewBufferReader(msg.GetContent())
+	// TODO Check min length of buffer reader
+	requestedhash:=tmpbr.GetHash()
+	/*
+	last:=tmpbr.GetUint32()
+	if (last<first)||(last-first>RequestMainheadersMax){
+		applog.Trace("error first %d last %d",first,last)
+		return false,0,0
+	}
+	*/
+	
+	return true,&requestedhash
+}
+func EncodeReplyData(databytes []byte) (*Message){
+	msg:=NewMessage(MsgIdentifierReplyData )
+	contentbw:=utility.NewBufferWriter()
+	//TODO 0.2.x improve performance by using VarUint 
+	contentbw.PutUint32(uint32(len(databytes)))//
+	contentbw.PutBytes(databytes)
+	
+	
+	//data:=[]byte("coool")
+	
+	//tmpbw:=utility.NewBufferWriter()
+	//tmpbw.PutUint32(uint32(len(data)))
+	//tmpbw.PutBytes(data)
+
+	msg.PutContent(contentbw.GetContent())
+	return msg
+}
+func DecodeReplyData(msg *Message)(bool,[]byte){
+	tmpbr:=utility.NewBufferReader(msg.GetContent())
+	// 
+	datalength:=tmpbr.GetUint32()
+	databytes:=tmpbr.GetBytes(uint(datalength))
+	/*
+	last:=tmpbr.GetUint32()
+	if (last<first)||(last-first>RequestMainheadersMax){
+		applog.Trace("error first %d last %d",first,last)
+		return false,0,0
+	}
+	*/
+	
+	return true,databytes
+}

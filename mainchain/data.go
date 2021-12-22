@@ -10,15 +10,16 @@ import (
 	//"github.com/globaldce/globaldce-toolbox/wallet"
 	//"os"
 	//"math"
-	//"time"
+	"time"
 	"encoding/json"
 	//"math/big"
 	//"net"
 	//"log"
-	//"fmt"
+	"fmt"
 	//"path/filepath"
 	//"sync"
 	"strings"
+	"math/rand"
 )
 
 const (
@@ -87,11 +88,12 @@ func (mn *Maincore) GetPostInfoStringArray(keywords string,maxposts int)[]string
 			//	applog.Warning("Cannot add data - hash %s - error %v",hash,err)
 			//	return
 			//}
-			namestring:=string(namebytes)
+			
 			//Block namestring should not be displayed
-			if mn.IsBannedName(namestring) {
+			if mn.IsBannedName(namebytes) {
 				continue
 			}
+			namestring:=string(namebytes)
 			tmpstring:=StringFromPostInfo(PostInfo{
 				Name:namestring,
 				Link:linkstring,
@@ -116,7 +118,8 @@ func (mn *Maincore) GetPostInfoStringArray(keywords string,maxposts int)[]string
 	}
 	return postsstringarray
 }
-func (mn *Maincore) IsBannedName(name string) bool{
+func (mn *Maincore) IsBannedName(namebytes []byte) bool{
+	name:=string(namebytes)
 	for _ , bn:= range mn.BannedNameArray{
 		if bn==name{
 			return true
@@ -141,7 +144,35 @@ func (mn *Maincore) AddLocalPublicPostData(namestring string,hash utility.Hash,d
 
 }
 
-func (mn *Maincore) addData(hash utility.Hash,bytes []byte) {
+func (mn *Maincore) AddToMissingDataHashArray(hash utility.Hash) {
+	var alreadyexist=false
+
+	for _,h:=range mn.MissingDataHashArray{
+		if h == hash{
+			alreadyexist=true
+			applog.Warning("Data already existes %x",hash)
+			return
+		}
+	}
+	if !alreadyexist{
+		mn.MissingDataHashArray=append(mn.MissingDataHashArray,hash)
+	}
+}
+func (mn *Maincore) AddToMissingDataFileHashArray(hash utility.Hash) {
+	var alreadyexist=false
+
+	for _,h:=range mn.MissingDataFileHashArray{
+		if h == hash{
+			alreadyexist=true
+			applog.Warning("Data already existes %x",hash)
+			return
+		}
+	}
+	if !alreadyexist{
+		mn.MissingDataFileHashArray=append(mn.MissingDataFileHashArray,hash)
+	}
+}
+func (mn *Maincore) AddData(hash utility.Hash,bytes []byte) {
 	//TODO generalize to different data types
 
 	name,id,err:=mn.GetPublicPostState(hash)
@@ -161,6 +192,16 @@ func (mn *Maincore) addData(hash utility.Hash,bytes []byte) {
 	mn.dataf.AddChunk(bytes)
 	mn.PutPublicPostState(hash,name,uint32(mn.dataf.NbChunks()-1))
 }
+func (mn *Maincore) GetData(hash utility.Hash) ([]byte,error) {
+	name,data,err:=mn.GetPublicPostData(hash)
+	if err!=nil{
+		return ([]byte("")),err
+	}
+	if mn.IsBannedName(name) {
+		return ([]byte("")),fmt.Errorf("Data associated with banned name")
+	}
+	return data,nil
+}
 //TODO generalize to different data types
 func (mn *Maincore) GetPublicPostData(hash utility.Hash) ([]byte,[]byte,error) {
 	name,id,err:=mn.GetPublicPostState(hash)
@@ -178,4 +219,20 @@ func (mn *Maincore) GetNbData() uint32{
 		return uint32(0)
 	}
 	return uint32(mn.dataf.NbChunks())
+}
+func (mn *Maincore) GetRandomMissingDataHash() *utility.Hash{
+	rand.Seed(time.Now().UnixNano())
+	if len(mn.MissingDataHashArray)==0{
+		return nil
+	}
+	i:=rand.Intn(len(mn.MissingDataHashArray))//TODO concentrate on the last Data Hashes
+	return &mn.MissingDataHashArray[i]
+}
+func (mn *Maincore) IsMissingData(hash utility.Hash) bool{
+	for _,missingdatahash:=range mn.MissingDataHashArray{
+		if missingdatahash==hash {
+			return true
+		}
+	}
+	return false
 }

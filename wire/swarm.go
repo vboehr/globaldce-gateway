@@ -9,6 +9,7 @@ import (
 
 type Swarm struct {
 	Syncingdone bool
+	MDNSEnabled bool
 	NewpeersChan chan * Peer
 	IpaddrChan chan  string
 	PeersmsgChan chan * Message
@@ -21,6 +22,7 @@ type Swarm struct {
 func NewSwarm() *Swarm {
 	ns:=new(Swarm)
 	ns.Syncingdone=false
+	ns.MDNSEnabled=false
 	ns.NewpeersChan = make(chan * Peer)
 	ns.IpaddrChan = make(chan  string)
 	ns.PeersmsgChan = make(chan * Message)//TODO rename PeersmsgChan to MessageChan

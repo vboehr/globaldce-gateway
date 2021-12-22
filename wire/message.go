@@ -29,6 +29,9 @@ const (
 	MsgIdentifierBroadcastMainblock="BROADCAST_MAINBLOCK"
 	MsgIdentifierBroadcastTransaction="BROADCAST_TRANSACTION"
 
+	MsgIdentifierRequestData="REQUEST_DATA"
+	MsgIdentifierReplyData="REPLY_DATA"
+
 	MainNetworkIdentifier="9184"
 	
 )

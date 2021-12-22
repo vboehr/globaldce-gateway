@@ -20,6 +20,8 @@ import (
 	"sync"
 )
 type Maincore struct{
+	MissingDataHashArray []utility.Hash
+	MissingDataFileHashArray []utility.Hash
 	BannedNameArray []string
 	path string
 	genesisblock Mainblock

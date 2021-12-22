@@ -327,6 +327,7 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction) {
 			
 				_,ed,_:=utility.DecodeECDSANamePublicPost(tx.Vin[l].Bytecode)
 				mn.PutPublicPostState(ed.Hash,name,uint32(0))
+				mn.AddToMissingDataHashArray(ed.Hash)
 			//default:
 		}
 		

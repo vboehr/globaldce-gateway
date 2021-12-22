@@ -3,6 +3,7 @@ package wire
 import (
 	"github.com/globaldce/globaldce-toolbox/applog"
 	"github.com/globaldce/globaldce-toolbox/mainchain"
+	"github.com/globaldce/globaldce-toolbox/utility"
 )
 func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 	applog.Trace("\n new message to be handled",rmsg)
@@ -95,6 +96,32 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 				sw.RelayMessage(relayedmsg,rmsg.OriginPeer)
 			}
 			//URGENT TODO relaying transaction
+		}
+	//////////////////////////////////
+	case (rmsg.CheckIdentifier( MsgIdentifierRequestData)):
+		applog.Trace("VERY Good request data")
+		correctness,phash :=DecodeRequestData(rmsg)
+		//
+		if correctness && phash!=nil {
+			data,err:=mn.GetData(*phash)
+			//
+			if err==nil {
+				replayedmsg:=EncodeReplyData(data) //
+				sw.ReplyMessage(replayedmsg,rmsg.OriginPeer)
+			}	
+		}
+	//////////////////////////////////
+	case (rmsg.CheckIdentifier( MsgIdentifierReplyData )):
+		applog.Trace("VERY Good reply data")
+		correctness,data :=DecodeReplyData(rmsg)
+		//
+		if correctness {
+			hash:=utility.ComputeHash(data)
+			if mn.IsMissingData(hash){
+				mn.AddData(hash,data)
+			}
+			//TODO decrease reputation of peer
+	
 		}
 	//////////////////////////////////
 	}

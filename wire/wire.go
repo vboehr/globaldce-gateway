@@ -28,8 +28,11 @@ func (sw *Swarm) SetupListener() ( err error) {
 		panic(err)
 	}
 	sw.Listener=ls
-	go sw.ListenConnections()	
-    go sw.StartMDNSServer()//Wireswarm.GetLocalIP())
+	if sw.MDNSEnabled {
+		go sw.ListenConnections()	
+    	go sw.StartMDNSServer()//Wireswarm.GetLocalIP())
+	}
+
     
     
     go sw.StartMDNSClient()

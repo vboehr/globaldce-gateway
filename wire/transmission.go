@@ -3,6 +3,8 @@ import (
 	"github.com/globaldce/globaldce-toolbox/applog"
 	"github.com/globaldce/globaldce-toolbox/mainchain"
 	"github.com/globaldce/globaldce-toolbox/utility"
+	"math/rand"
+	"time"
 )
 
 
@@ -33,6 +35,26 @@ func (sw *Swarm) BroadcastTransaction(tx *utility.Transaction) {
 	}
 }
 
+func (sw *Swarm) RequestData(hash utility.Hash) {
+	//applog.Trace("our Mainchainlength is %d", currentmainchainlength)
+	applog.Notice("Broadcasting Request Data !")
+	//blockmsg:=NewMessage(MsgIdentifierBroadcastMainblock)
+	rdatamsg :=EncodeRequestData(hash)
+	//blockmsg.WriteBytes(p.Connection)
+	//
+	var keys []string
+	for address, _ := range sw.Peers {
+		keys=append(keys,address)
+	}
+		rand.Seed(time.Now().UnixNano())
+		randomkey :=keys[rand.Intn(len(keys))]
+		p:=sw.Peers[randomkey]
+		p.WriteMessage(rdatamsg)
+		applog.Trace("Writing to peer %v",randomkey)
+
+}
+
+
 func (sw *Swarm) RelayMessage(msg *Message,originpeer *Peer) {
 
 	applog.Trace("Relaying message ")
@@ -43,4 +65,16 @@ func (sw *Swarm) RelayMessage(msg *Message,originpeer *Peer) {
 			p.WriteMessage(msg)
 		}
 	}
+}
+
+func (sw *Swarm) ReplyMessage(msg *Message,originpeer *Peer) {
+
+	applog.Trace("Replying message ")
+
+	//for address, p := range sw.Peers {
+
+		//if address!=originpeer.Address{
+			originpeer.WriteMessage(msg)
+		//}
+	//}
 }
