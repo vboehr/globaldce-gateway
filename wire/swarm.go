@@ -22,7 +22,7 @@ type Swarm struct {
 func NewSwarm() *Swarm {
 	ns:=new(Swarm)
 	ns.Syncingdone=false
-	ns.MDNSEnabled=false
+	ns.MDNSEnabled=true
 	ns.NewpeersChan = make(chan * Peer)
 	ns.IpaddrChan = make(chan  string)
 	ns.PeersmsgChan = make(chan * Message)//TODO rename PeersmsgChan to MessageChan

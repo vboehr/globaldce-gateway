@@ -76,7 +76,8 @@ func Mainloop(){
 
    
     Wireswarm.Bootstrap()
-
+    ticker1 := time.Tick(time.Second * 10)
+    ticker2 := time.Tick(time.Second * 30)
     //
     for {
 
@@ -96,12 +97,12 @@ func Mainloop(){
         
         select{
         /////////////////////////////////////////////////
-        case <-time.After(60 * time.Second):
+        case <-ticker1://time.After(60 * time.Second):
         hash:=Mn.GetRandomMissingDataHash()
         if hash!=nil {
             Wireswarm.RequestData(*hash)
         }
-        case <-time.After(7 * time.Second):
+        case <-ticker2://time.After(7 * time.Second):
 
             if (Wireswarm.NbPeers()>SyncingMinNbPeers) && (!Wireswarm.Syncingdone){
  

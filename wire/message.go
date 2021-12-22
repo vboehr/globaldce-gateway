@@ -57,7 +57,11 @@ func DecodeIdentifier(msgidentifier []byte) string{
 		case (RawCheckIdentifier(msgidentifier, MsgIdentifierBroadcastMainblock )):
 			return MsgIdentifierBroadcastMainblock
 		case (RawCheckIdentifier(msgidentifier, MsgIdentifierBroadcastTransaction )):
-			return MsgIdentifierBroadcastTransaction	
+			return MsgIdentifierBroadcastTransaction
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierRequestData )):
+			return MsgIdentifierRequestData
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyData )):
+			return  MsgIdentifierReplyData
 		//case (RawCheckIdentifier(msgidentifier,  )):
 		//	return 
 	}
