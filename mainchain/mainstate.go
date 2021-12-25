@@ -329,7 +329,7 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction) {
 				
 				_,_,err:=mn.GetPublicPostState(ed.Hash)//([]byte, uint32, error){
 				
-				if (err==nil)&&(mn.IsBannedName(name)){
+				if (err!=nil)&&(!mn.IsBannedName(name)){
 					mn.PutPublicPostState(ed.Hash,name,uint32(0))
 					mn.AddToMissingDataHashArray(ed.Hash)	
 				}

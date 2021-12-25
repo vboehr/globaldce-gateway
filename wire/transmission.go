@@ -46,6 +46,9 @@ func (sw *Swarm) RequestData(hash utility.Hash) {
 	for address, _ := range sw.Peers {
 		keys=append(keys,address)
 	}
+	if len(keys)==0{
+		return
+	}
 		rand.Seed(time.Now().UnixNano())
 		randomkey :=keys[rand.Intn(len(keys))]
 		p:=sw.Peers[randomkey]
