@@ -86,6 +86,7 @@ func Start(cliname string){
             daemon.Seed=true
         }
         if strings.Index(tmparg, "-hotmining")==0{
+            daemon.HotMining=true
             applog.EnableDisplayTrace()
         }
         if strings.Index(tmparg, "-trace")==0{
@@ -144,24 +145,64 @@ func loadusermainwalletfile() *wallet.Wallet{
     //
    
     wlt:=new(wallet.Wallet)
-    daemon.MainwalletFileKey=askuserwalletfilekey()
+
+for (!daemon.Walletloaded)&&(!daemon.HotMining){    
     if _, err := os.Stat( daemon.MainwalletFilePath); !os.IsNotExist(err) {
         
-        if daemon.HotMining{
-            // TODO need better error handling
-            // 
-            wlt.HotWallet=true
-            _= wlt.Hotaddresses.LoadJSONFile(wlt.Path)
-        } else{
+        //if daemon.HotMining{
+        //    // TODO need better error handling
+        //    // 
+        //    wlt.HotWallet=true
+        //    wlt.Path= askuserwalletfilepath()
+        //    applog.Notice("wallet file path set %s",wlt.Path)
+        //    _= wlt.Hotaddresses.LoadJSONFile(wlt.Path)
+        //    
+        //} else{
             // TODO better error handdling
-            wlt.LoadJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
-            daemon.Walletloaded=true
-        }
+            daemon.MainwalletFileKey=askuserwalletfilekey()
+            lerr:=wlt.LoadJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
+            //daemon.Walletloaded=true
+            if lerr==nil{
+                daemon.Walletloaded=true
+            } else {
+                applog.Notice("wallet file %s not loaded",wlt.Path)
+            }
+       // }
         
 	} else {
         applog.Notice("walletfile %s does not exist.",daemon.MainwalletFilePath)
+        daemon.MainwalletFilePath= askuserwalletfilepath()
     }
-
+}
+for (!wlt.HotWallet)&&(daemon.HotMining){    
+    if _, err := os.Stat( wlt.Path); !os.IsNotExist(err) {
+        
+        //f daemon.HotMining{
+            // TODO need better error handling
+            // 
+            
+            //wlt.Path= askuserwalletfilepath()
+            applog.Notice("hotaddresses file path set %s",wlt.Path)
+            lerr:= wlt.Hotaddresses.LoadJSONFile(wlt.Path)
+            if lerr==nil{
+                wlt.HotWallet=true
+            } else {
+                applog.Notice("hotaddresses file %s not loaded",wlt.Path)
+                wlt.Path= askuserwalletfilepath()
+            }
+            
+        //} else{
+        //    // TODO better error handdling
+        //    daemon.MainwalletFileKey=askuserwalletfilekey()
+        //    wlt.LoadJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
+        //    daemon.Walletloaded=true
+        //}
+        
+	} else {
+        applog.Notice("hotaddress file %s does not exist.",wlt.Path)
+        wlt.Path= askuserwalletfilepath()
+    }
+}
     return wlt 
 }
 func askuserwalletfilekey() []byte{

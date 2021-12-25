@@ -31,7 +31,10 @@ func startmining(){
                 if success {
                     Wireswarm.BroadcastMainblock(mb)
                 }
-                Mn.SyncWallet(Wlt)
+                if !Wlt.HotWallet{
+                    Mn.SyncWallet(Wlt)
+                }
+                
             //applog.Trace("mainchaillength %d",Mn.GetConfirmedMainchainLength())
         }
 
@@ -82,11 +85,23 @@ func Mainloop(){
     for {
 
         //
-
+        /*
         if  Miningrequested && Walletloaded && Wireswarm.Syncingdone{
            
             Mn.SyncWallet(Wlt)
             Mn.LoadUnconfirmedBroadcastedTxs(Wlt)
+            go startmining()
+             Miningrequested=false
+             Miningrunning=true
+       
+        }*/
+        //
+        if  Miningrequested && ((Wlt.HotWallet) || (Walletloaded)) && Wireswarm.Syncingdone{
+           if Wlt.HotWallet{
+                Mn.SyncWallet(Wlt)
+                Mn.LoadUnconfirmedBroadcastedTxs(Wlt)   
+           }
+
             go startmining()
              Miningrequested=false
              Miningrunning=true
@@ -141,14 +156,17 @@ func Mainloop(){
         
             }
         case <-time.After(180 * time.Minute):
-            // (re)broadcasting wallet transactions that have not been included in the mainchain
-            Mn.SyncWallet(Wlt)
-            broadcastingtxs:=Wlt.GetUnconfirmedBroadcastedTxs()
-            //fmt.Println("broadcastime",broadcastingtxs)
-            for _, broadcastingtx := range broadcastingtxs {
-                Wireswarm.BroadcastTransaction(broadcastingtx)
+            if Walletloaded {
+                // (re)broadcasting wallet transactions that have not been included in the mainchain
+                Mn.SyncWallet(Wlt)
+                broadcastingtxs:=Wlt.GetUnconfirmedBroadcastedTxs()
+                //fmt.Println("broadcastime",broadcastingtxs)
+                for _, broadcastingtx := range broadcastingtxs {
+                    Wireswarm.BroadcastTransaction(broadcastingtx)
+                }
+                //applog.Trace("Wallet ballance %f",float64 (Wlt.ComputeBalance())/1000000.0) 
             }
-            //applog.Trace("Wallet ballance %f",float64 (Wlt.ComputeBalance())/1000000.0)
+
         case newmsg :=<-Wireswarm.PeersmsgChan:
             applog.Trace("New peer message channel entry %x",newmsg)
             Wireswarm.HandlePeerMessage(Mn,newmsg)
