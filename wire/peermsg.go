@@ -43,6 +43,7 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 			//msg.WriteBytes(peer.Connection)
 			op:=*rmsg.OriginPeer
 			op.WriteMessage(msg)
+			return true
 		} else{
 			applog.Warning("incorrect request for mainheader - also first %d last %d",first,last)
 			return false
@@ -58,8 +59,10 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 			//msg.WriteBytes(peer.Connection)
 			op:=*rmsg.OriginPeer
 			op.WriteMessage(msg)
+			return true
 		} else {
 			applog.Warning("incorrect request for mainblocktransactions")
+			return false
 		}
 
 	//////////////////////////////////
@@ -78,6 +81,7 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 				relayedmsg:=EncodeBroadcastMainblock(nbhops,mb) //*rmsg.OriginPeer
 				sw.RelayMessage(relayedmsg,rmsg.OriginPeer)
 				//if propagating mainblock is valide increase credibility
+				return true
 			} else {
 				applog.Warning("incorrect mainblock broadcast")
 				return false
@@ -103,11 +107,15 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 				nbhops++
 				relayedmsg:=EncodeBroadcastTransaction(nbhops,tx) //
 				sw.RelayMessage(relayedmsg,rmsg.OriginPeer)
+				return true
 			} else {
-				applog.Warning("incorrect transaction broadcast")
+				applog.Warning("invalid transaction in transaction broadcast")
 				return false
 			}
 			
+		} else {
+			applog.Warning("incorrect transaction broadcast")
+			return false
 		}
 	//////////////////////////////////
 	case (rmsg.CheckIdentifier( MsgIdentifierRequestData)):
@@ -123,6 +131,10 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 			if err==nil {
 				replayedmsg:=EncodeReplyData(data) //
 				sw.ReplyMessage(replayedmsg,rmsg.OriginPeer)
+				return true
+			} else {
+				applog.Warning("incorrect request data hash - unkown data hash ")
+				return false
 			}	
 		} else {
 			applog.Warning("incorrect request data")
@@ -138,14 +150,18 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 			if mn.IsMissingData(hash){
 				applog.Trace("Adding data")
 				mn.AddData(hash,data)
+				return true
 			} else {
 
-				applog.Trace("incorrect data reply")
+				applog.Trace("incorrect data reply - data is not missing")
 				return false
 				//TODO decrease reputation of peer
 			}
 			
-	
+		} else {
+			applog.Trace("incorrect data reply")
+			return false
+			//TODO decrease reputation of peer
 		}
 	//////////////////////////////////
 	default:
