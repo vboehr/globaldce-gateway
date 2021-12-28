@@ -158,6 +158,14 @@ func (mn *Maincore) AddToMissingDataHashArray(hash utility.Hash) {
 		mn.MissingDataHashArray=append(mn.MissingDataHashArray,hash)
 	}
 }
+func (mn *Maincore) RemoveMissingDataHash(hash utility.Hash) {
+	for i,h:=range mn.MissingDataHashArray{
+		if h == hash{
+			mn.MissingDataHashArray=append(mn.MissingDataHashArray[:i], mn.MissingDataHashArray[i+1:]...)
+			return
+		}
+	}
+}
 func (mn *Maincore) AddToMissingDataFileHashArray(hash utility.Hash) {
 	var alreadyexist=false
 
@@ -177,11 +185,11 @@ func (mn *Maincore) AddData(hash utility.Hash,bytes []byte) {
 
 	name,id,err:=mn.GetPublicPostState(hash)
 	if err!=nil {
-		applog.Warning("Cannot add data - hash %s - error %v",hash,err)
+		applog.Warning("Cannot add data - hash %x - error %v",hash,err)
 		return
 	}
 	if id!=0 {
-		applog.Warning("Cannot add data - hash %s - data already exist stored with id %d",hash,id)
+		applog.Warning("Cannot add data - hash %x - data already exist stored with id %d",hash,id)
 		return
 	}
 	//name,data,_:=mn.GetPublicPostData(hash)
@@ -191,6 +199,7 @@ func (mn *Maincore) AddData(hash utility.Hash,bytes []byte) {
 	//}
 	mn.dataf.AddChunk(bytes)
 	mn.PutPublicPostState(hash,name,uint32(mn.dataf.NbChunks()-1))
+	mn.RemoveMissingDataHash(hash)
 }
 func (mn *Maincore) GetData(hash utility.Hash) ([]byte,error) {
 	name,data,err:=mn.GetPublicPostData(hash)
