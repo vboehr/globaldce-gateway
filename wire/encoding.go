@@ -30,7 +30,10 @@ func DecodeBroadcastTransaction(msg *Message)(bool,uint32,uint32,*utility.Transa
 				return false,uint32(0),uint32(0),nil
 			}
 	
-	
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
+		return false,uint32(0),uint32(0),nil
+	}
 
 	return true,nbhops,txbyteslength,tx
 }
@@ -78,6 +81,10 @@ func DecodeBroadcastMainblock(msg *Message)(bool,uint32,uint32,*mainchain.Mainbl
 			}
 			mbtxs=append(mbtxs,*tx)
 	}
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
+		return false,uint32(0),uint32(0),nil
+	}
 	mb.Header=*mh
 	mb.Height=height
 	mb.Transactions=mbtxs
@@ -109,6 +116,10 @@ func DecodeRequestMainheaders(msg *Message)(bool,uint32,uint32){
 	last:=tmpbr.GetUint32()
 	if (last<first)||(last-first>RequestMainheadersMax){
 		applog.Trace("error first %d last %d",first,last)
+		return false,0,0
+	}
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
 		return false,0,0
 	}
 	
@@ -143,7 +154,10 @@ func DecodeRequestMainblockTransactions(msg *Message)(bool,uint32){
 		return false,0,0
 	}
 	*/
-	
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
+		return false,uint32(0)
+	}
 	return true,requestedblockheight
 }
 //
@@ -175,7 +189,10 @@ func DecodeRequestData(msg *Message)(bool,*utility.Hash){
 		return false,0,0
 	}
 	*/
-	
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
+		return false,nil
+	}
 	return true,&requestedhash
 }
 func EncodeReplyData(databytes []byte) (*Message){
@@ -207,6 +224,10 @@ func DecodeReplyData(msg *Message)(bool,[]byte){
 		return false,0,0
 	}
 	*/
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
+		return false,nil
+	}
 	
 	return true,databytes
 }

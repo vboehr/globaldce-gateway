@@ -44,6 +44,10 @@ func (sw *Swarm) GetPeersMainchainLength(){
 			tmpbr:=utility.NewBufferReader(lengthmsg.GetContent())
 
 			p.SyncingMainchainlength=tmpbr.GetUint32()
+			tmpbrerr:=tmpbr.GetError()
+			if tmpbrerr!=nil{
+				p.SyncingMainchainlength=0
+			}
 			sw.Peers[k]=p
 			applog.Trace("got Mainchainlength %d for %v ", sw.Peers[k].SyncingMainchainlength,k)
 			
