@@ -5,7 +5,7 @@ import (
 	"github.com/globaldce/globaldce-toolbox/mainchain"
 	"github.com/globaldce/globaldce-toolbox/utility"
 )
-func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
+func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool{
 	applog.Trace("\n new message to be handled",rmsg)
 	switch{
 	/*case (rmsg.CheckIdentifier( MsgIdentifierReplyMainchainLength)):
@@ -21,6 +21,7 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 		op.SyncingMainchainlength=tmpbr.GetUint32()
 		sw.Peers[op.Address]=op
 		applog.Trace("\n GOT MsgIdentifierReplyMainchainLength %d",op.SyncingMainchainlength)
+		return true
 	*/
 	case (rmsg.CheckIdentifier( MsgIdentifierRequestMainchainLength)):
 		applog.Trace("\n Sending MsgIdentifierReplyMainchainLength")
@@ -30,6 +31,7 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 		op:=*rmsg.OriginPeer
 		op.WriteMessage(msg)
 		//msg.WriteBytes(*rmsg.Connection)
+		return true
 	//////////////////////////////////
 	case (rmsg.CheckIdentifier(MsgIdentifierRequestMainheaders)):
 		applog.Trace("\nVERY Good headers request")
@@ -42,7 +44,8 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 			op:=*rmsg.OriginPeer
 			op.WriteMessage(msg)
 		} else{
-			applog.Trace("incorrect request for mainheader - also first %d last %d",first,last)
+			applog.Warning("incorrect request for mainheader - also first %d last %d",first,last)
+			return false
 		}
 
 	case (rmsg.CheckIdentifier(MsgIdentifierRequestMainblockTransactions)):
@@ -55,7 +58,10 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 			//msg.WriteBytes(peer.Connection)
 			op:=*rmsg.OriginPeer
 			op.WriteMessage(msg)
+		} else {
+			applog.Warning("incorrect request for mainblocktransactions")
 		}
+
 	//////////////////////////////////
 	case (rmsg.CheckIdentifier( MsgIdentifierBroadcastMainblock)):
 		applog.Trace("VERY Good mainblock broadcast")
@@ -72,6 +78,9 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 				relayedmsg:=EncodeBroadcastMainblock(nbhops,mb) //*rmsg.OriginPeer
 				sw.RelayMessage(relayedmsg,rmsg.OriginPeer)
 				//if propagating mainblock is valide increase credibility
+			} else {
+				applog.Warning("incorrect mainblock broadcast")
+				return false
 			}
 			//URGENT TODO ban peer that relyed invalide propagating mainblock
 			// if mainblock already existes and decrease credibility of peer
@@ -94,8 +103,11 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 				nbhops++
 				relayedmsg:=EncodeBroadcastTransaction(nbhops,tx) //
 				sw.RelayMessage(relayedmsg,rmsg.OriginPeer)
+			} else {
+				applog.Warning("incorrect transaction broadcast")
+				return false
 			}
-			//URGENT TODO relaying transaction
+			
 		}
 	//////////////////////////////////
 	case (rmsg.CheckIdentifier( MsgIdentifierRequestData)):
@@ -112,6 +124,9 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 				replayedmsg:=EncodeReplyData(data) //
 				sw.ReplyMessage(replayedmsg,rmsg.OriginPeer)
 			}	
+		} else {
+			applog.Warning("incorrect request data")
+			return false
 		}
 	//////////////////////////////////
 	case (rmsg.CheckIdentifier( MsgIdentifierReplyData )):
@@ -125,12 +140,18 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message){
 				mn.AddData(hash,data)
 			} else {
 
-				applog.Trace("Data rejected")
+				applog.Trace("incorrect data reply")
+				return false
 				//TODO decrease reputation of peer
 			}
 			
 	
 		}
 	//////////////////////////////////
+	default:
+		applog.Warning("unkown indentifier")
+		return false
 	}
+	applog.Warning("unexpected flow of instructions in HandlePeerMessage")
+	return false
 }

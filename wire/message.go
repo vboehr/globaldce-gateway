@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"github.com/globaldce/globaldce-toolbox/utility"
 	"net"
+	"fmt"
 )
 
 
@@ -67,6 +68,38 @@ func DecodeIdentifier(msgidentifier []byte) string{
 	}
 	return ""
 }
+func GetContentMaxSize(msgidentifier []byte) int{
+	switch {
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierRequestHandshake)):
+			return  500
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyHandshake)):
+			return 500
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierRequestMainchainLength)):
+			return 500
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyMainchainLength)):
+			return 500
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierRequestMainheaders)):
+			return 500
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyMainheaders)):
+			return 2000000
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierRequestMainblockTransactions)):
+			return 500
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyMainblockTransactions)):
+			return 2000000
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierBroadcastMainblock )):
+			return 2000000
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierBroadcastTransaction )):
+			return 2000
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierRequestData )):
+			return 500
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyData )):
+			return 2000000
+		//case (RawCheckIdentifier(msgidentifier,  )):
+		//	return 
+	}
+	return 1000
+}
+
 //type Message struct {
 //	Identifier []byte
 //	Content []byte
@@ -152,7 +185,7 @@ func (msg * Message) WriteBytes(connection net.Conn) {
 		applog.Trace("error")
 	}
 }
-func (msg * Message) ReadContent(connection net.Conn) error{
+func (msg * Message) ReadContent(connection net.Conn,maxsize int) error{
 	var err error
 	buffcontentlength := make([]byte, 4)
 	_,err=connection.Read(buffcontentlength)
@@ -160,7 +193,12 @@ func (msg * Message) ReadContent(connection net.Conn) error{
 		applog.Trace("warning unable to read content length%x",buffcontentlength)
 		return err
 	}
+
 	contentlength := binary.LittleEndian.Uint32(buffcontentlength)
+	if (int(contentlength)>maxsize){
+		applog.Warning("Max size exceeded while reading content of message - contentlength %d maxsize %d ",contentlength,maxsize)
+		return fmt.Errorf("Max size exceeded")
+	}
 	buffcontent := make([]byte, contentlength)
 	_,err=connection.Read(buffcontent)
 	if (err!=nil){
@@ -264,7 +302,7 @@ func (peer * Peer) ReadTCPMessage() (*Message,error)  {
 		}
 		
 		msg=NewMessage(msgidentifierstring)
-		rerr:=msg.ReadContent(connection)
+		rerr:=msg.ReadContent(connection,GetContentMaxSize(msgidentifier))
 		if rerr!=nil {
 			applog.Trace("error while reading message")
 			return nil,nil
