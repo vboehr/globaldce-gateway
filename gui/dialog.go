@@ -70,6 +70,8 @@ func  passwordDialog(win fyne.Window){
 					passwordDecryptionFailedDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
 				} else {
 					daemon.Walletloaded=true
+					daemon.Mn.SyncWallet(daemon.Wlt)
+					//
 				}
 		}
 		//var rememberText string
@@ -191,6 +193,7 @@ func selectWalletFileDialog(win fyne.Window) {
 		fmt.Println("Wallet file path",filepath)
 		walletsettingsDisplayedMainwalletFilePath.Set(filepath.Path())
 		daemon.MainwalletFilePath=filepath.Path()
+		daemon.Usersettings.MainwalletFilePath=filepath.Path()
 		if !daemon.Walletloaded{
 			daemon.MainwalletFilePath=filepath.Path()
 			passwordDialog(win)
