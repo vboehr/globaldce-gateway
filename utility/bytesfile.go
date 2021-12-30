@@ -2,11 +2,21 @@ package utility
 
 import
 (
-	"encoding/binary"
-	"bytes"
-	"fmt"
-	"os"
+	//"encoding/binary"
+	//"bytes"
+	//"fmt"
+	//"os"
+	"io/ioutil"
 )
+func SaveBytesFile(bytesfilebytes []byte,bytesfilepath string) error{
+	err :=ioutil.WriteFile(bytesfilepath,bytesfilebytes,0644)
+	return err
+}
+func LoadBytesFile(path string) (*[]byte,error){
+	b,err :=ioutil.ReadFile(path)
+	return &b,err
+}
+/*
 func SaveBytesFile(bytesfilebytes []byte,bytesfilepath string) error{
 
 	bufferBytesfiletype := make([]byte, 4)
@@ -81,3 +91,4 @@ func LoadBytesFile(path string) (*[]byte,error){
 
 	return &bytesfilerawbytes,nil
 }
+*/
