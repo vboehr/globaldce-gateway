@@ -25,7 +25,14 @@ go build -o globaldce-toolbox
 ```
 
 ## Usage
-This toolbox cli already offers some of the project features. To get the available commands run the node as follow:
+This code includes a graphical user interface (gui) and a command line interface (cli). 
+
+In order to run the graphical user interface just run the node as follow:
+```bash
+globaldce-toolbox
+```
+
+This cli already offers some of the project features. To get the available commands run as follow:
 ```bash
 globaldce-toolbox -help
 ```
