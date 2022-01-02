@@ -68,3 +68,69 @@ func  (mn *Maincore) CacheExistingFile(path string) (*utility.Extradata,error){
 
 	return &ed,nil	
 }
+func  (mn *Maincore) AddDataFile(hash utility.Hash,databytes []byte) {
+	datafilesdirpath:=filepath.Join(mn.path,"Data","DataFiles")
+	
+	if _, err := os.Stat(datafilesdirpath); os.IsNotExist(err) {
+		os.Mkdir(datafilesdirpath, os.ModePerm)
+	}
+	/*
+	if _, err := os.Stat( filepath.Join(mn.path,"Data","Data000")); os.IsNotExist(err) {
+		// path does not exist
+		mn.dataf = utility.OpenChunkStorage( filepath.Join(mn.path,"Data","Data"))
+		mn.dataf.AddChunk([]byte("emptydata"))
+	} else {
+		mn.dataf = utility.OpenChunkStorage(filepath.Join(mn.path,"Data","Data"))
+	}
+	*/
+	newdatafilename:=fmt.Sprintf("%x",hash)
+	newdatafilepath:=filepath.Join(datafilesdirpath,newdatafilename)
+	fmt.Println("creating file",newdatafilepath)
+	cf, err := os.OpenFile(newdatafilepath, os.O_WRONLY|os.O_CREATE, 0755)
+	
+	if err != nil {
+		//
+		fmt.Println("error:", err)
+	}
+	defer cf.Close()
+	_, wterr :=  cf.Write(databytes)
+	if wterr != nil {
+		//
+		fmt.Println("error:", wterr)
+	}
+
+	//////////////////////////////////////////
+	mn.PutDataFileState(hash,uint64(len(databytes)))
+
+	//return &ed,nil	
+}
+func  (mn *Maincore) GetDataFile(hash utility.Hash) ([]byte,error) {
+	//TODO check if file has been add to mainstate
+	datafilesdirpath:=filepath.Join(mn.path,"Data","DataFiles")
+	datafilename:=fmt.Sprintf("%x",hash)
+	datafilepath:=filepath.Join(datafilesdirpath,datafilename)
+	f, err := os.Open(datafilepath)
+	if err != nil {
+		//
+		fmt.Println("error:", err)
+		return nil,err
+	}
+	defer f.Close()
+
+	stats,serr:=f.Stat()
+	if serr !=nil{
+		return nil,serr
+	}
+	filesize:=stats.Size()
+	filebytes := make([]byte,filesize)
+
+	bufreader:=bufio.NewReader(f)
+	_,rerr :=bufreader.Read(filebytes)
+	if rerr!= nil{
+		return nil,rerr
+	}
+	//ed:=utility.NewExtradataFromBytes(filebytes)
+	//////////////////////////////////////////
+	return filebytes,nil
+
+}

@@ -178,6 +178,15 @@ func EncodeRequestData(hash utility.Hash) (*Message){
 	msg.PutContent(contentbw.GetContent())
 	return msg
 }
+func EncodeRequestDataFile(hash utility.Hash) (*Message){
+	msg:=NewMessage(MsgIdentifierRequestDataFile )
+	contentbw:=utility.NewBufferWriter()
+
+	contentbw.PutHash(hash)
+
+	msg.PutContent(contentbw.GetContent())
+	return msg
+}
 func DecodeRequestData(msg *Message)(bool,*utility.Hash){
 	tmpbr:=utility.NewBufferReader(msg.GetContent())
 	// TODO Check min length of buffer reader
@@ -189,6 +198,15 @@ func DecodeRequestData(msg *Message)(bool,*utility.Hash){
 		return false,0,0
 	}
 	*/
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
+		return false,nil
+	}
+	return true,&requestedhash
+}
+func DecodeRequestDataFile(msg *Message)(bool,*utility.Hash){
+	tmpbr:=utility.NewBufferReader(msg.GetContent())
+	requestedhash:=tmpbr.GetHash()
 	tmpbrerr:=tmpbr.GetError()
 	if tmpbrerr!=nil{
 		return false,nil
@@ -212,6 +230,16 @@ func EncodeReplyData(databytes []byte) (*Message){
 	msg.PutContent(contentbw.GetContent())
 	return msg
 }
+func EncodeReplyDataFile(databytes []byte) (*Message){
+	msg:=NewMessage(MsgIdentifierReplyDataFile )
+	contentbw:=utility.NewBufferWriter()
+	//TODO 0.2.x improve performance by using VarUint 
+	contentbw.PutUint32(uint32(len(databytes)))//
+	contentbw.PutBytes(databytes)
+
+	msg.PutContent(contentbw.GetContent())
+	return msg
+}
 func DecodeReplyData(msg *Message)(bool,[]byte){
 	tmpbr:=utility.NewBufferReader(msg.GetContent())
 	// 
@@ -224,6 +252,19 @@ func DecodeReplyData(msg *Message)(bool,[]byte){
 		return false,0,0
 	}
 	*/
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
+		return false,nil
+	}
+	
+	return true,databytes
+}
+func DecodeReplyDataFile(msg *Message)(bool,[]byte){
+	tmpbr:=utility.NewBufferReader(msg.GetContent())
+	// 
+	datalength:=tmpbr.GetUint32()
+	databytes:=tmpbr.GetBytes(uint(datalength))
+
 	tmpbrerr:=tmpbr.GetError()
 	if tmpbrerr!=nil{
 		return false,nil

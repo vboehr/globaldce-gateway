@@ -140,6 +140,29 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 			applog.Warning("incorrect request data")
 			return false
 		}
+		//////////////////////////////////
+	case (rmsg.CheckIdentifier( MsgIdentifierRequestDataFile)):
+		applog.Trace("VERY Good request data file")
+		correctness,phash :=DecodeRequestDataFile(rmsg)
+		
+		//
+		if correctness && phash!=nil {
+			applog.Trace("Requested data file hash %x",(*phash))
+			data,err:=mn.GetDataFile(*phash)
+			//
+			//applog.Trace("Data file sent %s",data)
+			if err==nil {
+				replayedmsg:=EncodeReplyDataFile(data) //
+				sw.ReplyMessage(replayedmsg,rmsg.OriginPeer)
+				return true
+			} else {
+				applog.Warning("incorrect request data file hash - unkown data file hash ")
+				return false
+			}	
+		} else {
+			applog.Warning("incorrect request data file")
+			return false
+		}
 	//////////////////////////////////
 	case (rmsg.CheckIdentifier( MsgIdentifierReplyData )):
 		applog.Trace("VERY Good reply data")
@@ -160,6 +183,29 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 			
 		} else {
 			applog.Trace("incorrect data reply")
+			return false
+			//TODO decrease reputation of peer
+		}
+	//////////////////////////////////
+	case (rmsg.CheckIdentifier( MsgIdentifierReplyDataFile )):
+		applog.Trace("VERY Good reply data file")
+		correctness,data :=DecodeReplyDataFile(rmsg)
+		//
+		if correctness {
+			hash:=utility.ComputeHash(data)
+			if mn.IsMissingDataFile(hash){
+				applog.Trace("Adding data")
+				mn.AddDataFile(hash,data)
+				return true
+			} else {
+
+				applog.Trace("incorrect data file reply - data file is not missing")
+				return false
+				//TODO decrease reputation of peer
+			}
+			
+		} else {
+			applog.Trace("incorrect data file reply")
 			return false
 			//TODO decrease reputation of peer
 		}

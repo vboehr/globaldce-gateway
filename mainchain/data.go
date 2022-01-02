@@ -158,14 +158,6 @@ func (mn *Maincore) AddToMissingDataHashArray(hash utility.Hash) {
 		mn.MissingDataHashArray=append(mn.MissingDataHashArray,hash)
 	}
 }
-func (mn *Maincore) RemoveMissingDataHash(hash utility.Hash) {
-	for i,h:=range mn.MissingDataHashArray{
-		if h == hash{
-			mn.MissingDataHashArray=append(mn.MissingDataHashArray[:i], mn.MissingDataHashArray[i+1:]...)
-			return
-		}
-	}
-}
 func (mn *Maincore) AddToMissingDataFileHashArray(hash utility.Hash) {
 	var alreadyexist=false
 
@@ -180,6 +172,23 @@ func (mn *Maincore) AddToMissingDataFileHashArray(hash utility.Hash) {
 		mn.MissingDataFileHashArray=append(mn.MissingDataFileHashArray,hash)
 	}
 }
+func (mn *Maincore) RemoveMissingDataHash(hash utility.Hash) {
+	for i,h:=range mn.MissingDataHashArray{
+		if h == hash{
+			mn.MissingDataHashArray=append(mn.MissingDataHashArray[:i], mn.MissingDataHashArray[i+1:]...)
+			return
+		}
+	}
+}
+func (mn *Maincore) RemoveMissingDataFileHash(hash utility.Hash) {
+	for i,h:=range mn.MissingDataFileHashArray{
+		if h == hash{
+			mn.MissingDataFileHashArray=append(mn.MissingDataFileHashArray[:i], mn.MissingDataFileHashArray[i+1:]...)
+			return
+		}
+	}
+}
+
 func (mn *Maincore) AddData(hash utility.Hash,bytes []byte) {
 	//TODO generalize to different data types
 
@@ -200,6 +209,7 @@ func (mn *Maincore) AddData(hash utility.Hash,bytes []byte) {
 	mn.dataf.AddChunk(bytes)
 	mn.PutPublicPostState(hash,name,uint32(mn.dataf.NbChunks()-1))
 	mn.RemoveMissingDataHash(hash)
+	mn.UpdateMissingDataFileHashArray(bytes)
 }
 func (mn *Maincore) GetData(hash utility.Hash) ([]byte,error) {
 	name,data,err:=mn.GetPublicPostData(hash)
@@ -211,6 +221,39 @@ func (mn *Maincore) GetData(hash utility.Hash) ([]byte,error) {
 	}
 	return data,nil
 }
+func (mn *Maincore) UpdateMissingDataFileHashArray(databytes []byte){
+
+		tmpbr:=utility.NewBufferReader(databytes)
+
+		dataidentifier:=tmpbr.GetUint32()
+		if dataidentifier!=DataIdentifierPublicPost{
+			return //,fmt.Errorf("Databytes is not Public Post Data")
+		}
+			//namebyteslen:=tmpbr.GetVarUint()
+			//namebytes:=tmpbr.GetBytes(uint(namebyteslen))
+			//namestring:=string(namebytes)
+	
+			linkbyteslen:=tmpbr.GetVarUint()
+			linkbytes:=tmpbr.GetBytes(uint(linkbyteslen))
+			_=linkbytes
+
+			textbyteslen:=tmpbr.GetVarUint()
+			textbytes:=tmpbr.GetBytes(uint(textbyteslen))
+			_=textbytes
+			nbattachement:=tmpbr.GetVarUint()
+			//var tmpAttachmentSizeArray []int
+			//var tmpAttachmentHashArray []utility.Hash
+			for j:=0;j<int(nbattachement);j++ {
+				tmpAttachmentSize:=int(tmpbr.GetVarUint())
+				tmpAttachmentHash:=tmpbr.GetHash()
+				_=tmpAttachmentSize
+				mn.AddToMissingDataFileHashArray(tmpAttachmentHash)
+				//tmpAttachmentSizeArray=append(tmpAttachmentSizeArray,tmpAttachmentSize)
+				//tmpAttachmentHashArray=append(tmpAttachmentHashArray,tmpAttachmentHash)
+			}
+
+}
+
 //TODO generalize to different data types
 func (mn *Maincore) GetPublicPostData(hash utility.Hash) ([]byte,[]byte,error) {
 	name,id,err:=mn.GetPublicPostState(hash)
@@ -237,9 +280,25 @@ func (mn *Maincore) GetRandomMissingDataHash() *utility.Hash{
 	i:=rand.Intn(len(mn.MissingDataHashArray))//TODO concentrate on the last Data Hashes
 	return &mn.MissingDataHashArray[i]
 }
+func (mn *Maincore) GetRandomMissingDataFileHash() *utility.Hash{
+	rand.Seed(time.Now().UnixNano())
+	if len(mn.MissingDataFileHashArray)==0{
+		return nil
+	}
+	i:=rand.Intn(len(mn.MissingDataFileHashArray))//TODO concentrate on the last DataFile Hashes
+	return &mn.MissingDataFileHashArray[i]
+}
 func (mn *Maincore) IsMissingData(hash utility.Hash) bool{
 	for _,missingdatahash:=range mn.MissingDataHashArray{
 		if missingdatahash==hash {
+			return true
+		}
+	}
+	return false
+}
+func (mn *Maincore) IsMissingDataFile(hash utility.Hash) bool{
+	for _,missingdatafilehash:=range mn.MissingDataFileHashArray{
+		if missingdatafilehash==hash {
 			return true
 		}
 	}

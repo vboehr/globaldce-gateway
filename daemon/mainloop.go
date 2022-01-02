@@ -79,8 +79,10 @@ func Mainloop(){
 
    
     Wireswarm.Bootstrap()
-    ticker1 := time.Tick(time.Second * 10)
-    ticker2 := time.Tick(time.Second * 7)
+    ticker1 := time.Tick(time.Second * 7)
+    ticker2 := time.Tick(time.Second * 10)
+    ticker3 := time.Tick(time.Second * 66)
+
     //
     for {
 
@@ -112,13 +114,8 @@ func Mainloop(){
         
         select{
         /////////////////////////////////////////////////
-        case <-ticker1 ://time.After(60 * time.Second):
-        applog.Trace("Checking missing data")
-        hash:=Mn.GetRandomMissingDataHash()
-        if hash!=nil {
-            Wireswarm.RequestData(*hash)
-        }
-        case <-ticker2://time.After(7 * time.Second):
+
+        case <-ticker1://time.After(7 * time.Second):
 
             if (Wireswarm.NbPeers()>SyncingMinNbPeers) && (!Wireswarm.Syncingdone){
  
@@ -155,6 +152,21 @@ func Mainloop(){
 
         
             }
+        //
+        case <-ticker2 ://time.After(60 * time.Second):
+            applog.Trace("Checking missing data")
+            hash:=Mn.GetRandomMissingDataHash()
+            if hash!=nil {
+                Wireswarm.RequestData(*hash)
+            }
+        //
+        case <-ticker3 ://time.After(60 * time.Second):
+            applog.Trace("Checking missing data file")
+            hash:=Mn.GetRandomMissingDataFileHash()
+            if hash!=nil {
+                Wireswarm.RequestDataFile(*hash)
+            }
+        //
         case <-time.After(180 * time.Minute):
             if Walletloaded {
                 // (re)broadcasting wallet transactions that have not been included in the mainchain
