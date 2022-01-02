@@ -195,6 +195,10 @@ func UnserializeMainheader(bytes []byte)  (*Mainheader,error){
 		fmt.Println("Mainheader Hash unserialize error:", err)
 		return nil,err
 	}
+	if !tmpbr.EndOfBytes(){
+		return nil,fmt.Errorf("End of bytes not reached")
+	}
+	
 	return mh,nil
 }
 func GenesisBlock() *Mainblock{

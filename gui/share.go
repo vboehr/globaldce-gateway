@@ -77,21 +77,6 @@ func shareScreen(win fyne.Window) fyne.CanvasObject {
 	textinput.SetPlaceHolder("Enter public post text...")
 	
 
-	sharebutton:= widget.NewButton("SHARE PUBLIC POST", func() {
-		if publicsharename!=""{
-			publicsharetext:=textinput.Text
-			publicsharelink:=linkinput.Text
-			fmt.Printf("creating a new public post for %s : %s\n",publicsharename,publicsharelink,publicsharetext)
-			cli.Sendpublicpost(daemon.Wireswarm,daemon.Mn,daemon.Wlt,publicsharename,publicsharelink,publicsharetext,attachmentpathArray)
-			dialog.ShowInformation("Public Post", "Public post is being broadcasted", win)
-			textinput.SetText("")
-			linkinput.SetText("")
-			attachmentpathArray=make([]string,0)
-			 
-			componentsTree.Refresh()
-		}
-    })
-	sharebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),sharebutton)
 	//sharebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),sharebutton)
 
 	//layout:=container.New(layout.NewPaddedLayout(),container.NewVBox(registrednameslist,nameregistrationcontainer))
@@ -112,6 +97,23 @@ func shareScreen(win fyne.Window) fyne.CanvasObject {
 	publicposttxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Public post fee"))
 	publicposttxfeeContainer:=container.NewHBox(publicposttxfeeLabelContainer,publicposttxfeeEntryContainer,publicposttxfeeSetDefaultButtonContainer)
 	
+	//
+
+	sharebutton:= widget.NewButton("SHARE PUBLIC POST", func() {
+		if publicsharename!=""{
+			publicsharetext:=textinput.Text
+			publicsharelink:=linkinput.Text
+			fmt.Printf("creating a new public post for %s : %s\n",publicsharename,publicsharelink,publicsharetext)
+			cli.Sendpublicpost(daemon.Wireswarm,daemon.Mn,daemon.Wlt,publicsharename,publicsharelink,publicsharetext,attachmentpathArray,publicposttxfeeEntry.Text)
+			dialog.ShowInformation("Public Post", "Public post is being broadcasted", win)
+			textinput.SetText("")
+			linkinput.SetText("")
+			attachmentpathArray=make([]string,0)
+			 
+			componentsTree.Refresh()
+		}
+    })
+	sharebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),sharebutton)
 	//
 	basicshare:=container.NewVBox(linkinput,textinput,publicposttxfeeContainer,sharebuttoncontainer)
 	attachmentshare:=attachmentbuilderScreen(win)

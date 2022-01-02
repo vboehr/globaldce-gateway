@@ -15,7 +15,7 @@ import (
 	//"math/big"
 	//"net"
 	//"log"
-	//"fmt"
+	"fmt"
 	"path/filepath"
 	"sync"
 )
@@ -231,7 +231,10 @@ func (mn *Maincore) UnserializeMainheaders(bytes []byte) (*[]Mainheader,error){
 		}
 		mhs=append(mhs,*mh)
 	}
-
+	if !tmpbr.EndOfBytes(){
+		return nil,fmt.Errorf("End of bytes not reached")
+	}
+	
 	return &mhs,nil
 }
 
@@ -261,6 +264,9 @@ func (mn *Maincore) UnserializeMainblockTransactions(bytes []byte) (*[]utility.T
 		}
 		mbtxs=append(mbtxs,*tx)
 	}
-
+	if !tmpbr.EndOfBytes(){
+		return nil,fmt.Errorf("End of bytes not reached")
+	}
+	
 	return &mbtxs,nil
 }

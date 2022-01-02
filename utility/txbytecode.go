@@ -44,6 +44,9 @@ func DecodeECDSATxOutBytecode(bytecode []byte) (*Hash,*Extradata,error){
 	if tmpbrerr!=nil{
 		return nil,nil,tmpbrerr
 	}
+	if !tmpbr.EndOfBytes(){
+		return nil,nil,fmt.Errorf("End of bytes not reached")
+	}
 	return &txoutaddr,extradata,nil
 
 }
@@ -76,6 +79,10 @@ func DecodeECDSATxInBytecode(bytecode []byte) ([]byte,*Extradata,error ){
 	if tmpbrerr!=nil{
 		return nil,nil,tmpbrerr
 	}
+	if !tmpbr.EndOfBytes(){
+		return nil,nil,fmt.Errorf("End of bytes not reached")
+	}
+	
 	return pubkeycompressed,extradata,nil
 }
 //
@@ -93,6 +100,10 @@ func DecodeECDSANamePublicPost(bytecode []byte) ([]byte,*Extradata,error){
 	if tmpbrerr!=nil{
 		return nil,nil,tmpbrerr
 	}
+	if !tmpbr.EndOfBytes(){
+		return nil,nil,fmt.Errorf("End of bytes not reached")
+	}
+	
 	return pubkeycompressed,ed,nil
 }
 
@@ -121,6 +132,10 @@ func DecodeECDSANameUnregistration(bytecode []byte) ([]byte,*Extradata,error){
 	if tmpbrerr!=nil{
 		return nil,nil,tmpbrerr
 	}
+	if !tmpbr.EndOfBytes(){
+		return nil,nil,fmt.Errorf("End of bytes not reached")
+	}
+	
 	return pubkeycompressed,extradata,nil
 }
 func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,*Extradata,error){
@@ -152,6 +167,10 @@ func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,*Extradata,error
 	if tmpbrerr!=nil{
 		return nil,nil,nil,tmpbrerr
 	}
+	if !tmpbr.EndOfBytes(){
+		return nil,nil,nil,fmt.Errorf("End of bytes not reached")
+	}
+	
 	return &pubkeyhash,name,extradata,nil
 
 }
@@ -185,6 +204,10 @@ func DecodeEngagement(bytecode []byte) (uint32,[]byte,*Extradata,error){
 	if tmpbrerr!=nil{
 		return 0,nil,nil,tmpbrerr
 	}
+	if !tmpbr.EndOfBytes(){
+		return 0,nil,nil,fmt.Errorf("End of bytes not reached")
+	}
+	
 	return eid,name,extradata,nil
 
 }

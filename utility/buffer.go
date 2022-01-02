@@ -88,6 +88,9 @@ func (br * BufferReader) GetError() error{
 func (br * BufferReader) GetCounter() uint{
 	return uint(br.counter)
 }
+func (br * BufferReader) EndOfBytes() bool{
+	return (br.counter==len(br.content))
+}
 ////////
 
 func (br * BufferReader) GetVarUint() uint64{

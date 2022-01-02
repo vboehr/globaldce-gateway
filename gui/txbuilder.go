@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2/widget"
     "fyne.io/fyne/v2/container"
     "fyne.io/fyne/v2/layout"
+    "fyne.io/fyne/v2/dialog"
     //"log"
     "fmt"
     "github.com/globaldce/globaldce-toolbox/cli"
@@ -19,7 +20,31 @@ type TxInfo struct {
     address string
     amount  string
 }
+/*
 
+func sendScreen(win fyne.Window) fyne.CanvasObject {
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Send to",  txbuilderScreen(win)),
+		//container.NewTabItem("List of Contacts",  contactslistScreen()),
+		//container.NewTabItem("Add Contact",  addContactScreen()),
+
+	)
+	
+	//tabsisTransitioning
+	//tabs.OnChanged = func(_ *container.TabItem) {
+	//	//list.Refresh()
+	//	fmt.Println("!!!!!!",list)
+	//}
+
+	tabs.SetTabLocation(container.TabLocationTop)
+
+
+
+	return tabs
+
+}
+
+*/
 
 var componentsList []TxInfo//{"test1: test1"}
 //var componentsList = []string{"test1: test1"}
@@ -37,7 +62,7 @@ func main() {
     window.ShowAndRun()
 }*/
 
-func txbuilderScreen() fyne.CanvasObject{
+func txbuilderScreen(win fyne.Window) fyne.CanvasObject{
 
    componentsTree := widget.NewList(
         func() int {
@@ -136,6 +161,10 @@ searchButton:=widget.NewButton("Fixed size window", func() {
         fmt.Println("got :",componentsList)
         var addressarray []string
         var amountarray []string
+        if len(addressarray)==0 {
+            dialog.ShowInformation("Error no recipient address was added", "Add at least one recipient address ", win)
+            return
+        }
         for i,_:=range componentsList{
             addressarray=append(addressarray,componentsList[i].address)
             amountarray=append(amountarray,componentsList[i].amount)

@@ -33,6 +33,9 @@ const (
 	MsgIdentifierRequestData="REQUEST_DATA"
 	MsgIdentifierReplyData="REPLY_DATA"
 
+	MsgIdentifierRequestDataFile="REQUEST_DATAFILE"
+	MsgIdentifierReplyDataFile="REPLY_DATAFILE"
+
 	MainNetworkIdentifier="9184"
 	
 )
@@ -63,6 +66,10 @@ func DecodeIdentifier(msgidentifier []byte) string{
 			return MsgIdentifierRequestData
 		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyData )):
 			return  MsgIdentifierReplyData
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierRequestDataFile )):
+			return MsgIdentifierRequestDataFile
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyDataFile )):
+			return  MsgIdentifierReplyDataFile
 		//case (RawCheckIdentifier(msgidentifier,  )):
 		//	return 
 	}
@@ -93,6 +100,10 @@ func GetContentMaxSize(msgidentifier []byte) int{
 		case (RawCheckIdentifier(msgidentifier, MsgIdentifierRequestData )):
 			return 500
 		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyData )):
+			return 2000000
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierRequestDataFile )):
+			return 500
+		case (RawCheckIdentifier(msgidentifier, MsgIdentifierReplyDataFile )):
 			return 2000000
 		//case (RawCheckIdentifier(msgidentifier,  )):
 		//	return 

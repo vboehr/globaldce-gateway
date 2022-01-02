@@ -89,7 +89,7 @@ func Start(appname string) {
 				container.NewTabItem("Balance",  balanceScreen()),
 				container.NewTabItem("Registration",  registrationScreen(myWindow)),
 				//container.NewTabItem("Send",  sendScreen()),//txbuilderScreen()
-				container.NewTabItem("Send to",  txbuilderScreen()),
+				container.NewTabItem("Send to",  txbuilderScreen(myWindow)),
 				container.NewTabItem("Settings",  settingsScreen(myWindow)),	
 			)
 		

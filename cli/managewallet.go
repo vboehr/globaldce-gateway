@@ -93,8 +93,8 @@ func managewallet(ws *wire.Swarm,mn *mainchain.Maincore,wlt * wallet.Wallet){
 				for i:=4;i<len(requestarguments);i++{
 					filepatharray=append(filepatharray,requestarguments[i]) 
 				}
-				
-				Sendpublicpost(ws,mn,wlt,requestarguments[1],requestarguments[2],requestarguments[3],filepatharray)
+				feestring:=fmt.Sprintf("%d",daemon.Usersettings.Publicposttxfee)
+				Sendpublicpost(ws,mn,wlt,requestarguments[1],requestarguments[2],requestarguments[3],filepatharray,feestring)
 			case "displaybalance":
 				displaybalance(mn,wlt)
 			case "displayaddresses":
@@ -336,7 +336,9 @@ func sendtoaddress(ws *wire.Swarm,wlt *wallet.Wallet,addrstring string,amountstr
         //os.Exit(0)
 		return
     }
-    amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
+    //amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
+	amountfee:=daemon.Usersettings.Sendtoaddressarraytxfee//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
+	amountfee*=1000000
     tx,err:=wlt.SetupTransactionToPublicKeyHash(*utility.NewHash(address),uint64 (amount),uint64 (amountfee))
     if err!=nil{
         fmt.Printf("%v",err)
@@ -371,15 +373,22 @@ func sendpublicposthelp(){
     fmt.Printf("sendpublicpost X Y Z F1 F2 ... Fn\n")
     //
 }
-func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,linkstring string,textstring string,filepatharray []string){
+func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,linkstring string,textstring string,filepatharray []string,amountfeestring string){
 	/*
 	a,aerr:=wlt.GetAssetFromRegisteredName(namestring)
     if aerr!=nil{
         fmt.Printf("%v",aerr)
         return
     }*/
-	amountfee:=100//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
-
+	
+	amountfee, ferr := strconv.ParseInt(amountfeestring, 10, 64)
+    if ferr!=nil{
+        fmt.Printf("Error: inappropriate fee provided - %v",ferr)
+        //os.Exit(0)
+		return
+    }
+	//amountfee:=amountfeestring//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
+	amountfee*=1000000
 	
 	tmpbw:=utility.NewBufferWriter()
 	tmpbw.PutUint32(mainchain.DataIdentifierPublicPost)
@@ -440,7 +449,8 @@ func Sendnameregistration(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wall
 		return fmt.Errorf("Validation error: %v\n",validationerr)
 	}
 
-    amountfee:=amount*1/100//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
+    amountfee:=daemon.Usersettings.Nameregistrationtxfee//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
+	amountfee*=1000000
 	pubkeyhash:=wlt.GenerateKeyPair()
     tx,err:=wlt.SetupTransactionForNameRegistration(name,pubkeyhash,uint64 (amount),uint64 (amountfee))
     if err!=nil{
