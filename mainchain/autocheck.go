@@ -7,12 +7,13 @@ import (
 func (mn *Maincore)  AutoCheckMainblocks() bool {
 	for i := 1; i < int (mn.GetMainchainLength()); i++ {
 		// check the transactions
-		mb:=mn.GetMainblock(40)
+		mb:=mn.GetMainblock(i)
 		if !CheckMainblockTransactions(&(mb.Transactions),mb.Header.Roothash){
 			applog.Warning("Rejected Propagating block - incorrect transactions")
 			return false
 		}
 	} 
+	applog.Trace("AutoCheckMainblocks returns true")
 	return true
 }
 

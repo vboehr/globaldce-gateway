@@ -332,6 +332,12 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				//applog.Trace("Value",inpututxo.Value)
 				//fmt.Println("UNregistration **********")
 				//os.Exit(0)
+				_,name,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
+				nbdislike:=mn.GetEngagementDislikeName(name)
+				nblike:=mn.GetEngagementLikeName(name)
+				if inpututxo.Value<mn.freezingcoef*uint64(nbdislike-nblike){
+					return 0,fmt.Errorf("Deposit frozen")
+				}
 				return inpututxo.Value,nil
 		case utility.ModuleIdentifierECDSANamePublicPost:
 				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierActifNameRegistration){
@@ -353,6 +359,12 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 					return 0,fmt.Errorf("Corrupt transaction input - input public key do not match its associated output hash")
 				}
 				//applog.Trace("Value",inpututxo.Value)
+				_,name,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
+				nbdislike:=mn.GetEngagementDislikeName(name)
+				nblike:=mn.GetEngagementLikeName(name)
+				if inpututxo.Value<mn.freezingcoef*uint64(nbdislike-nblike){
+					return 0,fmt.Errorf("Deposit frozen")
+				}
 				return 0,nil
 		default:
 			return 0,fmt.Errorf("Unknown moduleid of TxIn")

@@ -32,6 +32,7 @@ type Maincore struct{
 	//
 	inmemorymainblocks [] Mainblock
 	confirmationlayer uint32
+	freezingcoef uint64
 	txspool *TxsPool
 	mu sync.Mutex
 }
@@ -43,6 +44,7 @@ func NewMaincore() *Maincore{
 	mn.mainheaders=append(mn.mainheaders, genesisheader )
 
 	mn.confirmationlayer=6
+	mn.freezingcoef=1000000000000
 	mn.txspool=NewTxsPool()
 	return mn
 }
