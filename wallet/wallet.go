@@ -71,6 +71,16 @@ func (wlt *Wallet) GetAddress(i uint) utility.Hash{
 	pk:=wlt.Privatekeyarray[i]
 	return utility.ComputeHash(pk.PubKey().SerializeCompressed())
 }
+func (wlt *Wallet) GetPrivatekeyindexFromAddress(addr utility.Hash) int{
+	for privkeyindex,privkey:=range wlt.Privatekeyarray {
+		pubkey:=privkey.PubKey().SerializeCompressed()	
+		if addr==utility.ComputeHash(pubkey) {
+			return privkeyindex
+		}
+	}
+	return -1
+}
+
 func (wlt *Wallet) GetNbAddresses() int{
 	return len(wlt.Privatekeyarray)
 }

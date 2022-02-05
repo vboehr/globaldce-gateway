@@ -1,6 +1,6 @@
 package mainchain
 import (
-	"time"
+	//"time"
 	"github.com/globaldce/globaldce-toolbox/utility"
 	"container/list"
 	"fmt"
@@ -10,8 +10,8 @@ import (
 
 type TxsPool struct {
 	txs map[utility.Hash] utility.Transaction
-	txspriority map[utility.Hash] int
-	txsfee map[utility.Hash] int64
+	txspriority map[utility.Hash] uint64
+	txsfee map[utility.Hash] uint64
 	txsinclusionheight map[utility.Hash] uint32
 	//
 	txhashsortedlist * list.List
@@ -22,14 +22,14 @@ func NewTxsPool() *TxsPool {
 	txsp:=new(TxsPool)
 
 	txsp.txs= make(map[utility.Hash] utility.Transaction)
-	txsp.txspriority= make(map[utility.Hash] int)
-	txsp.txsfee= make(map[utility.Hash] int64)
+	txsp.txspriority= make(map[utility.Hash] uint64)
+	txsp.txsfee= make(map[utility.Hash] uint64)
 	txsp.txsinclusionheight=make(map[utility.Hash] uint32)
 	txsp.txhashsortedlist= list.New()
 	return txsp
 }
 
-func (txsp *TxsPool) AddTransaction(tx *utility.Transaction,txfee int64,priority int) {
+func (txsp *TxsPool) AddTransaction(tx *utility.Transaction,txfee uint64,priority uint64) {
 	applog.Notice("Add Transaction with fee %d priority %d",txfee,priority)
 	txhash:=tx.ComputeHash()
 	if _,ok:=txsp.txs[txhash];ok{
@@ -102,20 +102,20 @@ func (txsp *TxsPool) SetTxInclusionHeight(txhash *utility.Hash,inclusionheight u
 }
 
 
-func (txsp *TxsPool) GetTransactionPriority(txhash *utility.Hash) int {
+func (txsp *TxsPool) GetTransactionPriority(txhash *utility.Hash) uint64 {
 	priority,ok:=txsp.txspriority[*txhash]
 	if !ok{
-		return -1
+		return 0
 	}
 	return priority
 }
 
-func (txsp *TxsPool) GetHighestPriorityTxs(mainchainlength uint32) (*[]utility.Transaction,int64) {
+func (txsp *TxsPool) GetHighestPriorityTxs(mainchainlength uint32) (*[]utility.Transaction,uint64) {
 
 	//for key,priority:=range txsp.txspriority{
 
 	//}
-	var totalfees int64=0
+	var totalfees uint64=0
 	totalseize:=0
 	var tmptxs []utility.Transaction
 	//var tmphashes []utility.Hash
@@ -137,7 +137,7 @@ func (txsp *TxsPool) GetHighestPriorityTxs(mainchainlength uint32) (*[]utility.T
 					tmptxs=append(tmptxs,tx)
 					totalfees+=txsp.txsfee[hash]
 					fmt.Printf("Adding tx with fee %d\n",txsp.txsfee[hash])
-					time.Sleep(5*time.Second)
+					//time.Sleep(5*time.Second)
 					//tmphashes=append(tmphashes,hash)	
 				}
 	

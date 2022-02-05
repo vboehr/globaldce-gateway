@@ -15,11 +15,12 @@ const (
 
 	DIFFICULTY_TUNING_INTERVAL uint32=2016//about two weeks 
 	BLOCK_REWARD_TUNING_INTERVAL uint32=210000//blocks
-	BLOCK_CONFIRMATION_INTERVAL uint32=100//6//blocks
-
+	//BLOCK_CONFIRMATION_INTERVAL uint32=100//6//blocks
+	ENGAGEMENT_REWARD_FINALIZATION_INTERVAL uint32=144//24*6//about one day
 	BLOCK_MAX_SEIZE uint32=1024*1024//1 MO
-	BLOCKTRANSACTIONS_MAX_SEIZE uint32=BLOCK_MAX_SEIZE-116
-	OBSTRUCTED_MINING_TIME int64=60*600//10 hours 
+	BLOCKTRANSACTIONS_MAX_SEIZE uint32=BLOCK_MAX_SEIZE-200
+	OBSTRUCTED_MINING_TIME int64=60*600//10 hours
+	ENGAGEMENT_PUBLICPOST_MAXSTAKE uint64 = 1000000000
 
 )
 
@@ -223,7 +224,7 @@ func CheckMainblockTransactions(pointertxs *[]utility.Transaction,root utility.H
 
 func (mn *Maincore) ValidateMainblockTransactions(height uint32,pointertxs *[]utility.Transaction) bool {
 	txs:=*pointertxs
-	var totalfees int64=0
+	var totalfees uint64=0
 	for i:=1;i<len(txs);i++{
 		//
 		validity,txfee:=mn.ValidateTransaction(&txs[i])
@@ -234,174 +235,13 @@ func (mn *Maincore) ValidateMainblockTransactions(height uint32,pointertxs *[]ut
 		totalfees+=txfee
 	}
 
-	if txs[0].Vout[0].Value!=uint64 (totalfees)+GetMainblockReward(height){
+	if txs[0].Vout[0].Value!=totalfees+GetMainblockReward(height){
 		applog.Warning("invalid mainblock - reward fees %d do not match total transactions fees %d plus block reward",txs[0].Vout[0].Value,uint64 (totalfees)+GetMainblockReward(height))
 		return false
 	}
 	return true
 }
-func (mn *Maincore) ValidateTransaction(tx *utility.Transaction) (bool,int64){
-	//if !tx.VerifySignatures(){
-	//	applog.Trace("invalid signatures")
-	//	return false,0
-	//}
-	//
-	txsigninghash,err:=tx.ComputeSigningHash()//
-	if err!=nil{
-		return false,0
-	}
-	var totalinputamount int64=0
-	var totaloutputamount int64=0
-	applog.Trace("nb inputs %d",len(tx.Vin))
-	for i:=0;i<len(tx.Vin);i++{
-		//applog.Trace("ModuleId %d",utility.DecodeBytecodeId(tx.Vin[i].Bytecode))
-		applog.Trace("Validating txin %d",i)
-		txinvalue,err:=mn.ValidateTxIn(txsigninghash,tx.Vin[i])
-		if err!=nil{
-			//TODO display warning
-			applog.Trace("%v",err)
-			return false,0
-		}
-		totalinputamount+=int64(txinvalue)
-	}
-	for j:=0;j<len(tx.Vout);j++{
-		txoutvalue,err:=mn.ValidateTxOut(tx.Vout[j])
-		if err!=nil{
-			//TODO display warning
-			applog.Trace("%v",err)
-			return false,0
-		}
-		totaloutputamount+=int64(txoutvalue)
-		//totaloutputamount+=int64(tx.Vout[j].Value)
-	}
-	feeamount:=totalinputamount-totaloutputamount
-	applog.Trace("inputamount %d outputamount %d",totalinputamount,totaloutputamount)
-	if feeamount<0{
-		return false,feeamount
-	}
-	return true,feeamount
-}
 
-func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(uint64,error){
-	moduleid:=utility.DecodeBytecodeId(tmptxin.Bytecode)
-	applog.Trace("moduleid %d",moduleid)
-	switch moduleid {
-		case utility.ModuleIdentifierECDSATxIn:
-				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierUnspentTxOutput){
-					return 0,fmt.Errorf("invalide GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
-				}
-				_,height,number:=mn.GetTxState(tmptxin.Hash)
-				inpututxo:=mn.GetMainblock(int(height)).Transactions[number].Vout[tmptxin.Index]
-				pubkeycompressedbytes,_,err:=utility.DecodeECDSATxInBytecode(tmptxin.Bytecode)
-				if err!=nil{
-					return 0,fmt.Errorf("DecodeECDSATxInBytecode Error %v",err)
-				}
-				verr:=utility.VerifySignature(signinghash,tmptxin.Signature,pubkeycompressedbytes)
-				if verr!=nil{
-					return 0,verr
-				}
-				if !(inpututxo.CompareWithAddress(utility.ComputeHash (pubkeycompressedbytes))){
-				//if (utility.ComputeHash (pubkeycompressedbytes)!=inpututxo.Address){//TODO			
-					return 0,fmt.Errorf("Corrupt transaction input - input public key do not match its associated output hash")
-				}
-				//applog.Trace("Value",inpututxo.Value)
-				return inpututxo.Value,nil
-		case utility.ModuleIdentifierECDSANameUnregistration:
-				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierActifNameRegistration){
-					return 0,fmt.Errorf("invalide ** GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
-				}
-				_,height,number:=mn.GetTxState(tmptxin.Hash)
-				////////////////////////////////////////////
-				//if (mn.GetConfirmedMainchainLength()-height)>500000{
-				//	return 0,fmt.Errorf("Unregistration is too soon")
-				//}
-				////////////////////////////////////////////
-				inpututxo:=mn.GetMainblock(int(height)).Transactions[number].Vout[tmptxin.Index]
-				pubkeycompressedbytes,_,err:=utility.DecodeECDSANameUnregistration(tmptxin.Bytecode) //DecodeECDSANameUnregistration(bytecode []byte) ([]byte,*Extradata,error){
-				if err!=nil{
-					return 0,fmt.Errorf("DecodeECDSANameUnregistration Error %v",err)
-				}
-				verr:=utility.VerifySignature(signinghash,tmptxin.Signature,pubkeycompressedbytes)
-				if verr!=nil{
-					return 0,verr
-				}
-				if !(inpututxo.CompareWithAddress(utility.ComputeHash (pubkeycompressedbytes))){
-				//if (utility.ComputeHash (pubkeycompressedbytes)!=inpututxo.Address){//TODO			
-					return 0,fmt.Errorf("Corrupt transaction input - input public key do not match its associated output hash")
-				}
-				//applog.Trace("Value",inpututxo.Value)
-				//fmt.Println("UNregistration **********")
-				//os.Exit(0)
-				_,name,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
-				nbdislike:=mn.GetEngagementDislikeName(name)
-				nblike:=mn.GetEngagementLikeName(name)
-				if inpututxo.Value<mn.freezingcoef*uint64(nbdislike-nblike){
-					return 0,fmt.Errorf("Deposit frozen")
-				}
-				return inpututxo.Value,nil
-		case utility.ModuleIdentifierECDSANamePublicPost:
-				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierActifNameRegistration){
-					return 0,fmt.Errorf("invalide ** GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
-				}
-				_,height,number:=mn.GetTxState(tmptxin.Hash)
-				//applog.Trace("height%d,number%d",height,number)
-				inpututxo:=mn.GetMainblock(int(height)).Transactions[number].Vout[tmptxin.Index]
-				pubkeycompressedbytes,_,err:=utility.DecodeECDSANamePublicPost(tmptxin.Bytecode)
-				if err!=nil{
-					return 0,fmt.Errorf("DecodeECDSANamePublicPost Error %v",err)
-				}
-				verr:=utility.VerifySignature(signinghash,tmptxin.Signature,pubkeycompressedbytes)
-				if verr!=nil{
-					return 0,verr
-				}
-				if !(inpututxo.CompareWithAddress(utility.ComputeHash (pubkeycompressedbytes))){
-				//if (utility.ComputeHash (pubkeycompressedbytes)!=inpututxo.Address){//TODO			
-					return 0,fmt.Errorf("Corrupt transaction input - input public key do not match its associated output hash")
-				}
-				//applog.Trace("Value",inpututxo.Value)
-				_,name,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
-				nbdislike:=mn.GetEngagementDislikeName(name)
-				nblike:=mn.GetEngagementLikeName(name)
-				if inpututxo.Value<mn.freezingcoef*uint64(nbdislike-nblike){
-					return 0,fmt.Errorf("Deposit frozen")
-				}
-				return 0,nil
-		default:
-			return 0,fmt.Errorf("Unknown moduleid of TxIn")
-	}
-}
-func (mn *Maincore) ValidateTxOut(tmptxout utility.TxOut)(uint64,error){
-	moduleid:=utility.DecodeBytecodeId(tmptxout.Bytecode)
-	//applog.Trace("txout moduleid %d",moduleid)
-	switch moduleid {
-		case utility.ModuleIdentifierECDSATxOut:
-			_,_,err:=utility.DecodeECDSATxOutBytecode(tmptxout.Bytecode)
-			if err!=nil{
-				return 0,err
-			}
-			return tmptxout.Value,nil
-
-		case utility.ModuleIdentifierECDSANameRegistration:
-			_,name,_,err:=utility.DecodeECDSANameRegistration(tmptxout.Bytecode)
-			if err!=nil {
-				return 0,err
-			}
-			verr:=mn.ValidateNameRegistration(name)
-			if verr!=nil {
-				return 0,verr
-			}
-			return tmptxout.Value,nil
-		case utility.ModuleIdentifierEngagement:
-			_,_,_,err:=utility.DecodeEngagement(tmptxout.Bytecode)
-			if err!=nil {
-				return 0,err
-			}
-			return 0,nil
-		//default:
-		//	return 0,fmt.Errorf("Unknown moduleid of TxOut")
-		}
-		return 0,fmt.Errorf("Unknown module")
-}
 func (mn *Maincore) ValidateNameRegistration(name []byte)(error){
 	if len(name)>utility.RegistredNameMaxSize{
 		return fmt.Errorf("Name length exceeds RegistredNameMaxSize - Name length %d RegistredNameMaxSize %d",len(name))

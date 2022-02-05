@@ -14,11 +14,12 @@ const (
 	ModuleIdentifierECDSANameRegistration=3
 	ModuleIdentifierECDSANameUnregistration=4
 	ModuleIdentifierECDSANamePublicPost=5
-	ModuleIdentifierEngagement=6
+	ModuleIdentifierECDSAEngagementPublicPost=6
+	ModuleIdentifierECDSAEngagementPublicPostRewardClaim=7
 )
 const (
-	EngagementIdentifierLikeName=1
-	EngagementIdentifierDislikeName=2
+	EngagementIdentifierLikePublicPost=1
+	EngagementIdentifierDislikePublicPost=2
 )
 
 type TxOut struct {
@@ -107,31 +108,34 @@ func NewECDSANameUnregistration(inhash Hash,index uint32,pubkeycompressedbytes [
 	return tmptxin
 }
 
+func NewECDSAEngagementRewardClaim(engagementtxhash Hash,engagementtxindex uint32,pubkeycompressedbytes []byte) TxIn{
+	var tmptxin TxIn
+	tmptxin.Hash=engagementtxhash
+	tmptxin.Index=engagementtxindex
+	tmpbw:=NewBufferWriter()
+	tmpbw.PutUint32(ModuleIdentifierECDSAEngagementPublicPostRewardClaim)//
+	tmpbw.PutVarUint(uint64(len(pubkeycompressedbytes)))
+	tmpbw.PutBytes(pubkeycompressedbytes)
+	tmpbw.PutVarUint(uint64 (0)) //no extradata
+	tmptxin.Bytecode=append(tmptxin.Bytecode,tmpbw.GetContent()...)
+	return tmptxin
+}
 
-func NewECDSAEngagementLikeName(name []byte) TxOut{
+func NewECDSAEngagementPublicPost(eid uint32,stakedamount uint64,txhash Hash,index uint32,claimaddress Hash) TxOut{
 	var tmptxout TxOut
-	tmptxout.Value=0
+	tmptxout.Value=stakedamount
 	tmpbw:=NewBufferWriter()
-	tmpbw.PutUint32(ModuleIdentifierEngagement)// 
-	tmpbw.PutUint32(EngagementIdentifierLikeName)
-	tmpbw.PutVarUint(uint64(len(name)))
-	tmpbw.PutBytes(name)
+	tmpbw.PutUint32(ModuleIdentifierECDSAEngagementPublicPost)// 
+	tmpbw.PutUint32(eid)//EngagementIdentifierLikePublicPost or EngagementIdentifierDislikePublicPost
+	//tmpbw.PutVarUint(uint64(len(name)))
+	tmpbw.PutHash(txhash)
+	tmpbw.PutUint32(index)
+	tmpbw.PutHash(claimaddress)
 	tmpbw.PutVarUint(0)// No extradata
 	tmptxout.Bytecode=tmpbw.GetContent()
 	return tmptxout
 }
-func NewECDSAEngagementDislikeName(name []byte) TxOut{
-	var tmptxout TxOut
-	tmptxout.Value=0
-	tmpbw:=NewBufferWriter()
-	tmpbw.PutUint32(ModuleIdentifierEngagement)// 
-	tmpbw.PutUint32(EngagementIdentifierDislikeName)
-	tmpbw.PutVarUint(uint64(len(name)))
-	tmpbw.PutBytes(name)
-	tmpbw.PutVarUint(0)// No extradata
-	tmptxout.Bytecode=tmpbw.GetContent()
-	return tmptxout
-}
+
 func (txout * TxOut) CompareWithAddress(addr Hash) bool{
 	//
 	primitivemoduleid:=DecodeBytecodeId(txout.Bytecode)

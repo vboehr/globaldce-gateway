@@ -82,8 +82,10 @@ func (mn *Maincore) GetPostInfoStringArray(keywords string,maxposts int)[]string
 			//
 			ed:=utility.NewExtradataFromBytes(databytes)
 
-			namebytes,_,err:=mn.GetPublicPostState(ed.Hash)
+			namebytes,txhash,txindex,_,err:=mn.GetPublicPostState(ed.Hash)
 			_=err
+			_=txhash
+			_=txindex
 			//if err!=nil {
 			//	applog.Warning("Cannot add data - hash %s - error %v",hash,err)
 			//	return
@@ -140,7 +142,7 @@ func (mn *Maincore) AddLocalPublicPostData(namestring string,hash utility.Hash,d
 	// localy generated data can be directly stored
 	//mn.dataf.AddChunk(tmpbw.GetContent())
 	mn.dataf.AddChunk(databytes)
-	mn.PutPublicPostState(hash,namebytes,uint32(mn.dataf.NbChunks()-1))
+	mn.PutPublicPostState(hash,namebytes,*utility.NewHash(nil),0,uint32(mn.dataf.NbChunks()-1))
 
 }
 
@@ -192,7 +194,7 @@ func (mn *Maincore) RemoveMissingDataFileHash(hash utility.Hash) {
 func (mn *Maincore) AddData(hash utility.Hash,bytes []byte) {
 	//TODO generalize to different data types
 
-	name,id,err:=mn.GetPublicPostState(hash)
+	name,txhash,txindex,id,err:=mn.GetPublicPostState(hash)
 	if err!=nil {
 		applog.Warning("Cannot add data - hash %x - error %v",hash,err)
 		return
@@ -207,7 +209,7 @@ func (mn *Maincore) AddData(hash utility.Hash,bytes []byte) {
 	//	return
 	//}
 	mn.dataf.AddChunk(bytes)
-	mn.PutPublicPostState(hash,name,uint32(mn.dataf.NbChunks()-1))
+	mn.PutPublicPostState(hash,name,*txhash,txindex,uint32(mn.dataf.NbChunks()-1))
 	mn.RemoveMissingDataHash(hash)
 	mn.UpdateMissingDataFileHashArray(bytes)
 }
@@ -256,7 +258,7 @@ func (mn *Maincore) UpdateMissingDataFileHashArray(databytes []byte){
 
 //TODO generalize to different data types
 func (mn *Maincore) GetPublicPostData(hash utility.Hash) ([]byte,[]byte,error) {
-	name,id,err:=mn.GetPublicPostState(hash)
+	name,_,_,id,err:=mn.GetPublicPostState(hash)
 	if err!=nil{
 		return nil,nil,err
 	}

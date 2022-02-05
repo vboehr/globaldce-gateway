@@ -175,18 +175,18 @@ func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,*Extradata,error
 
 }
 //
-func DecodeEngagement(bytecode []byte) (uint32,[]byte,*Extradata,error){
+func DecodeECDSAEngagement(bytecode []byte) (uint32,*Hash,uint32,*Hash,*Extradata,error){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()
-	if primitivemoduleid != ModuleIdentifierEngagement{
-		return 0,nil,nil,fmt.Errorf("Not an Engagement bytecode")
+	if primitivemoduleid != ModuleIdentifierECDSAEngagementPublicPost{
+		return 0,nil,0,nil,nil,fmt.Errorf("Not an Engagement bytecode")
 	}
 	eid:=tmpbr.GetUint32()
-	namelen:=tmpbr.GetVarUint()
-	if namelen>RegistredNameMaxSize{
-		return 0,nil,nil,fmt.Errorf("Name in Engagement bytecode is too long - %d",namelen)
-	}
-	name:=tmpbr.GetBytes(uint(namelen)) 
+	//namelen:=tmpbr.GetVarUint()
+	//if namelen>RegistredNameMaxSize{
+	//	return 0,nil,0,nil,nil,fmt.Errorf("Name in Engagement bytecode is too long - %d",namelen)
+	//}
+	//name:=tmpbr.GetBytes(uint(namelen)) 
 	
 	/*
 	extradatalen:=tmpbr.GetVarUint()
@@ -199,16 +199,38 @@ func DecodeEngagement(bytecode []byte) (uint32,[]byte,*Extradata,error){
 		extradata.Hash=tmpbr.GetHash()
 	}
 	*/
+	hash:=tmpbr.GetHash()
+	index:=tmpbr.GetUint32()
+	claimaddress:=tmpbr.GetHash()
 	extradata:=tmpbr.GetExtradata()
 	tmpbrerr:=tmpbr.GetError()
 	if tmpbrerr!=nil{
-		return 0,nil,nil,tmpbrerr
+		return 0,nil,0,nil,nil,tmpbrerr
 	}
 	if !tmpbr.EndOfBytes(){
-		return 0,nil,nil,fmt.Errorf("End of bytes not reached")
+		return 0,nil,0,nil,nil,fmt.Errorf("End of bytes not reached")
 	}
 	
-	return eid,name,extradata,nil
+	return eid,&hash,index,&claimaddress,extradata,nil
 
 }
+func DecodeECDSAEngagementRewardClaim (bytecode []byte) ([]byte,*Extradata,error){
+	tmpbr:=NewBufferReader(bytecode)
+	primitivemoduleid:=tmpbr.GetUint32()
+	if primitivemoduleid != ModuleIdentifierECDSAEngagementPublicPostRewardClaim {
+		return nil,nil,fmt.Errorf("Not an ECDSA EngagementPublicPostRewardClaim")
+	}
+	pubkeycompressedlen:=tmpbr.GetVarUint()
+	pubkeycompressed:=tmpbr.GetBytes(uint(pubkeycompressedlen))
 
+	ed:=tmpbr.GetExtradata()
+	tmpbrerr:=tmpbr.GetError()
+	if tmpbrerr!=nil{
+		return nil,nil,tmpbrerr
+	}
+	if !tmpbr.EndOfBytes(){
+		return nil,nil,fmt.Errorf("End of bytes not reached")
+	}
+	
+	return pubkeycompressed,ed,nil
+}

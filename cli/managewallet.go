@@ -303,7 +303,7 @@ func Sendtoaddressarray(ws *wire.Swarm,wlt *wallet.Wallet,addrstringarray []stri
 	fmt.Printf("new sendtoaddress tx seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
 		_,fee:= daemon.Mn.ValidateTransaction(tx)
-		priority:=int(fee)
+		priority:=fee
 		daemon.Mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
@@ -348,7 +348,7 @@ func sendtoaddress(ws *wire.Swarm,wlt *wallet.Wallet,addrstring string,amountstr
 	fmt.Printf("new sendtoaddress tx seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
 		_,fee:= daemon.Mn.ValidateTransaction(tx)
-		priority:=int(fee)
+		priority:=fee
 		daemon.Mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
@@ -423,7 +423,7 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
     if tx!=nil{
 		mn.AddLocalPublicPostData(namestring,ed.Hash,databytes)
 		_,fee:= mn.ValidateTransaction(tx)
-		priority:=int(fee)
+		priority:=fee
 		mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
@@ -460,7 +460,7 @@ func Sendnameregistration(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wall
 	fmt.Printf("new nameregistration seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
 		_,fee:= mn.ValidateTransaction(tx)
-		priority:=int(fee)
+		priority:=fee
 		mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
@@ -484,7 +484,7 @@ func Sendnameunregistration(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wa
 	fmt.Printf("new nameunregistration seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
 		_,fee:= mn.ValidateTransaction(tx)
-		priority:=int(fee)
+		priority:=fee
 		mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)

@@ -14,3 +14,4 @@
 *.ini
 # Directories to ignore
 rawtest
+functest

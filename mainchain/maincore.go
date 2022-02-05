@@ -79,7 +79,7 @@ func (mn *Maincore) PutPath(path string){
 func (mn *Maincore) GetPath() (string){
 	return mn.path
 }
-func (mn *Maincore) AddTransactionToTxsPool(tx *utility.Transaction,fee int64,priority int){
+func (mn *Maincore) AddTransactionToTxsPool(tx *utility.Transaction,fee uint64,priority uint64){
 		mn.txspool.AddTransaction(tx,fee,priority)
 }
 func (mn *Maincore) LoadUnconfirmedBroadcastedTxs(wlt *wallet.Wallet){
@@ -87,7 +87,7 @@ func (mn *Maincore) LoadUnconfirmedBroadcastedTxs(wlt *wallet.Wallet){
 	
 	for i:=0;i<len(txs);i++{
 		_,fee:=mn.ValidateTransaction(txs[i])
-		priority:=5000000*(int (fee)+100)
+		priority:=fee+1000000
 		//applog.Notice("fee %d priority %d ",fee,priority)
 		mn.txspool.AddTransaction(txs[i],fee,priority)
 	}

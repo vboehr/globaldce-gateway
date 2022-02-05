@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"math"
+	"math/big"
 )
 
 type BufferWriter struct {
@@ -49,6 +50,15 @@ func (bw * BufferWriter) PutUint64(i uint64){
 	tmpbufferuint := make([]byte, 8)
 	binary.LittleEndian.PutUint64(tmpbufferuint, i)
 	bw.content=append(bw.content, tmpbufferuint ...)
+}
+
+func (bw * BufferWriter) PutBigInt(i * big.Int){
+
+	//tmpbufferuint := make([]byte, 8)
+	//binary.LittleEndian.PutUint64(tmpbufferuint, i)
+	buf:=i.Bytes()
+	bw.PutVarUint(uint64(len(buf)))
+	bw.content=append(bw.content, buf ...)
 }
 
 func (bw * BufferWriter) PutBytes(buf []byte){
@@ -142,6 +152,13 @@ func (br * BufferReader) GetUint64() uint64{
 		return uint64(0)
 	}
 	return binary.LittleEndian.Uint64(br.content[br.counter-8:br.counter])
+}
+func (br * BufferReader) GetBigInt()  (* big.Int){
+	l:=br.GetVarUint()
+	buf:=br.GetBytes(uint(l))
+	i := new(big.Int)
+	i.SetBytes(buf)
+	return i
 }
 func (br * BufferReader) GetBytes(length uint) []byte{
 	br.counter+=int(length)

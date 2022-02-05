@@ -6,17 +6,21 @@ import (
 )
 
 func (wlt * Wallet) ComputeBalance() (uint64){
-	var totalbalance uint64=0
+	var totalbalance uint64
+	nbunspent:=0
 	for i:=0;i<len(wlt.Assetarray);i++{
 
 
 		//applog.Trace("hash %x index %d value %d pkindex %d ",wlt.Assetarray[i].Hash,wlt.Assetarray[i].Index,wlt.Assetarray[i].Value,wlt.Assetarray[i].Privatekeyindex)
 		if wlt.Assetarray[i].StateString=="UNSPENT"{
 			totalbalance+=wlt.Assetarray[i].Value
+			nbunspent++
+		} else {
+			fmt.Printf("Asset state %s %d \n",wlt.Assetarray[i].StateString,wlt.Assetarray[i].Value)
 		}
 
 	}
-
+	fmt.Printf("Total Assets %d - nbunspent %d\n",len(wlt.Assetarray),nbunspent)
 	return totalbalance
 }
 func (wlt * Wallet) SetupTransactionForNameUnregistration(name string,fee uint64)  (*utility.Transaction,error){
@@ -100,6 +104,51 @@ func (wlt * Wallet) SetupTransactionForNamePublicPost(name string,ed utility.Ext
 
 	return tx,err
 }
+
+func (wlt * Wallet) SetupTransactionForEngagementPublicPost(eid uint32,txhash utility.Hash,index uint32,claimaddress utility.Hash,stakedamount uint64, fee uint64)  (*utility.Transaction,error){
+	tmptxout:=utility.NewECDSAEngagementPublicPost(eid,stakedamount,txhash,index,claimaddress)
+	tx,err:=wlt.SetupTransactionAmount(stakedamount,fee,nil,&tmptxout)
+	return tx,err
+}
+
+
+func (wlt * Wallet) SetupTransactionForEngagementRewardClaim(etxhash utility.Hash,etxindex uint32,claimaddress utility.Hash,fee uint64)  (*utility.Transaction,error){
+	
+
+	prvkeyindex:=wlt.GetPrivatekeyindexFromAddress(claimaddress)
+	pubkey:=wlt.Privatekeyarray[prvkeyindex].PubKey().SerializeCompressed()
+	tmptxin:=utility.NewECDSAEngagementRewardClaim(etxhash,etxindex,pubkey)
+	tx,err:=wlt.SetupTransactionAmount(0,fee,&tmptxin,nil)
+	//tx:=new(utility.Transaction)
+	//tx.Version=1
+	//tx.Vin=append(tx.Vin, tmptxin )
+	//tmptxout:=utility.NewECDSATxOut(0,wlt.GenerateKeyPair())
+	//tx.Vout=append(tx.Vout,tmptxout)
+	applog.Trace("------------txin %x",tmptxin)
+	newtxhash,herr:=tx.ComputeSigningHash()//
+	if herr!=nil{
+		return nil,herr
+	}
+
+	i:=len(tx.Vin)-1
+	//i:=0
+		sig, err := wlt.Privatekeyarray[prvkeyindex].Sign(newtxhash[:])
+		if err != nil {
+			applog.Trace("error: unable to sign input %d of transaction",i)
+			return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
+		}
+		//applog.Trace("signature %x", sig.Serialize())
+		tmpbw:=utility.NewBufferWriter()
+		//tmpbw.PutVarUint(uint64(len(sig.Serialize())))
+		tmpbw.PutBytes(sig.Serialize())
+		//tx.Vin[i].Bytecode=append(tx.Vin[i].Bytecode, tmpbw.GetContent() ...)
+		tx.Vin[i].Signature=tmpbw.GetContent()//selectedassetarray[i].Privatekeyindex 
+	
+
+	return tx,err
+}
+
+
 func (wlt * Wallet) SetupTransactionForNameRegistration(name []byte,pubkeyhash utility.Hash,amount uint64,fee uint64)  (*utility.Transaction,error){
 	tmptxout:=utility.NewECDSANameRegistration(amount,name,pubkeyhash)
 	tx,err:=wlt.SetupTransactionAmount(amount,fee,nil,&tmptxout)

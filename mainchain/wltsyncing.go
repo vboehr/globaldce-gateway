@@ -24,6 +24,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 					if mb.Transactions[j].Vout[k].CompareWithAddress(wltPubkeyHash[l]){
 						assetstate:=mb.Transactions[j].Vout[k].GetAssetState()
 						wlt.AddAsset(mb.Transactions[j].ComputeHash(),uint32(k),mb.Transactions[j].Vout[k].Value,uint32(l),assetstate)
+						applog.Trace("Maincore Syncing Wallet - Adding Assets ... %d",mb.Transactions[j].Vout[k].Value)
 					}
 				}
 			}
@@ -34,8 +35,9 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 							if wlt.Assetarray[m].Hash==mb.Transactions[j].Vin[k].Hash && wlt.Assetarray[m].Index==mb.Transactions[j].Vin[k].Index {
 								//
 								//utility.DecodeBytecodeId(mb.Transactions[j].Vin[k].Bytecode)
-								if wlt.Assetarray[m].StateString=="UNSPENT" {
+								if (wlt.Assetarray[m].StateString=="UNSPENT")||(wlt.Assetarray[m].StateString=="BROADCASTED") {
 									wlt.Assetarray[m].StateString="SPENT"
+									applog.Trace("Maincore Syncing Wallet - Consuming Assets ... %d %s",wlt.Assetarray[m].Value,wlt.Assetarray[m].StateString)
 								} else {
 									moduleid:=utility.DecodeBytecodeId(mb.Transactions[j].Vin[k].Bytecode)
 									

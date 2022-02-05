@@ -99,7 +99,7 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 			//URGENT TODO take into account the weight of the transaction
 			if validity {
 
-				priority:=int(int(fee)/int(seize))
+				priority:=fee/uint64(seize)/1000000
 				applog.Trace("************ fee %d priority of tx %d nbhops %d",fee,priority,nbhops)
 				//applog.Trace("valid received nbhops %d height %d mainblock %x",nbhops,height,mb)
 				mn.AddTransactionToTxsPool(tx,fee,priority)
