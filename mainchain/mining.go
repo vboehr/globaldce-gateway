@@ -106,7 +106,7 @@ func (mn *Maincore) ConfirmMainblock(mb*Mainblock) {
 		txhash:=tx.ComputeHash()
 		mn.txspool.DeleteTransaction(&txhash)
 		mn.PutTxState(txhash,uint32(i),uint32(j))
-		mn.UpdateMainstate(tx)
+		mn.UpdateMainstate(tx,uint32(i))
 		//
 	}
 }

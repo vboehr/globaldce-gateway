@@ -1,7 +1,7 @@
 package mainchain
 
 import (
-	//"github.com/globaldce/globaldce-toolbox/applog"
+	"github.com/globaldce/globaldce-toolbox/applog"
 
 	"github.com/globaldce/globaldce-toolbox/utility"
 	//"fmt"
@@ -38,26 +38,31 @@ func (mn *Maincore) GetEngagementDislikeName(name []byte) (uint64,big.Int) {
 //
 func (mn *Maincore) AddEngagementPublicPostRewardLike(publicposttxhash utility.Hash,publicposttxindex uint32,stakelike uint64,height uint32) {
 
-	weight:=stakelike/uint64(height)
+	weight:=stakelike*uint64(height)
 	_,liketotalstake,disliketotalstake,liketotalweight,disliketotalweight:=mn.GetEngagementPublicPostRewardState(publicposttxhash,publicposttxindex)
 	liketotalstake+=stakelike
 	newliketotalweight := new(big.Int)
 	//liketotalweight+=weight
-	newliketotalweight.Add(&liketotalweight,big.NewInt(int64(weight)))
+	bigweight:=new(big.Int)
+	bigweight.SetUint64(weight)
+	newliketotalweight.Add(&liketotalweight,bigweight)
 	err:=mn.PutEngagementPublicPostRewardState(publicposttxhash,publicposttxindex,liketotalstake,disliketotalstake,*newliketotalweight,disliketotalweight)
 	_=err
+	applog.Trace("publicposttxhash %x,publicposttxindex %d,liketotalstake %d,disliketotalstake %d,*newliketotalweight %s,disliketotalweight %s",publicposttxhash,publicposttxindex,liketotalstake,disliketotalstake,(*newliketotalweight).String(),disliketotalweight.String())
 
 }
 
 
 func (mn *Maincore) AddEngagementPublicPostRewardDislike(publicposttxhash utility.Hash,publicposttxindex uint32,stakedislike uint64,height uint32) {
 
-	weight:=stakedislike/uint64(height)
+	weight:=stakedislike*uint64(height)
 	_,liketotalstake,disliketotalstake,liketotalweight,disliketotalweight:=mn.GetEngagementPublicPostRewardState(publicposttxhash,publicposttxindex)
 	disliketotalstake+=stakedislike
 	//disliketotalweight+=weight
 	newdisliketotalweight:=new(big.Int)
-	newdisliketotalweight.Add(&disliketotalweight,big.NewInt(int64(weight)))
+	bigweight:=new(big.Int)
+	bigweight.SetUint64(weight)
+	newdisliketotalweight.Add(&disliketotalweight,bigweight)
 	err:=mn.PutEngagementPublicPostRewardState(publicposttxhash,publicposttxindex,liketotalstake,disliketotalstake,liketotalweight,*newdisliketotalweight)
 	_=err
 	

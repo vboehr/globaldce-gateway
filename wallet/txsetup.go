@@ -112,18 +112,21 @@ func (wlt * Wallet) SetupTransactionForEngagementPublicPost(eid uint32,txhash ut
 }
 
 
-func (wlt * Wallet) SetupTransactionForEngagementRewardClaim(etxhash utility.Hash,etxindex uint32,claimaddress utility.Hash,fee uint64)  (*utility.Transaction,error){
+func (wlt * Wallet) SetupTransactionForEngagementRewardClaim(etxhash utility.Hash,etxindex uint32,claimaddress utility.Hash,claimedamount uint64,fee uint64)  (*utility.Transaction,error){
 	
 
 	prvkeyindex:=wlt.GetPrivatekeyindexFromAddress(claimaddress)
 	pubkey:=wlt.Privatekeyarray[prvkeyindex].PubKey().SerializeCompressed()
 	tmptxin:=utility.NewECDSAEngagementRewardClaim(etxhash,etxindex,pubkey)
-	tx,err:=wlt.SetupTransactionAmount(0,fee,&tmptxin,nil)
-	//tx:=new(utility.Transaction)
-	//tx.Version=1
-	//tx.Vin=append(tx.Vin, tmptxin )
-	//tmptxout:=utility.NewECDSATxOut(0,wlt.GenerateKeyPair())
-	//tx.Vout=append(tx.Vout,tmptxout)
+	
+	//rewardamount,err:=GetEngagementPublicPostRewardValue(publicposttxhash,publicposttxindex,publicpostheight,engagementid,engagementstake,height) 
+	
+	tx:=new(utility.Transaction)
+	tx.Version=1
+	tx.Vin=append(tx.Vin, tmptxin )
+	tmptxout:=utility.NewECDSATxOut(claimedamount-fee,wlt.GenerateKeyPair())
+	tx.Vout=append(tx.Vout,tmptxout)
+
 	applog.Trace("------------txin %x",tmptxin)
 	newtxhash,herr:=tx.ComputeSigningHash()//
 	if herr!=nil{

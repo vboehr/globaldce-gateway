@@ -264,7 +264,7 @@ func (mn *Maincore) GetEngagementNameState(name []byte,engagementidentifier uint
 	totalstake:=tmpbr.GetBigInt()
 	return nbengagement,*totalstake // returns nbengagement and totalstake
 }
-
+/*
 func (mn *Maincore) PutEngagementPublicPostState(pptxhash utility.Hash,pptxindex uint32,claimaddress utility.Hash,engagementidentifier uint32,etxhash utility.Hash,etxindex uint32) error {
 
 	tmpkeybw:=utility.NewBufferWriter()
@@ -281,8 +281,8 @@ func (mn *Maincore) PutEngagementPublicPostState(pptxhash utility.Hash,pptxindex
 
 	err := mn.mainstatedb.Put(tmpkeybw.GetContent(), tmpbw.GetContent(), nil)
 	return err
-}
-
+}*/
+/*
 func (mn *Maincore) GetEngagementPublicPostState(pptxhash utility.Hash,pptxindex uint32,claimaddress utility.Hash) (uint32,*utility.Hash,uint32) {
 	tmpkeybw:=utility.NewBufferWriter()
 	tmpkeybw.PutUint32(StateKeyIdentifierEngagementPublicPost)
@@ -301,7 +301,7 @@ func (mn *Maincore) GetEngagementPublicPostState(pptxhash utility.Hash,pptxindex
 	etxhash:=tmpbr.GetHash()
 	etxindex:=tmpbr.GetUint32()
 	return engagementidentifier,&etxhash,etxindex
-}
+}*/
 
 
 //
@@ -327,7 +327,7 @@ func (mn *Maincore) PutEngagementPublicPostRewardState(publicposttxhash utility.
 
 func (mn *Maincore) GetEngagementPublicPostRewardState(publicposttxhash utility.Hash, publicposttxindex uint32) (uint32,uint64,uint64,big.Int,big.Int) {
 	tmpkeybw:=utility.NewBufferWriter()
-	tmpkeybw.PutUint32(StateKeyIdentifierEngagementPublicPost)
+	tmpkeybw.PutUint32(StateKeyIdentifierEngagementPublicPostReward)
 	//tmpkeybw.PutRegistredNameKey(name)
 	tmpkeybw.PutHash(publicposttxhash)
 	tmpkeybw.PutUint32(publicposttxindex)
@@ -357,26 +357,39 @@ func (mn *Maincore) GetEngagementPublicPostRewardState(publicposttxhash utility.
 
 
 
-//engagementreward,err:=mn.GetEngagementClaimRewardValue(publicposttxhash,publicposttxindex,engagementid,engagementtxout.Value,height)
+//engagementreward,err:=mn.GetEngagementPublicPostRewardValue(publicposttxhash,publicposttxindex,engagementid,engagementtxout.Value,height)
 //
-func (mn *Maincore) GetEngagementClaimRewardValue(publicposttxhash utility.Hash,publicposttxindex uint32,publicpostheight uint32,
-													engagementid uint32,engagementstake uint64,height uint32) (uint64,error){
+func (mn *Maincore) GetEngagementPublicPostRewardValue(publicposttxhash utility.Hash,publicposttxindex uint32,publicpostheight uint32,
+													engagementid uint32,engagementstake uint64,stakeheight uint32) (uint64,error){
 
 	var claimreward uint64
 	var totalweight big.Int
+	applog.Trace("GetEngagementPublicPostRewardValue hash %x index %d",publicposttxhash,publicposttxindex)
 	stateidentifier,liketotalstake,disliketotalstake,liketotalweight,disliketotalweight:=mn.GetEngagementPublicPostRewardState(publicposttxhash,publicposttxindex)
+	applog.Trace("stateidentifier %d,liketotalstake %d,disliketotalstake %d,liketotalweight %s,disliketotalweight %s",stateidentifier,liketotalstake,disliketotalstake,liketotalweight.String(),disliketotalweight.String())
+	//_=stateidentifier
 	if stateidentifier!=StateValueIdentifierEngagementPublicPostReward{
-		return 0,fmt.Errorf("Found an incorrect stateidentifier associated with engagement public post reward state - identifier found")
+		return 0,fmt.Errorf("Found an incorrect stateidentifier associated with engagement public post reward state - identifier found %d",stateidentifier)
 	}
-	weight:=int64(engagementstake)/int64(height)
+	weight:=uint64(engagementstake)*uint64(stakeheight)
 	//claimreward=totalreward*weight/totalweight
 	if liketotalstake>=disliketotalstake{
 		totalweight=liketotalweight
+		if engagementid==utility.EngagementIdentifierDislikePublicPost {
+			return 0,nil
+		}
 	} else {
 		totalweight=disliketotalweight
-	}
-	bigtmp:=big.NewInt(int64(liketotalstake+disliketotalstake))
-	bigtmp2:=bigtmp.Mul(bigtmp,big.NewInt(weight))
+		if engagementid==utility.EngagementIdentifierLikePublicPost {
+			return 0,nil
+		}
+	} 
+	bigtmp:=new(big.Int)
+	bigtmp.SetUint64(liketotalstake+disliketotalstake)
+ 	//bigtmp:=big.NewInt(int64(liketotalstake+disliketotalstake))
+	bigweight:=new(big.Int)
+	bigweight.SetUint64(weight)
+	bigtmp2:=bigtmp.Mul(bigtmp,bigweight)
 	bigclaimreward:=bigtmp2.Div( bigtmp2 , &totalweight)
 	claimreward=uint64(bigclaimreward.Int64())
 	return claimreward,nil
@@ -408,7 +421,7 @@ func  (mn *Maincore)  RebuildMainstate() {
 			tx:=mn.GetMainblock(i).Transactions[j]
 			txhash:=tx.ComputeHash()
 			mn.PutTxState(txhash,uint32(i),uint32(j))
-			mn.UpdateMainstate(tx)
+			mn.UpdateMainstate(tx,uint32(i))
 			//
 		}
 		//

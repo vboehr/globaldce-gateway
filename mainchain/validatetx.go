@@ -144,11 +144,14 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				return 0,nil
 		//
 		case utility.ModuleIdentifierECDSAEngagementPublicPostRewardClaim:
-			pubkey,_,_:=utility.DecodeECDSAEngagementRewardClaim(tmptxin.Bytecode)
-			rewardclaimaddress:=utility.ComputeHash(pubkey)
-			stateid,_,_:=mn.GetEngagementPublicPostState(tmptxin.Hash,tmptxin.Index,rewardclaimaddress)
-			if stateid!=StateValueIdentifierUnclaimedEngagementPublicPost{
-				return 0,fmt.Errorf("Engagement reward claim points to engagment already claimed or inexisting")
+			//pubkey,_,_:=utility.DecodeECDSAEngagementRewardClaim(tmptxin.Bytecode)
+			//rewardclaimaddress:=utility.ComputeHash(pubkey)
+			//stateid,_,_:=mn.GetEngagementPublicPostState(tmptxin.Hash,tmptxin.Index,rewardclaimaddress)
+			//if stateid!=StateValueIdentifierUnclaimedEngagementPublicPost{
+			//	return 0,fmt.Errorf("Engagement reward claim points to engagment already claimed or inexisting")
+			//}
+			if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierUnclaimedEngagementPublicPost){
+				return 0,fmt.Errorf("Engagement reward claim points to engagment already claimed or inexisting - GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
 			}
 			_,height,number:=mn.GetTxState(tmptxin.Hash)//URGENT TODO
 			//applog.Trace("height%d,number%d",height,number)
@@ -158,6 +161,7 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 			if (mn.GetConfirmedMainchainLength()-publicpostheight)<ENGAGEMENT_REWARD_FINALIZATION_INTERVAL {
 				return 0,fmt.Errorf("Engagement reward claim was made too soon")
 			}
+			
 			//
 			//tmptxin.Bytecode
 			
@@ -177,10 +181,12 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				//return inpututxo.Value,nil
 			
 			//
-			engagementreward,err:=mn.GetEngagementClaimRewardValue(*publicposttxhash,publicposttxindex,publicpostheight,engagementid,engagementtxout.Value,height)
+			stakeheight:= ENGAGEMENT_REWARD_FINALIZATION_INTERVAL- (height-publicpostheight)
+			engagementreward,err:=mn.GetEngagementPublicPostRewardValue(*publicposttxhash,publicposttxindex,publicpostheight,engagementid,engagementtxout.Value,stakeheight)
 			if err!=nil {
 				return 0,err
 			}
+			applog.Trace("Adding valid GetEngagementPublicPostRewardValue - %d",engagementreward)
 			return engagementreward,nil
 
 

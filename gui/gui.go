@@ -27,6 +27,7 @@ const appscreenWidth =1000
 const appscreenHeight = 600
 //var winredraw bool 
 //var searchtext string
+var newuser bool=false
 
 var guiApp fyne.App
 
@@ -36,6 +37,7 @@ func Start(appname string) {
 	if settingserr!=nil{
 		//
 		daemon.SetDefaultSettings()
+		newuser =true
 	}
 	daemon.ApplyUsersettings()
 	applog.Notice("Mainwalletpath %s",daemon.MainwalletFilePath)
@@ -69,8 +71,12 @@ func Start(appname string) {
 
 			//}
 		} else {
+			if newuser {
+				passwordCreationDialog(myWindow)
+			} else {
+				nowalletFoundDialog(myWindow,"walletfile "+daemon.MainwalletFilePath+" does not exist.")
+			}
 			
-			nowalletFoundDialog(myWindow,"walletfile "+daemon.MainwalletFilePath+" does not exist.")
 		}
 	//}
 	daemon.Wlt=wlt
