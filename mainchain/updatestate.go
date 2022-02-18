@@ -72,12 +72,15 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 				_,ed,_:=utility.DecodeECDSANamePublicPost(tx.Vin[l].Bytecode)
 				
 				//_,txhash,txindex,_,err:=mn.GetPublicPostState(ed.Hash)//([]byte, uint32, error){
-				_,_,_,_,err:=mn.GetPublicPostState(ed.Hash)
+				if ed!=nil{
+					_,_,_,_,err:=mn.GetPublicPostState(ed.Hash)
 				
-				if (err!=nil)&&(!mn.IsBannedName(name)){
-					mn.PutPublicPostState(ed.Hash,name,txhash,uint32(l),uint32(0))
-					mn.AddToMissingDataHashArray(ed.Hash)	
+					if (err!=nil)&&(!mn.IsBannedName(name)){
+						mn.PutPublicPostState(ed.Hash,name,txhash,uint32(l),uint32(0))
+						mn.AddToMissingDataHashArray(ed.Hash)	
+					}
 				}
+
 			case utility.ModuleIdentifierECDSAEngagementPublicPostRewardClaim:
 				applog.Trace("Updating ECDSAEngagementRewardClaim Tx")
 				//tmptxin:=tx.Vin[l]

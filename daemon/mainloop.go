@@ -33,6 +33,9 @@ func startmining(){
                 }
                 if !Wlt.HotWallet{
                     Mn.SyncWallet(Wlt)
+                    if Walletloaded && success{
+                        Wlt.SaveJSONFile(MainwalletFilePath,MainwalletFileKey)
+                    }
                 }
                 
             //applog.Trace("mainchaillength %d",Mn.GetConfirmedMainchainLength())

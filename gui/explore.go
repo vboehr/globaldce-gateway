@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"time"
-	//"strings"
+	"strings"
 	"fyne.io/fyne/v2"
 	//"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/widget"
@@ -139,7 +139,7 @@ func (pr *postRenderer) Objects() []fyne.CanvasObject {
 func (pr *postRenderer) Refresh() {
 	pr.top.SetText(pr.pc.p.Name)
 
-	pr.main.SetText(pr.pc.p.Content)
+	pr.main.SetText(MaxCharDisplay(pr.pc.p.Content))
 	
 	
 	///////////////////////////////////
@@ -364,3 +364,25 @@ func getPosts(keywords string)[]string{
 	//return nil
 }
 
+func MaxCharDisplay(s string) string{
+	as:=strings.Split(s,"\n")
+	tl:=0
+	maxl:=5
+	maxtl:=500
+	if len(as)<maxl{
+		maxl=len(as)
+	}
+	for i:=0;i<maxl;i++{
+		tl+=len(as[i])
+	}
+	if tl>maxtl{
+		tl=maxtl
+	}
+	ns:=s[:tl]
+	if len(ns)<len(s){
+		return ns+" ..."
+	} else {
+		return ns
+	}
+	
+}

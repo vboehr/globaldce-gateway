@@ -72,12 +72,12 @@ func overviewScreen() fyne.CanvasObject {
 			go func() {
 				for {
 					//fmt.Println("*******!!!!!!!!",registerednames)
-					time.Sleep(time.Second * 2)
+					time.Sleep(time.Second * 5)
 					updatedassestsdestails:=daemon.Wlt.GetAssetsDetails()
 					if updatedassestsdestails!=nil{
 						assestsdestails.Set(updatedassestsdestails)
 					}
-					time.Sleep(time.Second * 10)
+					time.Sleep(time.Second * 30)
 					//str.Set(fmt.Sprintf("WALLET BALANCE is %d", daemon.Wlt.ComputeBalance()))
 					
 				}
@@ -169,7 +169,11 @@ func addressesScreen() fyne.CanvasObject {
 			for {
 				//fmt.Println("*******!!!!!!!!",registerednames)
 				time.Sleep(time.Second * 2)
-				wltaddresses.Set(daemon.Wlt.GetAddressesDetails())
+				updatedassestsdestails:=daemon.Wlt.GetAddressesDetails()
+				if updatedassestsdestails!=nil{
+					wltaddresses.Set(updatedassestsdestails)
+				}
+				
 				//str.Set(fmt.Sprintf("WALLET BALANCE is %d", daemon.Wlt.ComputeBalance()))
 				
 			}
