@@ -99,7 +99,7 @@ type postRenderer struct {
 	link *widget.Hyperlink
 	details *widget.Button
 	ban *widget.Button
-	sep *widget.Separator
+	//sep *widget.Separator
 }
 func (pr *postRenderer) Destroy() {
 }
@@ -125,15 +125,15 @@ func (pr *postRenderer) Layout(s fyne.Size) {
 	pr.main.Move(fyne.NewPos(remainStart, pr.top.MinSize().Height+2*theme.Padding()))
 	pr.main.Resize(fyne.NewSize(remainWidth, pr.main.MinSize().Height))
 	
-	pr.sep.Move(fyne.NewPos(0, s.Height-theme.SeparatorThicknessSize()))
-	pr.sep.Resize(fyne.NewSize(s.Width, theme.SeparatorThicknessSize()))
+	//pr.sep.Move(fyne.NewPos(0, s.Height-theme.SeparatorThicknessSize()))
+	//pr.sep.Resize(fyne.NewSize(s.Width, theme.SeparatorThicknessSize()))
 }
 func (pr *postRenderer) MinSize() fyne.Size {
 
 	return fyne.NewSize(appscreenWidth,200)
 }
 func (pr *postRenderer) Objects() []fyne.CanvasObject {
-	return []fyne.CanvasObject{pr.top, pr.main, pr.pic,pr.link,pr.details,pr.ban, pr.sep}
+	return []fyne.CanvasObject{pr.top, pr.main, pr.pic,pr.link,pr.details,pr.ban}
 }
 
 func (pr *postRenderer) Refresh() {
@@ -145,14 +145,20 @@ func (pr *postRenderer) Refresh() {
 	///////////////////////////////////
 
 	go func() {
-		pr.link=widget.NewHyperlink(pr.pc.p.Link, parseURL(pr.pc.p.Link))
-		pr.details= widget.NewButton("Details", displayPostDetails(pr.pc.p))
-		pr.ban= widget.NewButton("Ban", banPostName(pr.pc.p.Name))
+		//pr.link=widget.NewHyperlink(pr.pc.p.Link, parseURL(pr.pc.p.Link))
+		pr.link.SetURLFromString(pr.pc.p.Link)
+		//pr.details= widget.NewButton("Details", displayPostDetails(pr.pc.p))
+		pr.details.OnTapped=displayPostDetails(pr.pc.p)
+		//pr.ban= widget.NewButton("Ban", banPostName(pr.pc.p.Name))
+		pr.ban.OnTapped=banPostName(pr.pc.p.Name)
 		if pr.pc.p.AttachmentHashArray!=nil{
-			pr.pic=canvas.NewImageFromFile(DataFilePathFromHash(pr.pc.p.AttachmentHashArray[0]))
+			//pr.pic=canvas.NewImageFromFile(DataFilePathFromHash(pr.pc.p.AttachmentHashArray[0]))
+			pr.pic.File=DataFilePathFromHash(pr.pc.p.AttachmentHashArray[0])
 		} else {
-			pr.pic=canvas.NewImageFromFile("blank.png")
+			//pr.pic=canvas.NewImageFromFile("blank.png")
+			pr.pic.File="blank.png"
 		}
+		pr.pic.Refresh()
 	}()
 	///////////////////////////////////
 
@@ -179,7 +185,7 @@ func (pc *postCell) CreateRenderer() fyne.WidgetRenderer {
 		link:emptylink,
 		details:emptydetailsbutton,
 		ban:emptybanbutton, 
-		sep: widget.NewSeparator(),
+		//sep: widget.NewSeparator(),
 	}
 }
 
