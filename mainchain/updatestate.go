@@ -73,8 +73,10 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 				
 				//_,txhash,txindex,_,err:=mn.GetPublicPostState(ed.Hash)//([]byte, uint32, error){
 				if ed!=nil{
-					_,_,_,_,err:=mn.GetPublicPostState(ed.Hash)
-				
+					oldname,_,_,_,err:=mn.GetPublicPostState(ed.Hash)
+					if (len(oldname)==0)&&(!mn.IsBannedName(name)){
+						mn.PutPublicPostState(ed.Hash,name,txhash,uint32(l),uint32(0))
+					}
 					if (err!=nil)&&(!mn.IsBannedName(name)){
 						mn.PutPublicPostState(ed.Hash,name,txhash,uint32(l),uint32(0))
 						mn.AddToMissingDataHashArray(ed.Hash)	
