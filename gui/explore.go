@@ -133,7 +133,7 @@ func (pr *postRenderer) MinSize() fyne.Size {
 	return fyne.NewSize(appscreenWidth,200)
 }
 func (pr *postRenderer) Objects() []fyne.CanvasObject {
-	return []fyne.CanvasObject{pr.top, pr.main, pr.pic,pr.link,pr.details,pr.ban}
+	return []fyne.CanvasObject{pr.top, pr.main, pr.pic,pr.link,pr.details,pr.ban}//,pr.sep}
 }
 
 func (pr *postRenderer) Refresh() {
