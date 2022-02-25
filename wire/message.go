@@ -188,6 +188,7 @@ func (msg * Message) WriteBytes(connection net.Conn) {
 	tmpbw.PutUint32(1)// the message version
 	tmpbw.PutBytes(msg.Identifier)
 	tmpbw.PutUint32(uint32(len(msg.Content)))
+	tmpbw.PutHash(utility.ComputeHash(msg.Content))
 	tmpbw.PutBytes(msg.Content)
 	
 	var err error
@@ -210,6 +211,16 @@ func (msg * Message) ReadContent(connection net.Conn,maxsize int) error{
 		applog.Warning("Max size exceeded while reading content of message - contentlength %d maxsize %d ",contentlength,maxsize)
 		return fmt.Errorf("Max size exceeded")
 	}
+	//
+	buffcontenthashbytes := make([]byte, utility.HashSize)
+	_,err=connection.Read(buffcontenthashbytes)
+	if (err!=nil){
+		applog.Trace("warning unable to read content hashbytes")
+		return err
+	}
+
+	//
+
 	buffcontent := make([]byte, contentlength)
 	_,err=connection.Read(buffcontent)
 	if (err!=nil){
@@ -220,6 +231,7 @@ func (msg * Message) ReadContent(connection net.Conn,maxsize int) error{
 	//applog.Trace("****************content length %d content %x",contentlength, buffcontent)
 	msg.PutContent(buffcontent)
 	return nil
+
 }
 
 ////////////////////////////////
