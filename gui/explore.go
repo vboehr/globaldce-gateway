@@ -45,8 +45,13 @@ func displayPostDetails(p *post) func() {
 			//fmt.Println("post",p)
 			win := guiApp.NewWindow("Public post details")
 			postdetailsCanvas := win.Canvas()
+			
 			txtContent:=widget.NewLabel(p.Content)
+			txtContent.Wrapping=fyne.TextWrapBreak	
+			//txtContentContainer:= container.New(  layout.NewGridWrapLayout(fyne.NewSize(800, 600)),txtContent)
 			postdetailscontainer:=container.NewVBox()
+
+			//postdetailscontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(50, 50)),txtContent)
 			postdetailscontainer.Add(txtContent)
 			for j:=0;j<len(p.AttachmentHashArray);j++{
 				i:=canvas.NewImageFromFile(DataFilePathFromHash(p.AttachmentHashArray[j]))
@@ -59,7 +64,8 @@ func displayPostDetails(p *post) func() {
 			//win.SetContent(widget.NewLabel(p.Content))
 			postdetailsScroll := container.NewScroll(postdetailscontainer)
 			//myCanvas.SetContent(container.NewVBox(i,i2))
-
+			//postdetailsContainer:= container.New(  layout.NewGridWrapLayout(fyne.NewSize(800, 600)),postdetailsScroll)
+			//postdetailsContainer:=container.New(layout.NewHBoxLayout(), layout.NewSpacer(), postdetailsScroll, layout.NewSpacer())
 			postdetailsCanvas.SetContent(postdetailsScroll)
 			win.Resize(fyne.NewSize(800, 600))
 			win.Show()
@@ -210,13 +216,14 @@ func newPostCell(np *post) *postCell {
 
 var MaxDisplayedPost =5
 var searchtext string =""
-var ListRefreshNeeded bool =false
+var ListRefreshNeeded bool =true
+//var ListRefreshTime time.Duration =3* time.Second
 func exploreScreen(w fyne.Window)  fyne.CanvasObject{
 	bindings := binding.BindStringList(
 		&[]string{},
 	)
 
-
+	
 
 
 list := widget.NewTable(
@@ -254,28 +261,33 @@ list := widget.NewTable(
   })
 
 
-
+/*
 go func() {
 	for {
 		//fmt.Println("*******!!!!!!!!",registerednames)
-		time.Sleep(time.Second * 5)
+		time.Sleep(time.Second * 3)
 		//assestsdestails.Set(daemon.Wlt.GetAssetsDetails())
 		bindings.Set(getPosts(searchtext))
 		list.Refresh()//
-		time.Sleep(time.Second * 120)
+		//time.Sleep(time.Second * 10)
 		//str.Set(fmt.Sprintf("WALLET BALANCE is %d", daemon.Wlt.ComputeBalance()))
 		
 	}
 }()
+*/
+
 go func(){
 	for {
+		//time.Sleep(ListRefreshTime)
+		time.Sleep(time.Second * 3)
 		if ListRefreshNeeded{
 			bindings.Set(getPosts(searchtext))
 			list.Refresh()
 			ListRefreshNeeded=false
-			time.Sleep(time.Second * 30)
+			//ListRefreshTime=3*time.Second
+			//time.Sleep(time.Second * 10)
 		}
-		time.Sleep(time.Second * 5)
+		
 	}
 }()
 	
@@ -359,17 +371,40 @@ func getPosts(keywords string)[]string{
 	//bindings.Set(sarray)
 	return sarray
 	*/
-	
+	var sarray []string
 	if daemon.Mn==nil{
-		return nil
+		return sarray
 	}
-	sarray:=daemon.Mn.GetPostInfoStringArray(keywords,MaxDisplayedPost) 
+	sarray=daemon.Mn.GetPostInfoStringArray(keywords,MaxDisplayedPost) 
 	//fmt.Printf("********%v",sarray)
 	return sarray
 	
 	//return nil
 }
-
+/*
+func MaxLineDisplay(s string) string{
+	as:=strings.Split(s,"\n")
+	tl:=0
+	maxl:=5
+	maxtl:=500
+	if len(as)<maxl{
+		maxl=len(as)
+	}
+	for i:=0;i<maxl;i++{
+		tl+=len(as[i])
+	}
+	if tl>maxtl{
+		tl=maxtl
+	}
+	ns:=s[:tl]
+	if len(ns)<len(s){
+		return ns+" ..."
+	} else {
+		return ns
+	}
+	
+}
+*/
 func MaxCharDisplay(s string) string{
 	as:=strings.Split(s,"\n")
 	tl:=0
