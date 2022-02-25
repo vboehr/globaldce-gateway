@@ -414,11 +414,13 @@ func (mn *Maincore) GetNameState(name []byte) uint32 {
 ////////////////////////////////////////////
 
 func  (mn *Maincore)  RebuildMainstate() {
+	/*
 	for l:=0;l<mn.dataf.NbChunks();l++{
 		data:=mn.dataf.GetChunkById(int(l))
 		hash:=utility.ComputeHash(data)
 		mn.PutPublicPostState(hash,[]byte(""),*utility.NewHash(nil),0,uint32(l))
 	}
+	*/
 	//
 	for i:=0;i<mn.mainbf.NbChunks();i++{
 		//applog.Trace("block %d %d ",i,len(mn.GetMainblock(i).Transactions))

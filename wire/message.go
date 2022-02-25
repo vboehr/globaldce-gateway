@@ -6,6 +6,7 @@ import (
 	"github.com/globaldce/globaldce-toolbox/utility"
 	"net"
 	"fmt"
+	//"os"
 )
 
 
@@ -211,7 +212,7 @@ func (msg * Message) ReadContent(connection net.Conn,maxsize int) error{
 		applog.Warning("Max size exceeded while reading content of message - contentlength %d maxsize %d ",contentlength,maxsize)
 		return fmt.Errorf("Max size exceeded")
 	}
-	//
+	
 	buffcontenthashbytes := make([]byte, utility.HashSize)
 	_,err=connection.Read(buffcontenthashbytes)
 	if (err!=nil){
@@ -219,7 +220,7 @@ func (msg * Message) ReadContent(connection net.Conn,maxsize int) error{
 		return err
 	}
 
-	//
+	
 
 	buffcontent := make([]byte, contentlength)
 	_,err=connection.Read(buffcontent)
@@ -230,6 +231,9 @@ func (msg * Message) ReadContent(connection net.Conn,maxsize int) error{
 
 	//applog.Trace("****************content length %d content %x",contentlength, buffcontent)
 	msg.PutContent(buffcontent)
+	if utility.ComputeHash(buffcontent)!=*utility.NewHash(buffcontenthashbytes){
+		return nil 
+	}
 	return nil
 
 }
@@ -282,11 +286,19 @@ func ReadConnectionMessage(connection net.Conn) (*Message,error)  {
 		applog.Trace("warning unable to read content length%x",buffcontentlength)
 		return nil,err
 	}
+
 	contentlength := binary.LittleEndian.Uint32(buffcontentlength)
 	if contentlength!=0{
 		return nil,nil
 	}
-	
+	//
+	buffcontenthashbytes := make([]byte, utility.HashSize)
+	_,err=connection.Read(buffcontenthashbytes)
+	if (err!=nil){
+		applog.Trace("warning unable to read content hashbytes")
+		return nil,err
+	}
+	//
 	var msg *Message
 
 	switch {

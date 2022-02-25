@@ -49,7 +49,7 @@ func SetDefaultSettings(){
 		Publicposttxfee:PublicposttxfeeDefault,
 		Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
 		BannedNameArray:nil,
-		Miningrequested:true,
+		Miningrequested:false,
 	}
 }
 

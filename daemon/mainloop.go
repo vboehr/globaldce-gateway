@@ -161,6 +161,8 @@ func Mainloop(){
             hash:=Mn.GetRandomMissingDataHash()
             if hash!=nil {
                 Wireswarm.RequestData(*hash)
+            } else{
+                applog.Trace("No missing data")
             }
         //
         case <-ticker3 ://time.After(60 * time.Second):

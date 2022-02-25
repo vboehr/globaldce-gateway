@@ -66,6 +66,14 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 			case utility.ModuleIdentifierECDSANamePublicPost:
 				_,height,number:=mn.GetTxState(tx.Vin[l].Hash)
 				//applog.Trace("height%d,number%d",height,number)
+				
+				if int(number)>=len(mn.GetMainblock(int(height)).Transactions){
+					return
+				}
+				if int(tx.Vin[l].Index)>=len(mn.GetMainblock(int(height)).Transactions[number].Vout){
+					return
+				}
+				
 				tmpinpututxo:=mn.GetMainblock(int(height)).Transactions[number].Vout[tx.Vin[l].Index]
 				_,name,_,_:=utility.DecodeECDSANameRegistration(tmpinpututxo.Bytecode)
 			
