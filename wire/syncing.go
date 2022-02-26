@@ -205,19 +205,22 @@ func (sw *Swarm) InitiateSyncing(mn * mainchain.Maincore,lmpeeraddress string) (
 		
 		tmpblock,_:=mainchain.UnserializeMainblock(tmpsyncstorage.GetChunkById(i))
 		//applog.Trace("Validating block%d",i)
-		if ! mn.ValidateMainblockTransactions(uint32 (i), &tmpblock.Transactions){
+		//if mn.ValidateMainblockTransactions(uint32 (i), &tmpblock.Transactions){
+			/*
 			//TODO rebuild mainstate
 			applog.Warning("error: invalide transactions")
 			mn.CleanMainstate()
 			mn.RebuildMainstate()
 			//TODO ban peer
 			return fmt.Errorf("error: invalide transactions")
-		}
-		//mn.AddBlockChunck(tmpsyncstorage.GetChunkById(i))
-		applog.Trace("Confirm mainblock of height %d",tmpblock.Height)
-		mn.ConfirmMainblock(tmpblock)
-		
-		applog.Trace("Confirm mainblock lenght %d ",mn.GetMainchainLength())
+			*/
+			//mn.AddBlockChunck(tmpsyncstorage.GetChunkById(i))
+			applog.Trace("Confirm mainblock of height %d",tmpblock.Height)
+			mn.ConfirmMainblock(tmpblock)
+			
+			applog.Trace("Confirm mainblock lenght %d ",mn.GetMainchainLength())
+		//}
+
 		
 	}
 	for i:=int(lmpeermainchainlength-startingblockheight-mn.GetConfirmationLayer());i< int(lmpeermainchainlength-startingblockheight);i++ {
@@ -227,9 +230,10 @@ func (sw *Swarm) InitiateSyncing(mn * mainchain.Maincore,lmpeeraddress string) (
 		//applog.Trace("position %d size %d file %d", tmpsyncstorage.Chunkposition[i], tmpsyncstorage.Chunksize[i],tmpsyncstorage.Chunkfileid[i])
 		//mn.AddBlockChunck(tmpsyncstorage.GetChunkById(i))
 		inmemoryblock,_:=mainchain.UnserializeMainblock(tmpsyncstorage.GetChunkById(i))
-		mn.AddInMemoryBlock(inmemoryblock)
-		applog.Trace("Adding inmemorymainblock %d",inmemoryblock.Height)
-		
+		//if mn.ValidateMainblockTransactions(uint32 (i), &inmemoryblock.Transactions){
+			mn.AddInMemoryBlock(inmemoryblock)
+			applog.Trace("Adding inmemorymainblock %d",inmemoryblock.Height)
+		//}
 	}
 	//applog.Trace("chunkposition %v ",tmpsyncstorage.Chunkposition)
 

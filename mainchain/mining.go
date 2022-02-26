@@ -100,6 +100,11 @@ func (mn *Maincore) ConfirmMainblock(mb*Mainblock) {
 	mn.mainbf.AddChunk(mb.Serialize())
 	mn.mainheaders=append(mn.mainheaders,mb.Header)
 	i:=mb.Height
+	if !mn.ValidateMainblockTransactions(uint32 (i), &mb.Transactions){
+		applog.Warning("ConfirmMainblock - Invalid mainblock %d",i)
+		return
+	}
+	
 	for j:=0;j<len(mb.Transactions);j++{
 		//applog.Trace("block %d %x ",i,mn.GetMainblock(i).Transactions[j].ComputeHash())
 		tx:=mb.Transactions[j]
