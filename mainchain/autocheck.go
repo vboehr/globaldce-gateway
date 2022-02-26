@@ -12,6 +12,7 @@ func (mn *Maincore)  AutoCheckMainblocks() bool {
 			applog.Warning("Rejected Propagating block - incorrect transactions")
 			return false
 		}
+
 	} 
 	applog.Trace("AutoCheckMainblocks returns true")
 	return true

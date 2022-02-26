@@ -44,16 +44,14 @@ func startmining(){
 }
 
 /////////////////////////////
-func Mainloop(){
-
-
+func MainInit(){
     applog.Init()
-    quitChan := listenSigInt()
+    
     
     Mn=mainchain.NewMaincore()
     Mn.PutPath( AppPath)
 	Mn.LoadMaincore()
-	defer Mn.UnloadMaincore()
+	
     Mn.BannedNameArray=Usersettings.BannedNameArray
     Wireswarm=wire.NewSwarm()
 
@@ -61,11 +59,11 @@ func Mainloop(){
         Wireswarm.Syncingdone=true
     }
 
-
-	
-	
-	
-	err:=Wireswarm.SetupListener()
+}
+func Mainloop(){
+	quitChan := listenSigInt()
+	defer Mn.UnloadMaincore()
+    err:=Wireswarm.SetupListener()
 	if err != nil {
 		log.Fatal(err)
 	}

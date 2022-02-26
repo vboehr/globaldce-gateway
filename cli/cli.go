@@ -132,6 +132,7 @@ func Start(cliname string){
         //////////////////////////////
     }()
     //
+    daemon.MainInit()
     daemon.Mainloop()
 }
 

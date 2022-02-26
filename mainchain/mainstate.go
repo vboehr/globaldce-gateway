@@ -5,6 +5,7 @@ import (
 
 	"github.com/globaldce/globaldce-toolbox/utility"
 	"fmt"
+	"os"
 	"math/big"
 	//leveldberrors "github.com/syndtr/goleveldb/leveldb/errors"//
 	//leveldbutil "github.com/syndtr/goleveldb/leveldb/util"//
@@ -414,16 +415,23 @@ func (mn *Maincore) GetNameState(name []byte) uint32 {
 ////////////////////////////////////////////
 
 func  (mn *Maincore)  RebuildMainstate() {
-	/*
+	
 	for l:=0;l<mn.dataf.NbChunks();l++{
 		data:=mn.dataf.GetChunkById(int(l))
 		hash:=utility.ComputeHash(data)
 		mn.PutPublicPostState(hash,[]byte(""),*utility.NewHash(nil),0,uint32(l))
 	}
-	*/
+	
+
 	//
 	for i:=0;i<mn.mainbf.NbChunks();i++{
 		//applog.Trace("block %d %d ",i,len(mn.GetMainblock(i).Transactions))
+		if !mn.ValidateMainblockTransactions(uint32 (i), &mn.GetMainblock(i).Transactions){
+			applog.Warning("Rejected block - incorrect transactions - block height %d",i)
+			applog.Warning("RebuildMainstate Failed")
+			os.Exit(0)
+			//return false
+		}
 		for j:=0;j<len(mn.GetMainblock(i).Transactions);j++{
 			//applog.Trace("block %d %x ",i,mn.GetMainblock(i).Transactions[j].ComputeHash())
 			tx:=mn.GetMainblock(i).Transactions[j]

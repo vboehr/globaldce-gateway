@@ -5,7 +5,7 @@ import (
 	"github.com/globaldce/globaldce-toolbox/applog"
 
 	"github.com/globaldce/globaldce-toolbox/utility"
-	//"fmt"
+	"os"
 	//"math/big"
 	//leveldberrors "github.com/syndtr/goleveldb/leveldb/errors"//
 	//leveldbutil "github.com/syndtr/goleveldb/leveldb/util"//
@@ -68,9 +68,13 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 				//applog.Trace("height%d,number%d",height,number)
 				
 				if int(number)>=len(mn.GetMainblock(int(height)).Transactions){
+					applog.Warning("Invalide transaction in updatestate")
+					os.Exit(0)
 					return
 				}
 				if int(tx.Vin[l].Index)>=len(mn.GetMainblock(int(height)).Transactions[number].Vout){
+					applog.Warning("Invalide transaction in updatestate")
+					os.Exit(0)
 					return
 				}
 				
