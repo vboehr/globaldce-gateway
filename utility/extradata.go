@@ -3,7 +3,7 @@ package utility
 //import (
 //	"fmt"
 //)
-const ExtradataMaxSize=1000
+const ExtradataMaxSize=20000
 
 type Extradata struct {
 	Size uint64

@@ -100,7 +100,7 @@ func Mainloop(){
         }*/
         //
         if  Miningrequested && ((Wlt.HotWallet) || (Walletloaded)) && Wireswarm.Syncingdone{
-           if Wlt.HotWallet{
+           if !Wlt.HotWallet{
                 Mn.SyncWallet(Wlt)
                 Mn.LoadUnconfirmedBroadcastedTxs(Wlt)   
            }
