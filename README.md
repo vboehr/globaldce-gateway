@@ -7,7 +7,7 @@ globaldce is a blockchain based experimental decentralized collaboration environ
 We recommend that new users get started using the compressed executable binaries that can be found in releases section:
 https://github.com/globaldce/go-globaldce/releases
 
-Just download the compressed release prepared for your operating system, decompress it and run the globaldce-toolbox executable file.
+Just download the compressed release prepared for your operating system, decompress it and run the go-globaldce executable file.
 
 ## Current Status
 + Tested on Go 1.5

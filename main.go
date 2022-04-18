@@ -8,10 +8,10 @@ import(
 func main(){
 	if len(os.Args)>=2{
 		//fmt.Println("Launching the cli")
-		cli.Start("globaldce-toolbox")
+		cli.Start("go-globaldce")
 	} else {
 		//fmt.Println("Launching the gui")
-		gui.Start("globaldce-toolbox")
+		gui.Start("go-globaldce")
 
 	}
 
