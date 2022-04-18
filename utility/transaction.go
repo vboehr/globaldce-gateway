@@ -2,7 +2,7 @@
 package utility
 
 import (
-	"github.com/globaldce/globaldce-toolbox/applog"
+	"github.com/globaldce/go-globaldce/applog"
 	"fmt"
 	//"encoding/binary"
 	//"encoding/json"

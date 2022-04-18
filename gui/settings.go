@@ -17,8 +17,8 @@ import (
 	//"net/url"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2"
-	//"github.com/globaldce/globaldce-toolbox/cli"
-	"github.com/globaldce/globaldce-toolbox/daemon"
+	//"github.com/globaldce/go-globaldce/cli"
+	"github.com/globaldce/go-globaldce/daemon"
 )
 
 var walletsettingsDisplayedMainwalletFilePath binding.String

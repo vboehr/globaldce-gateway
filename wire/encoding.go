@@ -1,8 +1,8 @@
 package wire
 import(
-	"github.com/globaldce/globaldce-toolbox/utility"
-	"github.com/globaldce/globaldce-toolbox/applog"
-	"github.com/globaldce/globaldce-toolbox/mainchain"
+	"github.com/globaldce/go-globaldce/utility"
+	"github.com/globaldce/go-globaldce/applog"
+	"github.com/globaldce/go-globaldce/mainchain"
 )
 const (
 	RequestMainheadersMax=uint32(100)

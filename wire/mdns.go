@@ -1,6 +1,6 @@
 package wire
 import (
-	"github.com/globaldce/globaldce-toolbox/applog"
+	"github.com/globaldce/go-globaldce/applog"
 	"os"
 	"time"
 	"github.com/globaldce/mdns-1"

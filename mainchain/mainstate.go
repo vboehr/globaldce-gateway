@@ -1,9 +1,9 @@
 package mainchain
 
 import (
-	"github.com/globaldce/globaldce-toolbox/applog"
+	"github.com/globaldce/go-globaldce/applog"
 
-	"github.com/globaldce/globaldce-toolbox/utility"
+	"github.com/globaldce/go-globaldce/utility"
 	"fmt"
 	"os"
 	"math/big"

@@ -9,8 +9,8 @@ import (
     "fyne.io/fyne/v2/dialog"
     //"log"
     "fmt"
-    "github.com/globaldce/globaldce-toolbox/cli"
-    "github.com/globaldce/globaldce-toolbox/daemon"
+    "github.com/globaldce/go-globaldce/cli"
+    "github.com/globaldce/go-globaldce/daemon"
     "fyne.io/fyne/v2/data/validation"
 )
 

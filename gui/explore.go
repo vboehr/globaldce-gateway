@@ -15,9 +15,9 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/data/binding"
-	"github.com/globaldce/globaldce-toolbox/mainchain"
-	"github.com/globaldce/globaldce-toolbox/daemon"
-	"github.com/globaldce/globaldce-toolbox/utility"
+	"github.com/globaldce/go-globaldce/mainchain"
+	"github.com/globaldce/go-globaldce/daemon"
+	"github.com/globaldce/go-globaldce/utility"
 )
 
 //////////////////////////////////////////////////

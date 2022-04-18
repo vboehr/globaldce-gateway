@@ -1,12 +1,12 @@
 package wallet
 import
 (
-	"github.com/globaldce/globaldce-toolbox/utility"
+	"github.com/globaldce/go-globaldce/utility"
 	"encoding/json"
 	"encoding/binary"
 	"bytes"
 	"github.com/btcsuite/btcd/btcec"
-	"github.com/globaldce/globaldce-toolbox/applog"
+	"github.com/globaldce/go-globaldce/applog"
 	"fmt"
 	"os"
 	//"sync"

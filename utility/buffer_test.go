@@ -1,6 +1,6 @@
 package utility
 import (
-	//"github.com/globaldce/globaldce-toolbox/utility"
+	//"github.com/globaldce/go-globaldce/utility"
 	"testing"
 )
 
