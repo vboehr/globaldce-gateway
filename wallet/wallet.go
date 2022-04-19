@@ -5,7 +5,7 @@ import
 	//"encoding/json"
 	//"encoding/binary"
 	//"bytes"
-	"github.com/btcsuite/btcd/btcec"
+	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/globaldce/go-globaldce/applog"
 	"fmt"
 	//"os"
@@ -90,7 +90,7 @@ func (wlt *Wallet) GenerateKeyPair() utility.Hash{
 	//message:="message text"
 	//messageHash:=ComputeHashBytes([]byte(message))
 
-	pk, err := btcec.NewPrivateKey(btcec.S256())
+	pk, err := btcec.NewPrivateKey()
 	if err != nil {
 		//il, err//return (*PrivateKey)(key), nil
 		applog.Trace("err: %x", err)
@@ -104,12 +104,12 @@ func (wlt *Wallet) GenerateKeyPair() utility.Hash{
 	//applog.Trace("private key: %d public key: %d OR %d ", len(pk.Serialize()), len(pk.PubKey().SerializeUncompressed()), len(pk.PubKey().SerializeCompressed()))
 
 	/*
-	sig, err := pk.Sign(messageHash)
+	sig, err := pk.SignCompact(messageHash)
 	if err != nil {
 		applog.Trace("error")
 		//return 0
 	}
-	applog.Trace("signature %x", sig.Serialize())
+	applog.Trace("signature %x", sig)
 
 	// Verify the signature for the message using the public key.
 	verified := sig.Verify(messageHash, pk.PubKey())

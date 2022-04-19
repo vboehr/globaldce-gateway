@@ -49,6 +49,7 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 	nameregistrationtxfeeContainer:=container.NewHBox(nameregistrationtxfeeLabelContainer,nameregistrationtxfeeEntryContainer,nameregistrationtxfeeSetDefaultButtonContainer)
 
 	//Publicposttxfee:PublicposttxfeeDefault,
+	/*
 	publicposttxfeeEntry:=widget.NewEntry()
 	publicposttxfeeEntry.Text=fmt.Sprintf("%d",daemon.Usersettings.Publicposttxfee)
 	publicposttxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
@@ -59,6 +60,7 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 	publicposttxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),publicposttxfeeEntry)
 	publicposttxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Public post fee"))
 	publicposttxfeeContainer:=container.NewHBox(publicposttxfeeLabelContainer,publicposttxfeeEntryContainer,publicposttxfeeSetDefaultButtonContainer)
+	*/
 	//Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
 	sendtoaddressarraytxfeeEntry:=widget.NewEntry()
 	sendtoaddressarraytxfeeEntry.Text=fmt.Sprintf("%d",daemon.Usersettings.Sendtoaddressarraytxfee)
@@ -82,13 +84,14 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 			return
 		}
 		daemon.Usersettings.Nameregistrationtxfee=int(nameregistrationtxfeeNewValue)
+		/*
 		publicposttxfeeNewValue, publicposttxfeeNewValueErr := strconv.ParseInt(publicposttxfeeEntry.Text, 10, 64)
 		if publicposttxfeeNewValueErr!=nil{
 			dialog.ShowInformation("Error", "Entred value for public post fee is inappropriete ", win)
 			return
 		}
 		daemon.Usersettings.Publicposttxfee=int(publicposttxfeeNewValue)
-		
+		*/
 
 		sendtoaddressarraytxfeeNewValue, sendtoaddressarraytxfeeNewValueErr := strconv.ParseInt(sendtoaddressarraytxfeeEntry.Text, 10, 64)
 		if sendtoaddressarraytxfeeNewValueErr!=nil{
@@ -104,7 +107,7 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 	return container.NewVBox(
 		walletpathContainer,
 		nameregistrationtxfeeContainer,
-		publicposttxfeeContainer,
+		//publicposttxfeeContainer,
 		sendtoaddressarraytxfeeContainer,
 		MiningrequestedCheck,
 		saveSettingsButtonContainer,

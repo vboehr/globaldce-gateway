@@ -3,7 +3,7 @@ package wire
 import (
 	"github.com/globaldce/go-globaldce/applog"
 	"github.com/globaldce/go-globaldce/mainchain"
-	"github.com/globaldce/go-globaldce/utility"
+	//"github.com/globaldce/go-globaldce/utility"
 )
 func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool{
 	applog.Trace("\n new message to be handled",rmsg)
@@ -118,6 +118,7 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 			return false
 		}
 	//////////////////////////////////
+	/*
 	case (rmsg.CheckIdentifier( MsgIdentifierRequestData)):
 		applog.Trace("VERY Good request data")
 		correctness,phash :=DecodeRequestData(rmsg)
@@ -209,6 +210,7 @@ func (sw *Swarm) HandlePeerMessage(mn * mainchain.Maincore,rmsg *  Message) bool
 			return false
 			//TODO decrease reputation of peer
 		}
+	*/
 	//////////////////////////////////
 	default:
 		applog.Warning("unkown indentifier")

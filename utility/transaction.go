@@ -6,21 +6,22 @@ import (
 	"fmt"
 	//"encoding/binary"
 	//"encoding/json"
-	"github.com/btcsuite/btcd/btcec"
+	"github.com/btcsuite/btcd/btcec/v2"
+	"github.com/btcsuite/btcd/btcec/v2/ecdsa"
 )
 const (
 	ModuleIdentifierECDSATxOut=1
 	ModuleIdentifierECDSATxIn=2
 	ModuleIdentifierECDSANameRegistration=3
 	ModuleIdentifierECDSANameUnregistration=4
-	ModuleIdentifierECDSANamePublicPost=5
-	ModuleIdentifierECDSAEngagementPublicPost=6
-	ModuleIdentifierECDSAEngagementPublicPostRewardClaim=7
+	//ModuleIdentifierECDSANamePublicPost=5
+	//ModuleIdentifierECDSAEngagementPublicPost=6
+	//ModuleIdentifierECDSAEngagementPublicPostRewardClaim=7
 )
-const (
-	EngagementIdentifierLikePublicPost=1
-	EngagementIdentifierDislikePublicPost=2
-)
+//const (
+//	EngagementIdentifierLikePublicPost=1
+//	EngagementIdentifierDislikePublicPost=2
+//)
 
 type TxOut struct {
 	Value uint64 // in milion globals
@@ -81,6 +82,7 @@ func NewECDSATxIn(inhash Hash,index uint32,pubkeycompressedbytes []byte) TxIn{
 	tmptxin.Bytecode=append(tmptxin.Bytecode,tmpbw.GetContent()...)
 	return tmptxin
 }
+/*
 func NewECDSANamePublicPost(inhash Hash,index uint32,pubkeycompressedbytes []byte,ed Extradata) TxIn{		
 	var tmptxin TxIn
 	tmptxin.Hash=inhash
@@ -94,7 +96,7 @@ func NewECDSANamePublicPost(inhash Hash,index uint32,pubkeycompressedbytes []byt
 	tmptxin.Bytecode=append(tmptxin.Bytecode,tmpbw.GetContent()...)
 	return tmptxin
 }
-
+*/
 func NewECDSANameUnregistration(inhash Hash,index uint32,pubkeycompressedbytes []byte) TxIn{		
 	var tmptxin TxIn
 	tmptxin.Hash=inhash
@@ -107,7 +109,7 @@ func NewECDSANameUnregistration(inhash Hash,index uint32,pubkeycompressedbytes [
 	tmptxin.Bytecode=append(tmptxin.Bytecode,tmpbw.GetContent()...)
 	return tmptxin
 }
-
+/*
 func NewECDSAEngagementRewardClaim(engagementtxhash Hash,engagementtxindex uint32,pubkeycompressedbytes []byte) TxIn{
 	var tmptxin TxIn
 	tmptxin.Hash=engagementtxhash
@@ -135,7 +137,7 @@ func NewECDSAEngagementPublicPost(eid uint32,stakedamount uint64,txhash Hash,ind
 	tmptxout.Bytecode=tmpbw.GetContent()
 	return tmptxout
 }
-
+*/
 func (txout * TxOut) CompareWithAddress(addr Hash) bool{
 	//
 	primitivemoduleid:=DecodeBytecodeId(txout.Bytecode)
@@ -229,13 +231,13 @@ func (tx * Transaction) ComputeHash() Hash{
 }
 func VerifySignature(signinghash Hash,signaturebytes []byte,pubkeycompressedbytes []byte) (error){
 	//pubkeycompressedbytes,_,err:=DecodeECDSATxInBytecode(tx.Vin[i].Bytecode)
-	signature, err := btcec.ParseSignature(signaturebytes, btcec.S256())
+	signature, err := ecdsa.ParseSignature(signaturebytes) 
 	if err != nil {
 		applog.Warning("%v",err)
 		return err
 	}
 	//applog.Trace("signature[%d] %x len %d ",i,tx.Vin[i].Signature,len(tx.Vin[i].Signature))
-	pubKey, err := btcec.ParsePubKey(pubkeycompressedbytes, btcec.S256())
+	pubKey, err := btcec.ParsePubKey(pubkeycompressedbytes)
 	if err != nil {
 		applog.Warning("%v",err)
 		return err

@@ -85,7 +85,7 @@ func DecodeECDSATxInBytecode(bytecode []byte) ([]byte,*Extradata,error ){
 	
 	return pubkeycompressed,extradata,nil
 }
-//
+/*
 func DecodeECDSANamePublicPost(bytecode []byte) ([]byte,*Extradata,error){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()
@@ -106,7 +106,7 @@ func DecodeECDSANamePublicPost(bytecode []byte) ([]byte,*Extradata,error){
 	
 	return pubkeycompressed,ed,nil
 }
-
+*/
 func DecodeECDSANameUnregistration(bytecode []byte) ([]byte,*Extradata,error){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()
@@ -174,7 +174,7 @@ func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,*Extradata,error
 	return &pubkeyhash,name,extradata,nil
 
 }
-//
+/*
 func DecodeECDSAEngagement(bytecode []byte) (uint32,*Hash,uint32,*Hash,*Extradata,error){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()
@@ -188,17 +188,7 @@ func DecodeECDSAEngagement(bytecode []byte) (uint32,*Hash,uint32,*Hash,*Extradat
 	//}
 	//name:=tmpbr.GetBytes(uint(namelen)) 
 	
-	/*
-	extradatalen:=tmpbr.GetVarUint()
-	if extradatalen>ExtradataMaxSize{
-		return nil,nil,nil,fmt.Errorf("ExtradataMaxSize exceeded")
-	}
-	var extradata Extradata
-	if extradatalen!=0{
-		extradata.Size=extradatalen
-		extradata.Hash=tmpbr.GetHash()
-	}
-	*/
+
 	hash:=tmpbr.GetHash()
 	index:=tmpbr.GetUint32()
 	claimaddress:=tmpbr.GetHash()
@@ -234,3 +224,4 @@ func DecodeECDSAEngagementRewardClaim (bytecode []byte) ([]byte,*Extradata,error
 	
 	return pubkeycompressed,ed,nil
 }
+*/

@@ -8,7 +8,7 @@ import (
 	"github.com/globaldce/go-globaldce/wallet"
 	//"github.com/globaldce/go-globaldce/mainchain"
 	//"os"
-	//"time"
+	"time"
 	//"encoding/json"
 	"math/big"
 	//"net"
@@ -69,7 +69,7 @@ func (mn *Maincore) Mine(wlt *wallet.Wallet) (bool,*Mainblock){
 	///////////////////
 	tmplastmainheader:=mn.GetLastMainheader()
 	//TODO unlocking maincore and wallet
-	//time.Sleep(1*time.Second)
+	time.Sleep(1*time.Second)
 	applog.Trace("Lets go .......")
 	success:=mainblock.Mine( tmplastmainheader.Timestamp, tmplastmainheader.Hash,targetbits)
 	//TODO locking maincore and wallet
@@ -102,7 +102,9 @@ func (mn *Maincore) ConfirmMainblock(mb*Mainblock) {
 	i:=mb.Height
 	if !mn.ValidateMainblockTransactions(uint32 (i), &mb.Transactions){
 		applog.Warning("ConfirmMainblock - Invalid mainblock %d",i)
-		return
+		mn.PutMainblockState(uint32 (i),StateValueIdentifierUnvalidMainblock)
+	} else {
+		mn.PutMainblockState(uint32 (i),StateValueIdentifierValidMainblock)
 	}
 	
 	for j:=0;j<len(mb.Transactions);j++{

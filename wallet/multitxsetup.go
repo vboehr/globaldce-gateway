@@ -3,6 +3,7 @@ import (
 	"github.com/globaldce/go-globaldce/applog"
 	"fmt"
 	"github.com/globaldce/go-globaldce/utility"
+	"github.com/btcsuite/btcd/btcec/v2/ecdsa"
 )
 
 
@@ -96,14 +97,14 @@ for _,partialamount:=range amountarray{
 	}
 
 	for i:=0;i<len(selectedassetarray);i++{
-		sig, err := wlt.Privatekeyarray[selectedassetarray[i].Privatekeyindex].Sign(newtxhash[:])
-		if err != nil {
-			applog.Trace("error: unable to sign input %d of transaction",i)
-			return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
-		}
-		//applog.Trace("signature %x", sig.Serialize())
+		sig := ecdsa.Sign(wlt.Privatekeyarray[selectedassetarray[i].Privatekeyindex],newtxhash[:])
+		//if err != nil {
+		//	applog.Trace("error: unable to sign input %d of transaction",i)
+		//	return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
+		//}
+		//applog.Trace("signature %x", sig)
 		tmpbw:=utility.NewBufferWriter()
-		//tmpbw.PutVarUint(uint64(len(sig.Serialize())))
+		//tmpbw.PutVarUint(uint64(len(sig)))
 		tmpbw.PutBytes(sig.Serialize())
 		//tx.Vin[i].Bytecode=append(tx.Vin[i].Bytecode, tmpbw.GetContent() ...)
 		tx.Vin[i].Signature=tmpbw.GetContent()//selectedassetarray[i].Privatekeyindex 

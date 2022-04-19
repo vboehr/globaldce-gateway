@@ -52,7 +52,7 @@ func MainInit(){
     Mn.PutPath( AppPath)
 	Mn.LoadMaincore()
 	
-    Mn.BannedNameArray=Usersettings.BannedNameArray
+    //Mn.BannedNameArray=Usersettings.BannedNameArray
     Wireswarm=wire.NewSwarm()
 
     if Seed {
@@ -81,8 +81,8 @@ func Mainloop(){
    
     Wireswarm.Bootstrap()
     ticker1 := time.Tick(time.Second * 7)
-    ticker2 := time.Tick(time.Second * 10)
-    ticker3 := time.Tick(time.Second * 66)
+    //ticker2 := time.Tick(time.Second * 10)
+    //ticker3 := time.Tick(time.Second * 66)
 
     //
     for {
@@ -153,7 +153,7 @@ func Mainloop(){
 
         
             }
-        //
+        /*
         case <-ticker2 ://time.After(60 * time.Second):
             applog.Trace("Checking missing data")
             hash:=Mn.GetRandomMissingDataHash()
@@ -162,14 +162,14 @@ func Mainloop(){
             } else{
                 applog.Trace("No missing data")
             }
-        //
+        
         case <-ticker3 ://time.After(60 * time.Second):
             applog.Trace("Checking missing data file")
             hash:=Mn.GetRandomMissingDataFileHash()
             if hash!=nil {
                 Wireswarm.RequestDataFile(*hash)
             }
-        //
+        */
         case <-time.After(180 * time.Minute):
             if Walletloaded {
                 // (re)broadcasting wallet transactions that have not been included in the mainchain

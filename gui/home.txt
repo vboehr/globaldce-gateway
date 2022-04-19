@@ -1,6 +1,6 @@
 package gui
 
-
+/*
 import (
 	//"log"
 	//"strings"
@@ -23,15 +23,15 @@ func homeScreen(win fyne.Window) fyne.CanvasObject {
 		container.NewTabItem("Share",  shareScreen(win)),
 
 	)
-	/*
+	//
 	//tabsisTransitioning
-	tabs.OnChanged = func(_ *container.TabItem) {
+	//tabs.OnChanged = func(_ *container.TabItem) {
 		//list.Refresh()
-		fmt.Println("!!!!!!",list)
-	}
-	*/
+	//	fmt.Println("!!!!!!",list)
+	//}
+	
 	tabs.SetTabLocation(container.TabLocationTop)
 	return tabs
 
 }
-
+*/

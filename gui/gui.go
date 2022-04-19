@@ -92,7 +92,7 @@ func Start(appname string) {
 			//hometab=homeScreen(myWindow)
 			tabs := container.NewAppTabs(
 				//container.NewTabItemWithIcon("Wallet",theme.FolderIcon(),  overviewScreen()),
-				container.NewTabItem("Home",  homeScreen(myWindow)),
+				//container.NewTabItem("Home",  homeScreen(myWindow)),
 				container.NewTabItem("Balance",  balanceScreen()),
 				container.NewTabItem("Registration",  registrationScreen(myWindow)),
 				//container.NewTabItem("Send",  sendScreen()),//txbuilderScreen()

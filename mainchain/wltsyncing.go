@@ -18,6 +18,14 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 	applog.Trace("Maincore Syncing Wallet Adding Assets ...")
 	for i:=wlt.Lastknownblock+uint64(1);i<uint64(mn.GetConfirmedMainchainLength());i++{
 		mb:=mn.GetConfirmedMainblock(int(i))
+		//if !mn.ValidateMainblockTransactions(uint32 (i), &mb.Transactions){
+		//	applog.Warning("ConfirmMainblock - Invalid mainblock %d",i)
+		//	return
+		//}
+		if mn.GetMainblockState(uint32(i))==StateValueIdentifierUnvalidMainblock{
+			continue
+		}
+		
 		for j:=0;j<len(mb.Transactions);j++{
 			for k:=0;k<len(mb.Transactions[j].Vout);k++{
 				for l:=0;l<len(wltPubkeyHash);l++{

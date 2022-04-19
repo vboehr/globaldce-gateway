@@ -5,7 +5,7 @@ import
 	"encoding/json"
 	"encoding/binary"
 	"bytes"
-	"github.com/btcsuite/btcd/btcec"
+	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/globaldce/go-globaldce/applog"
 	"fmt"
 	"os"
@@ -136,7 +136,7 @@ func (wlt *Wallet) LoadJSONFile(path string,key []byte) error{
 	//applog.Trace("read JSONFILE CONTENT: %d %d", len (walletfile.Keypairarray),len(walletfile.Assetarray))
 	for i:=0;i<len(walletfile.Privatekeyarray);i++{
 		
-		privKey, _ := btcec.PrivKeyFromBytes(btcec.S256(), []byte( walletfile.Privatekeyarray[i] ))
+		privKey, _ := btcec.PrivKeyFromBytes([]byte( walletfile.Privatekeyarray[i] ))
 		wlt.Privatekeyarray=append(wlt.Privatekeyarray,privKey)
 	}
 	wlt.Assetarray=walletfile.Assetarray

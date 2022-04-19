@@ -4,9 +4,9 @@ import (
 	"github.com/globaldce/go-globaldce/applog"
 
 	"github.com/globaldce/go-globaldce/utility"
-	"fmt"
+	//"fmt"
 	"os"
-	"math/big"
+	//"math/big"
 	//leveldberrors "github.com/syndtr/goleveldb/leveldb/errors"//
 	//leveldbutil "github.com/syndtr/goleveldb/leveldb/util"//
 )
@@ -15,15 +15,16 @@ const (
 	StateKeyIdentifierTxOutput=1
 	StateKeyIdentifierTx=3
 	StateKeyIdentifierNameRegistration=4
-	StateKeyIdentifierData=6
-	StateKeyIdentifierDataFile=7
-	StateKeyIdentifierEngagementName=8
-	StateKeyIdentifierEngagementNameLike=9
-	StateKeyIdentifierEngagementNameDislike=10
-	StateKeyIdentifierEngagementPublicPost=11
-	StateKeyIdentifierEngagementPublicPostLike=12
-	StateKeyIdentifierEngagementPublicPostDislike=13
-	StateKeyIdentifierEngagementPublicPostReward=14
+	StateKeyIdentifierMainblock=6
+	//StateKeyIdentifierData=6
+	//StateKeyIdentifierDataFile=7
+	//StateKeyIdentifierEngagementName=8
+	//StateKeyIdentifierEngagementNameLike=9
+	//StateKeyIdentifierEngagementNameDislike=10
+	//StateKeyIdentifierEngagementPublicPost=11
+	//StateKeyIdentifierEngagementPublicPostLike=12
+	//StateKeyIdentifierEngagementPublicPostDislike=13
+	//StateKeyIdentifierEngagementPublicPostReward=14
 )
 const (
 	StateValueIdentifierNotFound=0
@@ -32,12 +33,14 @@ const (
 	StateValueIdentifierTx=3
 	StateValueIdentifierActifNameRegistration=4
 	StateValueIdentifierInactifNameRegistration=5
-	StateValueIdentifierData=6
-	StateValueIdentifierDataFile=7
-	StateValueIdentifierEngagementName=8
-	StateValueIdentifierUnclaimedEngagementPublicPost=9
-	StateValueIdentifierClaimedEngagementPublicPost=10
-	StateValueIdentifierEngagementPublicPostReward=11
+	StateValueIdentifierValidMainblock=6
+	StateValueIdentifierUnvalidMainblock=7
+	//StateValueIdentifierData=6
+	//StateValueIdentifierDataFile=7
+	//StateValueIdentifierEngagementName=8
+	//StateValueIdentifierUnclaimedEngagementPublicPost=9
+	//StateValueIdentifierClaimedEngagementPublicPost=10
+	//StateValueIdentifierEngagementPublicPostReward=11
 )
 
 func (mn *Maincore) PutTxState(txhash utility.Hash,height uint32,number uint32) error{
@@ -141,6 +144,41 @@ func (mn *Maincore) GetNameState(name []byte) uint32 {
 	return stateidentifier
 }
 
+
+func (mn *Maincore) PutMainblockState(height uint32,state uint32) error{
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierMainblock)
+	tmpkeybw.PutUint32(height)
+	//tmpkeybw.GetContent()
+
+	tmpbw:=utility.NewBufferWriter()
+	tmpbw.PutUint32(state)
+	err := mn.mainstatedb.Put(tmpkeybw.GetContent(), tmpbw.GetContent(), nil)
+	return err
+}
+
+func (mn *Maincore) GetMainblockState(height uint32) (uint32) {
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierTx)
+	tmpkeybw.PutUint32(height)
+	//tmpkeybw.GetContent()
+
+	data, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
+	if err != nil {
+		applog.Trace("GetMainblockStat height %d: %v",height, err)
+		return StateValueIdentifierNotFound
+	}
+	tmpbr:=utility.NewBufferReader(data)
+
+	stateidentifier:=tmpbr.GetUint32()
+
+
+	applog.Trace("type %d ",stateidentifier)
+	return stateidentifier
+}
+
+
+/*
 func (mn *Maincore) PutPublicPostState(datahash utility.Hash,namebytes []byte,txhash utility.Hash,index uint32,id uint32) error{
 	tmpkeybw:=utility.NewBufferWriter()
 	tmpkeybw.PutUint32(StateKeyIdentifierData)
@@ -183,8 +221,8 @@ func (mn *Maincore) GetPublicPostState(datahash utility.Hash)([]byte,*utility.Ha
 	return namebytes,&txhash,index,id,nil
 }
 
-
-
+*/
+/*
 
 func (mn *Maincore) PutDataFileState(datafilehash utility.Hash,size uint64) error{
 	tmpkeybw:=utility.NewBufferWriter()
@@ -265,6 +303,7 @@ func (mn *Maincore) GetEngagementNameState(name []byte,engagementidentifier uint
 	totalstake:=tmpbr.GetBigInt()
 	return nbengagement,*totalstake // returns nbengagement and totalstake
 }
+*/
 /*
 func (mn *Maincore) PutEngagementPublicPostState(pptxhash utility.Hash,pptxindex uint32,claimaddress utility.Hash,engagementidentifier uint32,etxhash utility.Hash,etxindex uint32) error {
 
@@ -305,7 +344,7 @@ func (mn *Maincore) GetEngagementPublicPostState(pptxhash utility.Hash,pptxindex
 }*/
 
 
-//
+/*
 func (mn *Maincore) PutEngagementPublicPostRewardState(publicposttxhash utility.Hash, publicposttxindex uint32,liketotalstake uint64,disliketotalstake uint64,liketotalweight big.Int,disliketotalweight big.Int) error {
 
 	tmpkeybw:=utility.NewBufferWriter()
@@ -395,7 +434,7 @@ func (mn *Maincore) GetEngagementPublicPostRewardValue(publicposttxhash utility.
 	claimreward=uint64(bigclaimreward.Int64())
 	return claimreward,nil
 }
-
+*/
 /*
 func (mn *Maincore) GetNameState(name []byte) uint32 {
 	tmpkeybw:=utility.NewBufferWriter()
@@ -411,17 +450,18 @@ func (mn *Maincore) GetNameState(name []byte) uint32 {
 
 	stateidentifier:=tmpbr.GetUint32()
 	return stateidentifier
-}*/
+}
+*/
 ////////////////////////////////////////////
 
 func  (mn *Maincore)  RebuildMainstate() {
-	
+	/*
 	for l:=0;l<mn.dataf.NbChunks();l++{
 		data:=mn.dataf.GetChunkById(int(l))
 		hash:=utility.ComputeHash(data)
 		mn.PutPublicPostState(hash,[]byte(""),*utility.NewHash(nil),0,uint32(l))
 	}
-	
+	*/
 
 	//
 	for i:=0;i<mn.mainbf.NbChunks();i++{

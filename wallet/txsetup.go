@@ -3,6 +3,7 @@ import (
 	"github.com/globaldce/go-globaldce/applog"
 	"fmt"
 	"github.com/globaldce/go-globaldce/utility"
+	"github.com/btcsuite/btcd/btcec/v2/ecdsa"
 )
 
 func (wlt * Wallet) ComputeBalance() (uint64){
@@ -48,21 +49,22 @@ func (wlt * Wallet) SetupTransactionForNameUnregistration(name string,fee uint64
 
 	//i:=len(tx.Vin)-1
 	i:=0
-		sig, err := wlt.Privatekeyarray[prvkeyindex].Sign(newtxhash[:])
-		if err != nil {
-			applog.Trace("error: unable to sign input %d of transaction",i)
-			return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
-		}
-		//applog.Trace("signature %x", sig.Serialize())
+		sig:= ecdsa.Sign(wlt.Privatekeyarray[prvkeyindex],newtxhash[:])
+		//if err != nil {
+		//	applog.Trace("error: unable to sign input %d of transaction",i)
+		//	return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
+		//}
+		//applog.Trace("signature %x", sig)
 		tmpbw:=utility.NewBufferWriter()
-		//tmpbw.PutVarUint(uint64(len(sig.Serialize())))
+		//tmpbw.PutVarUint(uint64(len(sig)))
 		tmpbw.PutBytes(sig.Serialize())
 		//tx.Vin[i].Bytecode=append(tx.Vin[i].Bytecode, tmpbw.GetContent() ...)
 		tx.Vin[i].Signature=tmpbw.GetContent()//selectedassetarray[i].Privatekeyindex 
 	
 
-	return tx,err
+	return tx,nil
 }
+/*
 func (wlt * Wallet) SetupTransactionForNamePublicPost(name string,ed utility.Extradata,fee uint64)  (*utility.Transaction,error){
 	a,aerr:=wlt.GetAssetFromRegisteredName(name)
 	if aerr!=nil{
@@ -89,15 +91,15 @@ func (wlt * Wallet) SetupTransactionForNamePublicPost(name string,ed utility.Ext
 
 	i:=len(tx.Vin)-1
 	//i:=0
-		sig, err := wlt.Privatekeyarray[prvkeyindex].Sign(newtxhash[:])
+		sig, err := ecdsa.SignCompact(wlt.Privatekeyarray[prvkeyindex],newtxhash[:],true)
 		if err != nil {
 			applog.Trace("error: unable to sign input %d of transaction",i)
 			return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
 		}
-		//applog.Trace("signature %x", sig.Serialize())
+		//applog.Trace("signature %x", sig)
 		tmpbw:=utility.NewBufferWriter()
-		//tmpbw.PutVarUint(uint64(len(sig.Serialize())))
-		tmpbw.PutBytes(sig.Serialize())
+		//tmpbw.PutVarUint(uint64(len(sig)))
+		tmpbw.PutBytes(sig)
 		//tx.Vin[i].Bytecode=append(tx.Vin[i].Bytecode, tmpbw.GetContent() ...)
 		tx.Vin[i].Signature=tmpbw.GetContent()//selectedassetarray[i].Privatekeyindex 
 	
@@ -135,22 +137,22 @@ func (wlt * Wallet) SetupTransactionForEngagementRewardClaim(etxhash utility.Has
 
 	i:=len(tx.Vin)-1
 	//i:=0
-		sig, err := wlt.Privatekeyarray[prvkeyindex].Sign(newtxhash[:])
+		sig, err := ecdsa.SignCompact(wlt.Privatekeyarray[prvkeyindex],newtxhash[:],true)
 		if err != nil {
 			applog.Trace("error: unable to sign input %d of transaction",i)
 			return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
 		}
-		//applog.Trace("signature %x", sig.Serialize())
+		//applog.Trace("signature %x", sig)
 		tmpbw:=utility.NewBufferWriter()
-		//tmpbw.PutVarUint(uint64(len(sig.Serialize())))
-		tmpbw.PutBytes(sig.Serialize())
+		//tmpbw.PutVarUint(uint64(len(sig)))
+		tmpbw.PutBytes(sig)
 		//tx.Vin[i].Bytecode=append(tx.Vin[i].Bytecode, tmpbw.GetContent() ...)
 		tx.Vin[i].Signature=tmpbw.GetContent()//selectedassetarray[i].Privatekeyindex 
 	
 
 	return tx,err
 }
-
+*/
 
 func (wlt * Wallet) SetupTransactionForNameRegistration(name []byte,pubkeyhash utility.Hash,amount uint64,fee uint64)  (*utility.Transaction,error){
 	tmptxout:=utility.NewECDSANameRegistration(amount,name,pubkeyhash)
@@ -237,14 +239,14 @@ func (wlt * Wallet) SetupTransactionAmount(amount uint64,fee uint64,txin *utilit
 	}
 
 	for i:=0;i<len(selectedassetarray);i++{
-		sig, err := wlt.Privatekeyarray[selectedassetarray[i].Privatekeyindex].Sign(newtxhash[:])
-		if err != nil {
-			applog.Trace("error: unable to sign input %d of transaction",i)
-			return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
-		}
-		//applog.Trace("signature %x", sig.Serialize())
+		sig:= ecdsa.Sign(wlt.Privatekeyarray[selectedassetarray[i].Privatekeyindex],newtxhash[:])
+		//if err != nil {
+		//	applog.Trace("error: unable to sign input %d of transaction",i)
+		//	return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
+		//}
+		//applog.Trace("signature %x", sig)
 		tmpbw:=utility.NewBufferWriter()
-		//tmpbw.PutVarUint(uint64(len(sig.Serialize())))
+		//tmpbw.PutVarUint(uint64(len(sig)))
 		tmpbw.PutBytes(sig.Serialize())
 		//tx.Vin[i].Bytecode=append(tx.Vin[i].Bytecode, tmpbw.GetContent() ...)
 		tx.Vin[i].Signature=tmpbw.GetContent()//selectedassetarray[i].Privatekeyindex 

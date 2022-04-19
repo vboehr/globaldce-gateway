@@ -84,6 +84,7 @@ func managewallet(ws *wire.Swarm,mn *mainchain.Maincore,wlt * wallet.Wallet){
 				}
 				
 				Sendnameregistration(ws,mn,wlt,requestarguments[1],requestarguments[2])
+			/*
 			case "sendpublicpost":
 				if len(requestarguments)<4{
 					sendpublicposthelp()
@@ -95,6 +96,7 @@ func managewallet(ws *wire.Swarm,mn *mainchain.Maincore,wlt * wallet.Wallet){
 				}
 				feestring:=fmt.Sprintf("%d",daemon.Usersettings.Publicposttxfee)
 				Sendpublicpost(ws,mn,wlt,requestarguments[1],requestarguments[2],requestarguments[3],filepatharray,feestring)
+			*/
 			case "displaybalance":
 				displaybalance(mn,wlt)
 			case "displayaddresses":
@@ -126,7 +128,7 @@ func managewallethelp(){
 	fmt.Printf("generateaddress			  				\n")
 	fmt.Printf("sendtoaddress			  				\n")
 	fmt.Printf("sendnameregistration	  				\n")
-	fmt.Printf("sendpublicpost			  				\n")
+	//fmt.Printf("sendpublicpost			  				\n")
 	fmt.Printf("displaybalance  						\n")
 	fmt.Printf("displayaddresses	  					\n")
 	fmt.Printf("displayalltransactions  				\n")
@@ -367,6 +369,7 @@ func sendnameregistrationhelp(){
     fmt.Printf("sendnameregistration X N \n")
     //
 }
+/*
 func sendpublicposthelp(){
     fmt.Printf("\nError: sendpublicpost inappropiate usage\n")
     fmt.Printf("In order to proceed with a public post for the registred name X with a web link of Y, a text Z and attached files F1 F2 ... Fn, enter as follows:\n")
@@ -374,12 +377,12 @@ func sendpublicposthelp(){
     //
 }
 func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,linkstring string,textstring string,filepatharray []string,amountfeestring string){
-	/*
-	a,aerr:=wlt.GetAssetFromRegisteredName(namestring)
-    if aerr!=nil{
-        fmt.Printf("%v",aerr)
-        return
-    }*/
+	//
+	//a,aerr:=wlt.GetAssetFromRegisteredName(namestring)
+    //if aerr!=nil{
+    //    fmt.Printf("%v",aerr)
+    //    return
+    //}
 	
 	amountfee, ferr := strconv.ParseInt(amountfeestring, 10, 64)
     if ferr!=nil{
@@ -428,7 +431,7 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
     }
-}
+}*/
 func Sendnameregistration(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,amountstring string) error{
     //applog.Trace("Wallet ballance %f",float64 (wlt.ComputeBalance())/1000000.0)
     //applog.Trace("Wallet Lastknownblock %d",wlt.Lastknownblock)

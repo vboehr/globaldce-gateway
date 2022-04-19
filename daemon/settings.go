@@ -11,7 +11,7 @@ var MainwalletFilePathDefault=filepath.Join("WalletFiles","Wallet.dat")
 var (
 	MaxDisplayedPostDefault=30
 	NameregistrationtxfeeDefault=300
-	PublicposttxfeeDefault=500
+	//PublicposttxfeeDefault=500
 	SendtoaddressarraytxfeeDefault=500
 )
 
@@ -27,12 +27,12 @@ type UsersettingsType struct {
 	//////////////////////////
 	MaxDisplayedPost int
 	Nameregistrationtxfee int
-	Publicposttxfee int
+	//Publicposttxfee int
 	Sendtoaddressarraytxfee int
 	//Lastknownblock uint32
 	//Broadcastedtxarray [] Broadcastedtx
 	//mu sync.Mutex
-	BannedNameArray []string
+	//BannedNameArray []string
 	Miningrequested bool
 }
 var Usersettings UsersettingsType
@@ -46,9 +46,9 @@ func SetDefaultSettings(){
 		/////////////////////////////////
 		MaxDisplayedPost:MaxDisplayedPostDefault,
 		Nameregistrationtxfee:NameregistrationtxfeeDefault,
-		Publicposttxfee:PublicposttxfeeDefault,
+		//Publicposttxfee:PublicposttxfeeDefault,
 		Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
-		BannedNameArray:nil,
+		//BannedNameArray:nil,
 		Miningrequested:false,
 	}
 }
@@ -66,9 +66,9 @@ func ApplyUsersettings(){
 //	Usersettings.MainwalletFilePath=path
 //}
 func SaveUsersettingsFile() error{
-	if Mn!=nil{
-		Usersettings.BannedNameArray=Mn.BannedNameArray
-	}
+	//if Mn!=nil{
+	//	Usersettings.BannedNameArray=Mn.BannedNameArray
+	//}
 	
 	//
 	usersettingsfilebytes, err := json.Marshal(Usersettings)

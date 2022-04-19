@@ -21,7 +21,7 @@ func emptyCMD(){
 }
 func helpCMD(){
     applog.Notice("\n%s command line interface",appName)
-    applog.Notice("Copyright 2020-2021 globaldce developers\n")
+    applog.Notice("Copyright 2020-2022 globaldce developers\n")
     applog.Notice("Usage: %s COMMAND [OPTIONS]... ARGUMENTS...\n",appName)
     applog.Notice("BASIC COMMANDS:")
     applog.Notice("mine                    start mining")
@@ -33,7 +33,7 @@ func helpCMD(){
                                         // TODO add support for more types of addresses and use of keyword '-addresstype:'
     applog.Notice("sendtoaddress           send a transaction (create and broadcast a transaction)")
     applog.Notice("sendnameregistration    send a name registration transaction")
-    applog.Notice("sendpublicpost          send a public post transaction")
+    //applog.Notice("sendpublicpost          send a public post transaction")
     //applog.Notice("getmainchaininfo      .....")
     //applog.Notice("getwalletinfo         .....")
     //applog.Notice("getblock              ......")

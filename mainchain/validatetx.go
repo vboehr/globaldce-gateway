@@ -113,6 +113,7 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				}
 				*/
 				return inpututxo.Value,nil
+		/*
 		case utility.ModuleIdentifierECDSANamePublicPost:
 				if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierActifNameRegistration){
 					return 0,fmt.Errorf("invalide ** GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
@@ -133,16 +134,16 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 					return 0,fmt.Errorf("Corrupt transaction input - input public key do not match its associated output hash")
 				}
 				//applog.Trace("Value",inpututxo.Value)
-				/*
-				_,name,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
-				_,totalstakedislike:=mn.GetEngagementDislikeName(name)
-				_,totalstakelike:=mn.GetEngagementLikeName(name)
-				if inpututxo.Value<mn.freezingcoef*uint64(totalstakedislike-totalstakelike){
-					return 0,fmt.Errorf("Deposit frozen")
-				}
-				*/
+				//
+				//_,name,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
+				//_,totalstakedislike:=mn.GetEngagementDislikeName(name)
+				//_,totalstakelike:=mn.GetEngagementLikeName(name)
+				//if inpututxo.Value<mn.freezingcoef*uint64(totalstakedislike-totalstakelike){
+				//	return 0,fmt.Errorf("Deposit frozen")
+				//}
+				//
 				return 0,nil
-		//
+		
 		case utility.ModuleIdentifierECDSAEngagementPublicPostRewardClaim:
 			//pubkey,_,_:=utility.DecodeECDSAEngagementRewardClaim(tmptxin.Bytecode)
 			//rewardclaimaddress:=utility.ComputeHash(pubkey)
@@ -189,7 +190,7 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 			applog.Trace("Adding valid GetEngagementPublicPostRewardValue - %d",engagementreward)
 			return engagementreward,nil
 
-
+		*/
 		default:
 			return 0,fmt.Errorf("Unknown moduleid of TxIn")
 	}
@@ -215,6 +216,7 @@ func (mn *Maincore) ValidateTxOut(tmptxout utility.TxOut)(uint64,error){
 				return 0,verr
 			}
 			return tmptxout.Value,nil
+		/*
 		case utility.ModuleIdentifierECDSAEngagementPublicPost:
 			_,_,_,_,_,err:=utility.DecodeECDSAEngagement(tmptxout.Bytecode)
 			//eid,&hash,index,extradata,nil
@@ -225,6 +227,7 @@ func (mn *Maincore) ValidateTxOut(tmptxout utility.TxOut)(uint64,error){
 				return 0,fmt.Errorf("Engagement stake of tx exceeds ENGAGEMENT_PUBLICPOST_MAXSTAKE")
 			}
 			return tmptxout.Value,nil
+		*/
 		//default:
 		//	return 0,fmt.Errorf("Unknown moduleid of TxOut")
 		}

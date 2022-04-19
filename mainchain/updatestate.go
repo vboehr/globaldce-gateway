@@ -5,7 +5,7 @@ import (
 	"github.com/globaldce/go-globaldce/applog"
 
 	"github.com/globaldce/go-globaldce/utility"
-	"os"
+	//"os"
 	//"math/big"
 	//leveldberrors "github.com/syndtr/goleveldb/leveldb/errors"//
 	//leveldbutil "github.com/syndtr/goleveldb/leveldb/util"//
@@ -24,9 +24,13 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 				applog.Trace("Puttting %x %d  stat %d",txhash,uint32(k),StateValueIdentifierUnspentTxOutput)
 			case utility.ModuleIdentifierECDSANameRegistration:
 				_,name,_,_:=utility.DecodeECDSANameRegistration(tx.Vout[k].Bytecode) 
+				if mn.GetNameState(name)==StateValueIdentifierActifNameRegistration{
+					applog.Warning("Names is already taken")
+				}
 				mn.PutTxOutputState(txhash,uint32(k),StateValueIdentifierActifNameRegistration)
 				applog.Trace("Puttting %x %d %d",txhash,uint32(k),StateValueIdentifierActifNameRegistration)
 				mn.PutNameState(name,StateValueIdentifierActifNameRegistration)
+			/*
 			case utility.ModuleIdentifierECDSAEngagementPublicPost:
 				applog.Trace("Updating ECDSAEngagement TxHash %x %d",txhash,uint32(k))
 				mn.PutTxOutputState(txhash,uint32(k),StateValueIdentifierUnclaimedEngagementPublicPost)
@@ -47,7 +51,7 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 					mn.AddEngagementPublicPostRewardDislike(*pptxhash,pptxindex,tx.Vout[k].Value,stakeheight)
 				}
 				
-				
+			*/
 				//mn.PutEngagementPublicPostState(*pptxhash,pptxindex,*claimaddress,StateValueIdentifierUnclaimedEngagementPublicPost,txhash,uint32(k) )
 			//default:
 			//
@@ -63,6 +67,7 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 		switch moduleid {
 			case utility.ModuleIdentifierECDSATxIn:
 				mn.PutTxOutputState(tx.Vin[l].Hash,tx.Vin[l].Index,StateValueIdentifierSpentTxOutput)
+			/*
 			case utility.ModuleIdentifierECDSANamePublicPost:
 				_,height,number:=mn.GetTxState(tx.Vin[l].Hash)
 				//applog.Trace("height%d,number%d",height,number)
@@ -94,7 +99,8 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 						mn.AddToMissingDataHashArray(ed.Hash)	
 					}
 				}
-
+			*/
+			/*
 			case utility.ModuleIdentifierECDSAEngagementPublicPostRewardClaim:
 				applog.Trace("Updating ECDSAEngagementRewardClaim Tx")
 				//tmptxin:=tx.Vin[l]
@@ -119,7 +125,7 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 				//
 				//mn.PutEngagementPublicPostState(tx.Vin[l].Hash,tx.Vin[l].Index,StateValueIdentifierClaimedEngagementPublicPost)
 				//
-
+			*/
 			//default:
 		}
 		

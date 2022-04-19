@@ -30,6 +30,7 @@ func parseURL(urlStr string) *url.URL {
 
 	return link
 }
+/*
 func banPostName(name string) func() {
 	return func() {
 		if name!=""{
@@ -39,6 +40,7 @@ func banPostName(name string) func() {
 		}
 	}
 }
+*/
 func displayPostDetails(p *post) func() {
 	return func() {
 		if p!=nil{

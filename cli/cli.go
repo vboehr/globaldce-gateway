@@ -63,11 +63,13 @@ func Start(cliname string){
         case "createnewaddress":
             applog.Notice("User requested a new address")
             createnewaddressCMD()
+        /*
         case "addbannedname":
             applog.Notice("User requested a bannedname")
             daemon.Usersettings.BannedNameArray=append(daemon.Usersettings.BannedNameArray,os.Args[2])
             _=daemon.SaveUsersettingsFile()
             os.Exit(0)
+        */
         default:
             emptyCMD()
     }
