@@ -172,18 +172,17 @@ func (br * BufferReader) GetHash() Hash{
 hb:= br.GetBytes(HashSize)
  return *NewHash(hb)
 }
-func (br * BufferReader) GetExtradata() *Extradata{
-	extradata:=NewExtradata()
-	extradatalen:=br.GetVarUint()
-	if extradatalen>ExtradataMaxSize{
-		br.err=fmt.Errorf("ExtradataMaxSize exceeded")
+
+const ExtrabytesMaxSize=100
+
+func (br * BufferReader) GetExtrabytes() []byte{
+	//var extrabytes []byte
+	extrabyteslen:=br.GetVarUint()
+	if extrabyteslen>ExtrabytesMaxSize{
+		br.err=fmt.Errorf("ExtrabytesMaxSize exceeded")
 		return nil
 	}
-	//var extradata Extradata
-	if extradatalen!=0{
-		extradata.Size=extradatalen
-		extradata.Hash=br.GetHash()
-	}
-	return &extradata
+
+	return br.GetBytes(uint(extrabyteslen))
 }
 

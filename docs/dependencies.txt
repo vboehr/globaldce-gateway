@@ -1,0 +1,26 @@
+go mod init github.com/globaldce/go-globaldce
+go get golang.org/x/crypto/sha3
+
+go get -u github.com/btcsuite/btcd/btcec
+
+go get github.com/syndtr/goleveldb/leveldb
+
+go get github.com/globaldce/mdns-gdce
+***************************************************************************
+
+https://developer.fyne.io
+
+Install Go
+Install Gcc
+go get fyne.io/fyne/v2
+
+Ubuntu / Debian: sudo apt-get install golang gcc libgl1-mesa-dev xorg-dev
+***************************************************************************
+to rebuild dependencies :
+go get -u 
+go mod tidy
+***************************************************************************
+Plus if you want to have local modifications :
+add in go .mod file the following
+replace github.com/globaldce/globaldce-go => ./
+***************************************************************************

@@ -17,7 +17,7 @@ func DecodeBytecodeId(bytecode []byte) (uint32){
 	return primitivemoduleid
 }
 
-func DecodeECDSATxOutBytecode(bytecode []byte) (*Hash,*Extradata,error){
+func DecodeECDSATxOutBytecode(bytecode []byte) (*Hash,[]byte,error){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()
 	if primitivemoduleid != ModuleIdentifierECDSATxOut{
@@ -25,7 +25,7 @@ func DecodeECDSATxOutBytecode(bytecode []byte) (*Hash,*Extradata,error){
 	}
 
 	txoutaddr:=tmpbr.GetHash()
-	extradata:=tmpbr.GetExtradata()
+	extrabytes:=tmpbr.GetExtrabytes()
 	/*
 	extradatalen:=tmpbr.GetVarUint()
 	if extradatalen>ExtradataMaxSize{
@@ -47,11 +47,11 @@ func DecodeECDSATxOutBytecode(bytecode []byte) (*Hash,*Extradata,error){
 	if !tmpbr.EndOfBytes(){
 		return nil,nil,fmt.Errorf("End of bytes not reached")
 	}
-	return &txoutaddr,extradata,nil
+	return &txoutaddr,extrabytes,nil
 
 }
 
-func DecodeECDSATxInBytecode(bytecode []byte) ([]byte,*Extradata,error ){
+func DecodeECDSATxInBytecode(bytecode []byte) ([]byte,[]byte,error ){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()
 	if primitivemoduleid != ModuleIdentifierECDSATxIn{
@@ -60,7 +60,7 @@ func DecodeECDSATxInBytecode(bytecode []byte) ([]byte,*Extradata,error ){
 	
 	pubkeycompressedlen:=tmpbr.GetVarUint()
 	pubkeycompressed:=tmpbr.GetBytes(uint(pubkeycompressedlen))
-	extradata:=tmpbr.GetExtradata()
+	extrabytes:=tmpbr.GetExtrabytes()
 	/*
 	extradatalen:=tmpbr.GetVarUint()
 	if extradatalen>ExtradataMaxSize{
@@ -83,7 +83,7 @@ func DecodeECDSATxInBytecode(bytecode []byte) ([]byte,*Extradata,error ){
 		return nil,nil,fmt.Errorf("End of bytes not reached")
 	}
 	
-	return pubkeycompressed,extradata,nil
+	return pubkeycompressed,extrabytes,nil
 }
 /*
 func DecodeECDSANamePublicPost(bytecode []byte) ([]byte,*Extradata,error){
@@ -107,7 +107,7 @@ func DecodeECDSANamePublicPost(bytecode []byte) ([]byte,*Extradata,error){
 	return pubkeycompressed,ed,nil
 }
 */
-func DecodeECDSANameUnregistration(bytecode []byte) ([]byte,*Extradata,error){
+func DecodeECDSANameUnregistration(bytecode []byte) ([]byte,[]byte,error){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()
 	if primitivemoduleid != ModuleIdentifierECDSANameUnregistration{
@@ -127,7 +127,7 @@ func DecodeECDSANameUnregistration(bytecode []byte) ([]byte,*Extradata,error){
 		extradata.Hash=tmpbr.GetHash()
 	}
 	*/
-	extradata:=tmpbr.GetExtradata()
+	extrabytes:=tmpbr.GetExtrabytes()
 	tmpbrerr:=tmpbr.GetError()
 	if tmpbrerr!=nil{
 		return nil,nil,tmpbrerr
@@ -136,9 +136,9 @@ func DecodeECDSANameUnregistration(bytecode []byte) ([]byte,*Extradata,error){
 		return nil,nil,fmt.Errorf("End of bytes not reached")
 	}
 	
-	return pubkeycompressed,extradata,nil
+	return pubkeycompressed,extrabytes,nil
 }
-func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,*Extradata,error){
+func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,[]byte,error){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()
 	if primitivemoduleid != ModuleIdentifierECDSANameRegistration{
@@ -162,7 +162,7 @@ func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,*Extradata,error
 		extradata.Hash=tmpbr.GetHash()
 	}
 	*/
-	extradata:=tmpbr.GetExtradata()
+	extrabytes:=tmpbr.GetExtrabytes()
 	tmpbrerr:=tmpbr.GetError()
 	if tmpbrerr!=nil{
 		return nil,nil,nil,tmpbrerr
@@ -171,7 +171,7 @@ func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,*Extradata,error
 		return nil,nil,nil,fmt.Errorf("End of bytes not reached")
 	}
 	
-	return &pubkeyhash,name,extradata,nil
+	return &pubkeyhash,name,extrabytes,nil
 
 }
 /*

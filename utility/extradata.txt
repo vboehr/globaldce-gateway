@@ -3,8 +3,8 @@ package utility
 //import (
 //	"fmt"
 //)
-const ExtradataMaxSize=20000
 
+/*
 type Extradata struct {
 	Size uint64
 	Hash Hash
@@ -19,4 +19,4 @@ func NewExtradata() Extradata {
 	ed:=new(Extradata)
 	ed.Size=uint64(0)
 	return *ed
-}
+}*/
