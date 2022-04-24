@@ -1,7 +1,7 @@
 ## go-globaldce
 This is the reference implementation of globaldce protocole coded in the go programming language.
 
-## What is globaldce
+## What is globaldce ?
 globaldce is a blockchain based experimental decentralized collaboration environment. The goal of of the globaldce is to provide a fullstack collaborative environment for decentralized applications. While other web3.0 blockchains only provide backend smart contract functionalities and force teams to rely on web2.0 servers for their front end, we believe here that in order to unleash the full potential of web3.0, decentralized applications should not rely on centralized servers. Furthermore, we believe also that a blockchain based decentralized front end environment coupled with smart contract functionalities can bring about a unprecedented level of collaboration.
 
 While this project already delivers some of the features we want to see, it is still at an early stage and many features needs to be implemented and tested.
