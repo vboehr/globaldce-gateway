@@ -6,6 +6,11 @@ globaldce is a blockchain based experimental decentralized collaboration environ
 
 While this project already delivers some of the features we want to see, it is still at an early stage and many features needs to be implemented and tested.
 
+
+## What is a globaldce gateway ?
+A globaldce gateway acts as a bridge between users and globaldce. Through the gateway, users can handle their wallet assets while accessing and interacting with globaldce based decentralized applications as if they were traditional web server based applications.
+
+
 ## Getting started
 We recommend that new users get started using the compressed executable binaries that can be found in releases section:
 https://github.com/globaldce/go-globaldce/releases
