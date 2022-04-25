@@ -1,4 +1,4 @@
-## go-globaldce
+## globaldce-gateway
 This is the reference implementation of globaldce protocole coded in the go programming language.
 
 ## What is globaldce ?
