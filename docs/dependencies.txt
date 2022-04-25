@@ -1,4 +1,4 @@
-go mod init github.com/globaldce/go-globaldce
+go mod init github.com/globaldce/globaldce-gateway
 go get golang.org/x/crypto/sha3
 
 go get -u github.com/btcsuite/btcd/btcec
@@ -22,5 +22,5 @@ go mod tidy
 ***************************************************************************
 Plus if you want to have local modifications :
 add in go .mod file the following
-replace github.com/globaldce/globaldce-go => ./
+replace github.com/globaldce/globaldce-gateway => ./
 ***************************************************************************
