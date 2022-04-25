@@ -1,18 +1,18 @@
 
 package cli
 import (
-	"github.com/globaldce/go-globaldce/applog"
-	"github.com/globaldce/go-globaldce/daemon"
+	"github.com/globaldce/globaldce-gateway/applog"
+	"github.com/globaldce/globaldce-gateway/daemon"
 	"fmt"
-	"github.com/globaldce/go-globaldce/mainchain"
-	"github.com/globaldce/go-globaldce/utility"
-	"github.com/globaldce/go-globaldce/wallet"
+	"github.com/globaldce/globaldce-gateway/mainchain"
+	"github.com/globaldce/globaldce-gateway/utility"
+	"github.com/globaldce/globaldce-gateway/wallet"
 	"strings"
 	"os"
 	"bufio"
     "strconv"
     "encoding/hex"
-    "github.com/globaldce/go-globaldce/wire"
+    "github.com/globaldce/globaldce-gateway/wire"
 	"path/filepath"
 )
 

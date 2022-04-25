@@ -16,7 +16,7 @@ import (
 	//"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/data/binding"
 	//"fyne.io/fyne/v2/widget"
-	"github.com/globaldce/go-globaldce/daemon"
+	"github.com/globaldce/globaldce-gateway/daemon"
 )
 
 func balanceScreen() fyne.CanvasObject {

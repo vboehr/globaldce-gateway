@@ -1,4 +1,4 @@
-module github.com/globaldce/go-globaldce
+module github.com/globaldce/globaldce-gateway
 
 go 1.15
 

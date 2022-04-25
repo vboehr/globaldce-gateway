@@ -1,10 +1,10 @@
 package mainchain
 import (
 	//"time"
-	"github.com/globaldce/go-globaldce/utility"
+	"github.com/globaldce/globaldce-gateway/utility"
 	"container/list"
 	"fmt"
-	"github.com/globaldce/go-globaldce/applog"
+	"github.com/globaldce/globaldce-gateway/applog"
 )
 
 

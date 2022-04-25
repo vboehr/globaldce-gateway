@@ -1,7 +1,7 @@
 package mainchain
 import (
-	"github.com/globaldce/go-globaldce/utility"
-	"github.com/globaldce/go-globaldce/applog"
+	"github.com/globaldce/globaldce-gateway/utility"
+	"github.com/globaldce/globaldce-gateway/applog"
 	"math/big"
 )
 func (mn *Maincore)  AutoCheckMainblocks() bool {

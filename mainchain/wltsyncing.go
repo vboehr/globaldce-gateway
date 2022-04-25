@@ -1,8 +1,8 @@
 package mainchain
 import (
-	"github.com/globaldce/go-globaldce/applog"
-	"github.com/globaldce/go-globaldce/utility"
-	"github.com/globaldce/go-globaldce/wallet"
+	"github.com/globaldce/globaldce-gateway/applog"
+	"github.com/globaldce/globaldce-gateway/utility"
+	"github.com/globaldce/globaldce-gateway/wallet"
 	"strings"
 	//"fmt"
 	//"os"

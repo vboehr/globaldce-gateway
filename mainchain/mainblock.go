@@ -1,11 +1,11 @@
 package mainchain
 import (
-	"github.com/globaldce/go-globaldce/applog"
+	"github.com/globaldce/globaldce-gateway/applog"
 	"fmt"
 	"time"
 	"encoding/json"
 	"encoding/binary"
-	"github.com/globaldce/go-globaldce/utility"
+	"github.com/globaldce/globaldce-gateway/utility"
 )
 type Mainblock struct {
 	// 

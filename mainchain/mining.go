@@ -1,12 +1,12 @@
 package mainchain
 import (
-	"github.com/globaldce/go-globaldce/applog"
-	//"github.com/globaldce/go-globaldce/wire"
-	//"github.com/globaldce/go-globaldce/mainchain"
+	"github.com/globaldce/globaldce-gateway/applog"
+	//"github.com/globaldce/globaldce-gateway/wire"
+	//"github.com/globaldce/globaldce-gateway/mainchain"
 	//"github.com/syndtr/goleveldb/leveldb"
-	"github.com/globaldce/go-globaldce/utility"
-	"github.com/globaldce/go-globaldce/wallet"
-	//"github.com/globaldce/go-globaldce/mainchain"
+	"github.com/globaldce/globaldce-gateway/utility"
+	"github.com/globaldce/globaldce-gateway/wallet"
+	//"github.com/globaldce/globaldce-gateway/mainchain"
 	//"os"
 	"time"
 	//"encoding/json"

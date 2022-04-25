@@ -4,7 +4,7 @@ import(
 	"os"
 	"bufio"
 	"fmt"
-	"github.com/globaldce/go-globaldce/utility"
+	"github.com/globaldce/globaldce-gateway/utility"
 )
 
 

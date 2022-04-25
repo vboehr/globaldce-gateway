@@ -1,12 +1,12 @@
 package daemon
 
 import (
-    "github.com/globaldce/go-globaldce/applog"
+    "github.com/globaldce/globaldce-gateway/applog"
     "os"
     "os/signal"
     "time"
-    "github.com/globaldce/go-globaldce/mainchain"
-    "github.com/globaldce/go-globaldce/wire"
+    "github.com/globaldce/globaldce-gateway/mainchain"
+    "github.com/globaldce/globaldce-gateway/wire"
     "log"
     "fmt"
 )

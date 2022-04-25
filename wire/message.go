@@ -1,9 +1,9 @@
 package wire
 import (
-	"github.com/globaldce/go-globaldce/applog"
+	"github.com/globaldce/globaldce-gateway/applog"
 	"bytes"
 	"encoding/binary"
-	"github.com/globaldce/go-globaldce/utility"
+	"github.com/globaldce/globaldce-gateway/utility"
 	"net"
 	"fmt"
 	//"os"
