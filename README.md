@@ -12,7 +12,7 @@ A globaldce gateway acts as a bridge between users and globaldce. Through the ga
 We recommend that new users get started using the compressed executable binaries that can be found in releases section:
 https://github.com/globaldce/globaldce-gateway/releases
 
-Just download the compressed release prepared for your operating system, decompress it and run the go-globaldce executable file.
+Just download the compressed release prepared for your operating system, decompress it and run the globaldce-gateway executable file.
 
 ## Current Status
 + Tested on Go 1.5
@@ -25,7 +25,7 @@ https://developer.fyne.io/started/
 3. Use the following commands to download, and build this source code: 
 ```bash
 git clone https://github.com/globaldce/globaldce-gateway
-cd go-globaldce
+cd globaldce-gateway
 go build -o globaldce-gateway
 ```
 
@@ -47,4 +47,4 @@ Bug reports and bug fixes are welcome.
 
 ## Licence
 This project is an open source free software; you can redistribute it and/or modify it under the terms of the MIT license.
-See [LICENSE](https://github.com/globaldce/go-globaldce/blob/main/LICENSE) for details. 
+See [LICENSE](https://github.com/globaldce/globaldce-gateway/blob/main/LICENSE) for details. 
