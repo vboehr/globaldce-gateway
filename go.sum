@@ -22,8 +22,8 @@ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMo
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
 github.com/fsnotify/fsnotify v1.5.1 h1:mZcQUHVQUQWoPXXtuf9yuEXKudkV2sx1E06UadKWpgI=
 github.com/fsnotify/fsnotify v1.5.1/go.mod h1:T3375wBYaZdLLcVNkcVbzGHY7f1l/uK5T5Ai1i3InKU=
-github.com/globaldce/mdns-gdce v0.0.0-20220418095946-3f6452934c5c h1:2aJDhhjkS2Gv8ZEvsBLBbbO5+vZCnR7VESCwQlQU3Vc=
-github.com/globaldce/mdns-gdce v0.0.0-20220418095946-3f6452934c5c/go.mod h1:pOjN1dkAe57Vei2hYPYykrLYrmNBmsl0DxFk3Up2tQs=
+github.com/globaldce/mdns-gdce1 v0.0.0-20220427061725-1fb3db598846 h1:efVvpFl2kj3QLamGFv7/GVJnQcEdTY7wD+VpgorSqCk=
+github.com/globaldce/mdns-gdce1 v0.0.0-20220427061725-1fb3db598846/go.mod h1:s33jNK+JoXZtM1+Eo7S56V7UXzNZ+tFq6Wr4SmWK0+E=
 github.com/go-gl/gl v0.0.0-20210813123233-e4099ee2221f/go.mod h1:wjpnOv6ONl2SuJSxqCPVaPZibGFdSci9HFocT9qtVYM=
 github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6 h1:zDw5v7qm4yH7N8C8uWd+8Ii9rROdgWxQuGoJ9WDXxfk=
 github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6/go.mod h1:9YTyiznxEY1fVinfM7RvRcjRHbw2xLBJ3AAGIT0I4Nw=

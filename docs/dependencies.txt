@@ -5,7 +5,7 @@ go get -u github.com/btcsuite/btcd/btcec
 
 go get github.com/syndtr/goleveldb/leveldb
 
-go get github.com/globaldce/mdns-gdce
+go get github.com/globaldce/mdns-gdce1
 ***************************************************************************
 
 https://developer.fyne.io

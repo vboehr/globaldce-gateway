@@ -6,7 +6,7 @@ require (
 	fyne.io/fyne/v2 v2.1.4
 	github.com/btcsuite/btcd/btcec/v2 v2.1.3
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/globaldce/mdns-gdce v0.0.0-20220418095946-3f6452934c5c
+	github.com/globaldce/mdns-gdce1 v0.0.0-20220427061725-1fb3db598846 // indirect
 	github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20220320163800-277f93cfa958 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect

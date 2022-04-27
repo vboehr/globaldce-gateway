@@ -3,7 +3,7 @@ import (
 	"github.com/globaldce/globaldce-gateway/applog"
 	"os"
 	"time"
-	"github.com/globaldce/mdns-gdce"
+	"github.com/globaldce/mdns-gdce1"
 )
 func (sw *Swarm) StartMDNSServer(){
 
