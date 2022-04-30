@@ -5,7 +5,7 @@ import (
 )
 
 
-const RegistredNameMaxSize=20
+const RegistredNameMaxSize=10
 func DecodeBytecodeId(bytecode []byte) (uint32){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()

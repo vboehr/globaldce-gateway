@@ -24,7 +24,7 @@ func listenSigInt() chan os.Signal {
 /////////////////////////////
 
 func startmining(){
-
+    Miningrunning=true
         for  Wireswarm.Syncingdone {
               fmt.Println("Working..")
                 success,mb:=Mn.Mine(Wlt)
@@ -107,7 +107,6 @@ func Mainloop(){
 
             go startmining()
              Miningrequested=false
-             Miningrunning=true
        
         }
 

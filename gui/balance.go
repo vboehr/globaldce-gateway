@@ -16,6 +16,7 @@ import (
 	//"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/data/binding"
 	//"fyne.io/fyne/v2/widget"
+	"github.com/globaldce/globaldce-gateway/cli"
 	"github.com/globaldce/globaldce-gateway/daemon"
 )
 
@@ -33,15 +34,18 @@ func balanceScreen() fyne.CanvasObject {
 
 func overviewScreen() fyne.CanvasObject {
 
-	str := binding.NewString()
-	//str.Set("Initial value**************************************")
-	str.Set("")
-	text := widget.NewLabelWithData(str)
-	input:=widget.NewLabel("")
+	balancestr := binding.NewString()
+	balancestr.Set("")
+	balancetext := widget.NewLabelWithData(balancestr)
+
+	//syncingstr := binding.NewString()
+	//syncingstr.Set("")
+	//syncingtext := widget.NewLabelWithData(syncingstr)
+	input:=widget.NewLabel("globaldce gateway "+cli.AppVersion)
 	
 	label := container.NewVBox(
 		widget.NewLabel(""),
-			input,text,)
+			input,balancetext,)
 
 	hbox := container.NewVBox( widget.NewIcon(nil), label)	
 
@@ -50,7 +54,14 @@ func overviewScreen() fyne.CanvasObject {
 			//fmt.Println("*******",daemon.Wlt.ComputeBalance())
 			walletpathstr:=fmt.Sprintf("Wallet path: %s",daemon.MainwalletFilePath)
 			walletbalancestr:=fmt.Sprintf("Wallet balance is %f", float64(daemon.Wlt.ComputeBalance()/1000000.0))
-			str.Set(walletpathstr+"\n"+walletbalancestr)
+			syncingstr:=""
+			if daemon.Wireswarm.Syncingdone{
+				syncingstr="SYNCING DONE"
+			}
+			if daemon.Miningrunning{
+				syncingstr="CPU MINING RUNNING"
+			}
+			balancestr.Set(syncingstr+"\n"+walletpathstr+"\n"+walletbalancestr+"\n\n\n\n\n\n\n\n\n")
 			time.Sleep(time.Second * 2)
 		}
 	}()
@@ -126,6 +137,9 @@ func overviewScreen() fyne.CanvasObject {
 	
 	}
 	*/
+	//
+	//containerhbox:=container.New(layout.NewBorderLayout(nil, nil, hbox, nil))
+	//return container.NewHSplit(containerhbox,assestsdestailslist)
 	return container.NewHSplit( container.NewCenter(hbox),assestsdestailslist)
 }
 

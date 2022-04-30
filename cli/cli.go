@@ -12,7 +12,7 @@ import (
     "github.com/globaldce/globaldce-gateway/utility"
 )
 const (
-    appVersion="0.2.0"
+    AppVersion="0.2.0"
 )
 var appName string
 func Start(cliname string){
