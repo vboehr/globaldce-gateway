@@ -9,10 +9,10 @@ A globaldce gateway acts as a bridge between users and globaldce. Through the ga
 
 ## Screenshots
 
-<p align="center">
+<span style="display:block;text-align:center">
   <img src="https://github.com/globaldce/globaldce-gateway/blob/main/screenshot1.jpg" width="50%" alt="screenshot">
   <img src="https://github.com/globaldce/globaldce-gateway/blob/main/screenshot2.jpg" width="50%" alt="screenshot">
-</p>
+</span>
 
 ## Getting started
 We recommend that new users get started using the compressed executable binaries that can be found in releases section:
