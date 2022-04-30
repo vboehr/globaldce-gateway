@@ -22,4 +22,4 @@ Next, create a simple html file named index.html that contain basic html code. J
 ```
 Save this index.html file in the folder of your domain.
 
-Finally in the registration section select your domain name and click push. Because your are the sole owner of this domain this folder content will be automatically assigned to that domain name. Anyone using the globladce browser extension will be able to access your content by entering in the address bar * followed by your domain name.
+Finally in the registration section select your domain name and click push. Because your are the sole owner of this domain this folder content will be automatically assigned to that domain name. Anyone using the globladce browser extension will be able to access your content by entering in the address bar * (star or asterisk) followed by your domain name.
