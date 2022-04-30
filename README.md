@@ -10,8 +10,8 @@ A globaldce gateway acts as a bridge between users and globaldce. Through the ga
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/globaldce/globaldce-gateway/screenshot1.jpg" alt="screenshot">
-  <img src="https://github.com/globaldce/globaldce-gateway/screenshot2.jpg" alt="screenshot">
+  <img src="https://github.com/globaldce/globaldce-gateway/blob/main/screenshot1.jpg" alt="screenshot">
+  <img src="https://github.com/globaldce/globaldce-gateway/blob/main/screenshot2.jpg" alt="screenshot">
 </p>
 
 ## Getting started
