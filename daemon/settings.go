@@ -19,7 +19,7 @@ type UsersettingsType struct {
 	//CloudWallet bool
 	//Cloudaddresses CloudAddr
 	//Chain []byte
-	//Privatekeyarray [] *btcec.PrivateKey
+
 	//Assetarray [] Asset
 	MainwalletFilePath string
 	//////////////////////////

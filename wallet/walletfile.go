@@ -5,7 +5,7 @@ import
 	"encoding/json"
 	"encoding/binary"
 	"bytes"
-	"github.com/btcsuite/btcd/btcec/v2"
+	//"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/globaldce/globaldce-gateway/applog"
 	"fmt"
 	"os"
@@ -136,8 +136,8 @@ func (wlt *Wallet) LoadJSONFile(path string,key []byte) error{
 	//applog.Trace("read JSONFILE CONTENT: %d %d", len (walletfile.Keypairarray),len(walletfile.Assetarray))
 	for i:=0;i<len(walletfile.Privatekeyarray);i++{
 		
-		privKey, _ := btcec.PrivKeyFromBytes([]byte( walletfile.Privatekeyarray[i] ))
-		wlt.Privatekeyarray=append(wlt.Privatekeyarray,privKey)
+		privKey, _ := utility.PrivKeyFromBytes([]byte( walletfile.Privatekeyarray[i] ))
+		wlt.Privatekeyarray=append(wlt.Privatekeyarray,&privKey)
 	}
 	wlt.Assetarray=walletfile.Assetarray
 	wlt.Lastknownblock=walletfile.Lastknownblock

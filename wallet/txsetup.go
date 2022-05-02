@@ -3,7 +3,7 @@ import (
 	"github.com/globaldce/globaldce-gateway/applog"
 	"fmt"
 	"github.com/globaldce/globaldce-gateway/utility"
-	"github.com/btcsuite/btcd/btcec/v2/ecdsa"
+	//"github.com/btcsuite/btcd/btcec/v2/ecdsa"
 )
 
 func (wlt * Wallet) ComputeBalance() (uint64){
@@ -49,7 +49,8 @@ func (wlt * Wallet) SetupTransactionForNameUnregistration(name string,fee uint64
 
 	//i:=len(tx.Vin)-1
 	i:=0
-		sig:= ecdsa.Sign(wlt.Privatekeyarray[prvkeyindex],newtxhash[:])
+		/////sig:= ecdsa.Sign(wlt.Privatekeyarray[prvkeyindex],newtxhash[:])
+		sigBytes:=utility.Sign(wlt.Privatekeyarray[prvkeyindex],newtxhash[:])
 		//if err != nil {
 		//	applog.Trace("error: unable to sign input %d of transaction",i)
 		//	return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
@@ -57,7 +58,8 @@ func (wlt * Wallet) SetupTransactionForNameUnregistration(name string,fee uint64
 		//applog.Trace("signature %x", sig)
 		tmpbw:=utility.NewBufferWriter()
 		//tmpbw.PutVarUint(uint64(len(sig)))
-		tmpbw.PutBytes(sig.Serialize())
+		/////tmpbw.PutBytes(sig.Serialize())
+		tmpbw.PutBytes(sigBytes)
 		//tx.Vin[i].Bytecode=append(tx.Vin[i].Bytecode, tmpbw.GetContent() ...)
 		tx.Vin[i].Signature=tmpbw.GetContent()//selectedassetarray[i].Privatekeyindex 
 	
@@ -239,7 +241,8 @@ func (wlt * Wallet) SetupTransactionAmount(amount uint64,fee uint64,txin *utilit
 	}
 
 	for i:=0;i<len(selectedassetarray);i++{
-		sig:= ecdsa.Sign(wlt.Privatekeyarray[selectedassetarray[i].Privatekeyindex],newtxhash[:])
+		///sig:= ecdsa.Sign(wlt.Privatekeyarray[selectedassetarray[i].Privatekeyindex],newtxhash[:])
+		sigBytes:=utility.Sign(wlt.Privatekeyarray[selectedassetarray[i].Privatekeyindex],newtxhash[:])
 		//if err != nil {
 		//	applog.Trace("error: unable to sign input %d of transaction",i)
 		//	return nil,fmt.Errorf("error: unable to sign input %d of transaction",i)
@@ -247,7 +250,8 @@ func (wlt * Wallet) SetupTransactionAmount(amount uint64,fee uint64,txin *utilit
 		//applog.Trace("signature %x", sig)
 		tmpbw:=utility.NewBufferWriter()
 		//tmpbw.PutVarUint(uint64(len(sig)))
-		tmpbw.PutBytes(sig.Serialize())
+		////tmpbw.PutBytes(sig.Serialize())
+		tmpbw.PutBytes(sigBytes)
 		//tx.Vin[i].Bytecode=append(tx.Vin[i].Bytecode, tmpbw.GetContent() ...)
 		tx.Vin[i].Signature=tmpbw.GetContent()//selectedassetarray[i].Privatekeyindex 
 	}

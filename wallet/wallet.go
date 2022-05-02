@@ -90,7 +90,7 @@ func (wlt *Wallet) GenerateKeyPair() utility.Hash{
 	//message:="message text"
 	//messageHash:=ComputeHashBytes([]byte(message))
 
-	pk, err := btcec.NewPrivateKey()
+	pk, err := utility.NewPrivateKey()
 	if err != nil {
 		//il, err//return (*PrivateKey)(key), nil
 		applog.Trace("err: %x", err)
@@ -99,7 +99,7 @@ func (wlt *Wallet) GenerateKeyPair() utility.Hash{
 	// pk.PubKey().SerializeUncompressed() 		returns a 65 bytes public key
 	// pk.PubKey().SerializeCompressed() 		returns a 33 bytes public key
 
-	wlt.Privatekeyarray=append(wlt.Privatekeyarray,pk)
+	wlt.Privatekeyarray=append(wlt.Privatekeyarray,&pk)
 	//applog.Trace("total length of keys %d",len(wlt.Privatekeyarray))
 	//applog.Trace("private key: %d public key: %d OR %d ", len(pk.Serialize()), len(pk.PubKey().SerializeUncompressed()), len(pk.PubKey().SerializeCompressed()))
 

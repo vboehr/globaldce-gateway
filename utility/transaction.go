@@ -1,14 +1,13 @@
 
 package utility
 
-import (
-	"github.com/globaldce/globaldce-gateway/applog"
-	"fmt"
+//import (
+	//"github.com/globaldce/globaldce-gateway/applog"
+	//"fmt"
 	//"encoding/binary"
 	//"encoding/json"
-	"github.com/btcsuite/btcd/btcec/v2"
-	"github.com/btcsuite/btcd/btcec/v2/ecdsa"
-)
+
+//)
 const (
 	ModuleIdentifierECDSATxOut=1
 	ModuleIdentifierECDSATxIn=2
@@ -228,27 +227,6 @@ func (tx * Transaction) ComputeSigningHash() (Hash,error){
 }
 func (tx * Transaction) ComputeHash() Hash{
 	return ComputeHash(tx.Serialize())
-}
-func VerifySignature(signinghash Hash,signaturebytes []byte,pubkeycompressedbytes []byte) (error){
-	//pubkeycompressedbytes,_,err:=DecodeECDSATxInBytecode(tx.Vin[i].Bytecode)
-	signature, err := ecdsa.ParseSignature(signaturebytes) 
-	if err != nil {
-		applog.Warning("%v",err)
-		return err
-	}
-	//applog.Trace("signature[%d] %x len %d ",i,tx.Vin[i].Signature,len(tx.Vin[i].Signature))
-	pubKey, err := btcec.ParsePubKey(pubkeycompressedbytes)
-	if err != nil {
-		applog.Warning("%v",err)
-		return err
-	}
-	
-	verified := signature.Verify(signinghash[:], pubKey)
-	//applog.Trace("Signature %d Verified? %v ",i, verified)	
-	if !verified {
-		return fmt.Errorf("Signature not verified")
-	}
-	return nil
 }
 /*
 func (tx * Transaction) VerifySignatures() bool{

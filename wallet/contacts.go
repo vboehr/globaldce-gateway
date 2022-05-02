@@ -6,7 +6,7 @@ import
 	//"encoding/json"
 	//"encoding/binary"
 	//"bytes"
-	//"github.com/btcsuite/btcd/btcec/v2"
+
 	//"github.com/globaldce/globaldce-gateway/applog"
 	//"fmt"
 	//"os"
