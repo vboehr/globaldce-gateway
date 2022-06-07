@@ -2,7 +2,7 @@
 This is the reference implementation of globaldce protocole coded in the go programming language.
 
 ## What is globaldce ?
-Even though cryptocurrency and blockchain technologies have the potential to disrubt every aspect of our daily life their use cases are currently still limited to financial services. Most real-world situations can not be tackled using existing dapps platforms and this due to the fact they are missing a crucial aspect: nondeterministic functionalities.
+Even though cryptocurrency and blockchain technologies have the potential to disrubt every aspect of our daily lifes their use cases are currently still limited to financial services. Most real-world situations can not be tackled using existing dapps platforms and this due to the fact they are missing a crucial aspect: nondeterministic functionalities.
 
 Up until this point innovation in nondeterministic decentralized applications such as storage and datafeeds have been highly fragmented and implementing any of these technologies has required creating an entire protocol layer or even a specialized blockchain. However, these innovations can be made an order of magnitude easier to implement if only there was a broader foundational layer for all of these dapps to be built up. And this need is what we seek to satisfy.
 
