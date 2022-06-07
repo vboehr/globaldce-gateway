@@ -2,9 +2,11 @@
 This is the reference implementation of globaldce protocole coded in the go programming language.
 
 ## What is globaldce ?
-Even though cryptocurrency and blockchain technologies have the potential to disrubt every aspect of our daily lifes their use cases are currently still limited to financial services. Most real-world situations can not be tackled using existing dapps platforms and this due to the fact they are missing a crucial aspect: nondeterministic functionalities.
+Even though cryptocurrency and blockchain technologies have the potential to disrubt every aspect of our daily lifes, their use cases are currently still limited to financial services. Most real-world situations can not be tackled using existing dapps platforms and this due to the fact they are missing a crucial aspect: nondeterministic functionalities.
 
 Up until this point innovation in nondeterministic decentralized applications such as storage and datafeeds have been highly fragmented and implementing any of these technologies has required creating an entire protocol layer or even a specialized blockchain. However, these innovations can be made an order of magnitude easier to implement if only there was a broader foundational layer for all of these dapps to be built up. And this need is what we seek to satisfy.
+
+While other blockchains only provide deterministic functionalities and force teams to rely on third party services for nondeteministic aspects, we believe here that blockchain based nondeterministic features coupled with smart contract functionalities can bring about a unprecedented level of collaboration and unleash the full potential of web 3.
 
 ## What is a globaldce gateway ?
 A globaldce gateway acts as a bridge between users and globaldce. Through the gateway, users can handle their wallet assets while accessing and interacting with globaldce based decentralized applications as if they were traditional web server based applications.
