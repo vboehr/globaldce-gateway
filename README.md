@@ -2,16 +2,19 @@
 This is the reference implementation of globaldce protocole coded in the go programming language.
 
 ## What is globaldce ?
-Even though cryptocurrency and blockchain technologies have the potential to disrubt every aspect of our daily lifes, their use cases are currently still limited to financial services. Most real-world situations can not be tackled using existing dapps platforms and this due to the fact they are missing a crucial aspect: nondeterministic functionalities.
+Even though cryptocurrency and blockchain technologies have the potential to disrupt every aspect of our daily life their use cases are currently still limited. Most real-world situations can not be tackled using existing smart contracts and dapps platforms and this due to the fact that building smart contracts and decentralized applications using existing platforms is like trying to building skyskrapers on sands.
 
-Up until this point innovation in nondeterministic decentralized applications such as storage and datafeeds have been highly fragmented and implementing any of these technologies has required creating an entire protocol layer or even a specialized blockchain. However, these innovations can be made an order of magnitude easier to implement if only there was a broader foundational layer for all of these dapps to be built up. And this need is what we seek to satisfy.
 
-While other blockchains only provide deterministic functionalities and force teams to rely on third party services for nondeteministic aspects, we believe here that blockchain based nondeterministic features coupled with smart contract functionalities can bring about a unprecedented level of collaboration and unleash the full potential of web 3.
+Existing smart contracts and dapps platforms do not have built-in native decentralization, governance, privacy and scalability. And that led to painful and catastrophic situations for users.
+* A lack of decentralization threatens the uncensored nature of blockchains
+* A lack of governance leads to numerous forking
+* A lack of privacy makes linking users addresses to their real-world identities easy
+* A lack of scalability slows transactions and increases fees
 
 ## What is a globaldce gateway ?
 A globaldce gateway acts as a bridge between users and globaldce. Through the gateway, users can handle their wallet assets while accessing and interacting with globaldce based decentralized applications as if they were traditional web server based applications.
 
-## Screenshots
+## GUI Screenshots
 
 <p float="left">
 <img src="https://github.com/globaldce/globaldce-gateway/blob/main/screenshot1.jpg" width="45%">
