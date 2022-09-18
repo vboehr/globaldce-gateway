@@ -53,9 +53,15 @@ func overviewScreen() fyne.CanvasObject {
 		for {	
 			//fmt.Println("*******",daemon.Wlt.ComputeBalance())
 			walletpathstr:=fmt.Sprintf("Wallet path: %s",daemon.MainwalletFilePath)
-			walletbalancestr:=fmt.Sprintf("Wallet balance is %f", float64(daemon.Wlt.ComputeBalance()/1000000.0))
+			var walletbalancestr string
+			if daemon.Walletloaded{
+				walletbalancestr=fmt.Sprintf("Wallet balance is %f", float64(daemon.Wlt.ComputeBalance()/1000000.0))
+			} else {
+				walletbalancestr=daemon.Walletstate
+			}
+			
 			syncingstr:=""
-			if daemon.Wireswarm.Syncingdone{
+			if daemon.Wireswarm.Syncingdone {
 				syncingstr="SYNCING DONE"
 			}
 			if daemon.Miningrunning{

@@ -2,11 +2,12 @@ package gui
 
 
 import (
+	//"os"
 	//"log"
 	"fmt"
 	"errors"
 	//"fyne.io/fyne/v2/app"
-	//"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/container"
 	//"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"fyne.io/fyne/v2/dialog"
@@ -18,6 +19,7 @@ import (
 	"github.com/globaldce/globaldce-gateway/daemon"
 	"github.com/globaldce/globaldce-gateway/utility"
 	"github.com/globaldce/globaldce-gateway/cli"
+	"github.com/globaldce/globaldce-gateway/wallet"
 )
 
 
@@ -64,7 +66,7 @@ func  passwordDialog(win fyne.Window){
 					// If the key length is 32, the key is hashed first
 					daemon.MainwalletFileKey=utility.ComputeHashBytes(key)
 				}
-				lerr:=daemon.Wlt.LoadJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
+				lerr:=daemon.Wlt.LoadJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
 				if lerr!=nil{
 					//nowalletFoundDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
 					passwordDecryptionFailedDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
@@ -83,25 +85,77 @@ func  passwordDialog(win fyne.Window){
 	}, win)
 
 }
-func  passwordCreationDialog(win fyne.Window) {
+func newWalletCreationDialog(win fyne.Window){
+	selectWalletFileCallback := func(response bool){
+		fmt.Println("Responded with", response)
+		if response {
+			
+			newSequentialWalletCreationDialog(win)
+		} else {
+			//
+			
+			nowalletFoundDialog(win,"")
+
+		}
+		
+	}
+	//TODO support other types of wallets
+	//combo := widget.NewSelect([]string{"Sequential Wallet", "Option 2"}, func(value string) {
+	combo := widget.NewSelect([]string{"Sequential Wallet"}, func(value string) {
+		fmt.Println("Select set to", value)
+	})
+	combo.SetSelected("Sequential Wallet")
+	content := container.NewVBox(widget.NewLabel("Wallet Type :"),combo)
+
+	cnf:=dialog.NewCustomConfirm("Would you like to create a new wallet file ?", "Yes ", "No  ", content,selectWalletFileCallback, win)
+	cnf.Show()
+}
+func newSequentialWalletCreationDialog(win fyne.Window) {
+	//
+
+	fmt.Printf("\nCreating new sequential wallet \n")
+    wltseedString:=wallet.GenerateRandomSeedString()
+    fmt.Printf("Random Seed String :%s\n",wltseedString)
+
+	//
 	//username := widget.NewEntry()
 	//username.Validator = validation.NewRegexp(`^[A-Za-z0-9_-]+$`, "username can only contain letters, numbers, '_', and '-'")
 	cli.GenerateNewMainwalletFilePath()
+
+	wltseed := widget.NewPasswordEntry()//NewMultiLineEntry()//
+	wltseed.MultiLine=true
+	wltseed.Wrapping=fyne.TextWrapBreak
+	wltseed.Validator=passwordValidation()
+	wltseed.Text=wltseedString
+	//wltseed.SetMinSize(fyne.NewSize(100, 20))
+	//wltseed.Validator=wltseedValidation()
 	firstpassword := widget.NewPasswordEntry()
 	//password.Validator = validation.NewRegexp(`^[A-Za-z0-9_-]+$`, "password can only contain letters, numbers, '_', and '-'")
 	firstpassword.Validator=passwordValidation()
 	secondpassword := widget.NewPasswordEntry()
 	secondpassword.Validator=passwordValidation()
-	//remember := false
+
+	remember:=widget.NewLabel("CAUNTION: IF YOU LOSE YOUR SEED YOU CAN NOT RECOVER YOUR WALLET")
+	generateSeedButton:=widget.NewButton("Generate New Seed", func() {
+		fmt.Println("tapped Generate New Seed")
+		wltseedString=wallet.GenerateRandomSeedString()
+		wltseed.Text=wltseedString
+		wltseed.Refresh()
+		})
+
 	items := []*widget.FormItem{
 		//widget.NewFormItem("Username", username),
+		widget.NewFormItem("Seed", wltseed),
+		widget.NewFormItem("", generateSeedButton),
 		widget.NewFormItem("Password", firstpassword),
 		widget.NewFormItem("Password", secondpassword),
-		//widget.NewFormItem("Remember me", widget.NewCheck("", func(checked bool) {
-		//	remember = checked
-		//})),
+		widget.NewFormItem("", remember),
 	}
-	dialog.ShowForm("Password required to create a new wallet          ", "Okay  ", "Cancel", items, func(b bool) {
+
+
+	//usersinfocontent = widget.NewForm(widget.NewFormItem("New label", scroll))
+	//dialog.ShowForm("Password required to create a new wallet          ", "Okay  ", "Cancel", items, func(b bool) {
+	dialog.ShowForm("A seed and a password are required to create a new wallet          ", "Okay  ", "Cancel", items, func(b bool) {
 		if !b {
 			fmt.Println("canceled")
 			nowalletFoundDialog(win,"")
@@ -109,7 +163,10 @@ func  passwordCreationDialog(win fyne.Window) {
 		}
 		//fmt.Println("Password",password.Text)
 
-		if firstpassword.Text==secondpassword.Text && b {
+		if firstpassword.Text!=secondpassword.Text  {
+			nowalletFoundDialog(win,"Wallet creation abroted entred passwords do not match")
+		}
+		if  b {
 			text:=firstpassword.Text
 				key:=[]byte(text)
 				if (len(key)==32){
@@ -120,10 +177,10 @@ func  passwordCreationDialog(win fyne.Window) {
 					daemon.MainwalletFileKey=utility.ComputeHashBytes(key)
 				}
 				walletsettingsDisplayedMainwalletFilePath.Set(daemon.MainwalletFilePath)
-				daemon.Walletloaded=true	
-		} else {
-			nowalletFoundDialog(win,"Wallet creation abroted entred password do not match")
-		}
+				//fmt.Println("*** wltseed.Text",wltseed.Text)
+				//os.Exit(0)
+				newSequentialWalletCreationProgressDialog(win,wltseedString)
+		} 
 		//var rememberText string
 		//if remember {
 		//	rememberText = "and remember this login"
@@ -133,16 +190,43 @@ func  passwordCreationDialog(win fyne.Window) {
 
 
 }
+///////////////////////////////////////////////////////////////////
 
+func newSequentialWalletCreationProgressDialog(win fyne.Window,seedString string) {
+	wlt:=new(wallet.Wallet)        
+    wlt.Type=wallet.WALLET_TYPE_SEQUENTIAL
+	//creationProgressDialog:=dialog.NewProgress("New Sequential Wallet", "Please stand by", win)
+	
+    InitialHashBytes:=[]byte(seedString)
+    for i:=0;i<wallet.NB_INITIAL_HASHES;i++{
+        InitialHashBytes = utility.ComputeHashBytes(InitialHashBytes)
+        wltgenprogress:=int(i*100/wallet.NB_INITIAL_HASHES)
+        if (i)%(wallet.NB_INITIAL_HASHES/10)==0{
+            fmt.Printf("Wallet Generation Progress %d %%\n",wltgenprogress)
+			//creationProgressDialog.SetValue(float64(wltgenprogress))
+			daemon.Walletstate=fmt.Sprintf("Wallet Generation Progress %d %%",wltgenprogress)
+        }
+        
+    }
+    
+    fmt.Printf("%x\n",InitialHashBytes)
+
+	pk := utility.PrivKeyFromBytes(InitialHashBytes)
+    wlt.Privatekeyarray=append(wlt.Privatekeyarray,&pk)
+	daemon.Wlt=wlt
+	daemon.Walletloaded=true    
+}
+
+///////////////////////////////////////////////////////////////////
 func passwordDecryptionFailedDialog(win fyne.Window,err string){
 	selectWalletFileCallback := func(response bool){
 		fmt.Println("Responded with", response)
 		if response {
 			//selectWalletFileDialog(win)
-			passwordDialog(win)
+			newWalletCreationDialog(win)
 		} else {
 			//s
-			//passwordCreationDialog(win)
+			//passwordCreationDialog(win)//
 			nowalletFoundDialog(win,err)
 		}
 		
@@ -160,7 +244,7 @@ func nowalletFoundDialog(win fyne.Window,err string){
 			selectWalletFileDialog(win)
 		} else {
 			//
-			passwordCreationDialog(win)
+			newWalletCreationDialog(win)
 
 		}
 		

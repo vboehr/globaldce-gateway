@@ -9,6 +9,7 @@ import (
 
 type Swarm struct {
 	Syncingdone bool
+	Syncingstate string
 	MDNSEnabled bool
 	NewpeersChan chan * Peer
 	IpaddrChan chan  string

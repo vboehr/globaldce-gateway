@@ -13,11 +13,14 @@ import
 	//"os"
 	//"sync"
 )
-
-func NewPrivateKey() (btcec.PrivateKey,error) {
-	pk,err:=btcec.NewPrivateKey()
-	return *pk,err
+func PrivKeyFromBytes(pkbytes []byte) (btcec.PrivateKey){
+	priv, _ := btcec.PrivKeyFromBytes(pkbytes)
+	return *priv
 }
+//func NewPrivateKey() (btcec.PrivateKey,error) {
+//	pk,err:=btcec.NewPrivateKey()
+//	return *pk,err
+//}
 func Sign(pk *btcec.PrivateKey,msgbytes []byte) ([]byte) {
 	sig:=ecdsa.Sign(pk,msgbytes)
 	return sig.Serialize()
@@ -44,8 +47,9 @@ func VerifySignature(signinghash Hash,signaturebytes []byte,pubkeycompressedbyte
 	return nil
 }
 
-
+/*
 func PrivKeyFromBytes(privateKeyBytes[]byte) (btcec.PrivateKey,btcec.PublicKey) {
 	pk,pubkey:=btcec.PrivKeyFromBytes(privateKeyBytes)
 	return *pk,*pubkey
 }
+*/

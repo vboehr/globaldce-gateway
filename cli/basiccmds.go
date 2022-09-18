@@ -7,7 +7,7 @@ import (
 
 
 func createnewaddressCMD(){
-    wlt:=loadusermainwalletfile()
+    wlt:=Loadusermainwalletfile()
     address:=wlt.GenerateKeyPair()
     applog.Notice("Generated Address: %x",address)
     

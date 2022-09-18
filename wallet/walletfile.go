@@ -14,7 +14,7 @@ import
 type PrivateKeyBytes []byte
 type Walletfile struct {
 	//Path string
-	Chain []byte
+	//Chain []byte
 	//
 	Privatekeyarray [] PrivateKeyBytes
 
@@ -27,7 +27,7 @@ type Walletfile struct {
 func (wlt *Wallet) SaveJSONFile(walletfilepath string,key []byte) {
 
 	walletfile:=new(Walletfile)
-	walletfile.Chain=wlt.Chain
+	//walletfile.Chain=wlt.Chain
 
 	for i := 0; i < len(wlt.Privatekeyarray); i++ {
 		walletfile.Privatekeyarray=append(walletfile.Privatekeyarray,wlt.Privatekeyarray[i].Serialize())
@@ -49,7 +49,7 @@ func (wlt *Wallet) SaveJSONFile(walletfilepath string,key []byte) {
 		walletfilestring=walletfilerawstring
 	}
 	bufferWalletfiletype := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bufferWalletfiletype, uint32(1))// type 1
+	binary.LittleEndian.PutUint32(bufferWalletfiletype, uint32(WALLET_TYPE_SEQUENTIAL))// type 1
 
 	bufferWalletfileseize := make([]byte, 4)
 	binary.LittleEndian.PutUint32(bufferWalletfileseize, uint32(len(walletfilestring)))
@@ -80,7 +80,7 @@ func (wlt *Wallet) SaveJSONFile(walletfilepath string,key []byte) {
 	applog.Notice("Wallet saved.")
 
 }
-func (wlt *Wallet) LoadJSONFile(path string,key []byte) error{
+func (wlt *Wallet) LoadJSONWalletFile(path string,key []byte) error{
 	//walletfilerawstring:=*LoadJSONFile(path)
 	f, err := os.OpenFile(path, os.O_RDONLY, 0755)
 	if err != nil {
@@ -136,7 +136,7 @@ func (wlt *Wallet) LoadJSONFile(path string,key []byte) error{
 	//applog.Trace("read JSONFILE CONTENT: %d %d", len (walletfile.Keypairarray),len(walletfile.Assetarray))
 	for i:=0;i<len(walletfile.Privatekeyarray);i++{
 		
-		privKey, _ := utility.PrivKeyFromBytes([]byte( walletfile.Privatekeyarray[i] ))
+		privKey := utility.PrivKeyFromBytes([]byte( walletfile.Privatekeyarray[i] ))
 		wlt.Privatekeyarray=append(wlt.Privatekeyarray,&privKey)
 	}
 	wlt.Assetarray=walletfile.Assetarray

@@ -15,6 +15,7 @@ import (
 		AppPath=""
 		AppLocalPort=""
 		Walletloaded=false
+		Walletstate=""
 		Miningrequested=false
 		Miningrunning=false
 		HotMining=false

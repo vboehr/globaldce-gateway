@@ -6,16 +6,22 @@ import
 	//"encoding/binary"
 	//"bytes"
 	"github.com/btcsuite/btcd/btcec/v2"
-	"github.com/globaldce/globaldce-gateway/applog"
+	//"github.com/globaldce/globaldce-gateway/applog"
 	"fmt"
 	//"os"
 	"sync"
+)
+const (
+	NB_INITIAL_HASHES int = 10000000 
+	
+	WALLET_TYPE_SEQUENTIAL uint32=1
 )
 // 
 type Wallet struct {
 	HotWallet bool
 	Hotaddresses HotAddresses
-	Chain []byte
+	//Chain []byte
+	Type uint32
 	Privatekeyarray [] *btcec.PrivateKey
 	Assetarray [] Asset
 	Path string
@@ -55,12 +61,12 @@ func (wlt *Wallet) GetNbAssets() int{
 
 
 func (wlt *Wallet) GetLastAddress() utility.Hash{
-	if wlt.HotWallet {
-		return wlt.Hotaddresses.GetRandomAddress()
-	}
-	if len(wlt.Privatekeyarray)==0{
-		return wlt.GenerateKeyPair()
-	}
+	//if wlt.HotWallet {
+	//	return wlt.Hotaddresses.GetRandomAddress()
+	//}
+	//if len(wlt.Privatekeyarray)==0{
+	//	return wlt.GenerateKeyPair()
+	//}
 	pk:=wlt.Privatekeyarray[len(wlt.Privatekeyarray)-1]
 	return utility.ComputeHash(pk.PubKey().SerializeCompressed())
 }
@@ -89,12 +95,14 @@ func (wlt *Wallet) GenerateKeyPair() utility.Hash{
 
 	//message:="message text"
 	//messageHash:=ComputeHashBytes([]byte(message))
-
-	pk, err := utility.NewPrivateKey()
-	if err != nil {
-		//il, err//return (*PrivateKey)(key), nil
-		applog.Trace("err: %x", err)
-	}
+	//TODO support for other types of wallet
+	prevpk:=wlt.Privatekeyarray[len(wlt.Privatekeyarray)-1]
+	tmppkbytes:=utility.ComputeHashBytes(prevpk.Serialize())
+	pk := utility.PrivKeyFromBytes(tmppkbytes)
+	//if err != nil {
+	//	//il, err//return (*PrivateKey)(key), nil
+	//	applog.Trace("err: %x", err)
+	//}
 	// pk.Serialize() 							returns a 32 bytes private key
 	// pk.PubKey().SerializeUncompressed() 		returns a 65 bytes public key
 	// pk.PubKey().SerializeCompressed() 		returns a 33 bytes public key
@@ -103,20 +111,21 @@ func (wlt *Wallet) GenerateKeyPair() utility.Hash{
 	//applog.Trace("total length of keys %d",len(wlt.Privatekeyarray))
 	//applog.Trace("private key: %d public key: %d OR %d ", len(pk.Serialize()), len(pk.PubKey().SerializeUncompressed()), len(pk.PubKey().SerializeCompressed()))
 
-	/*
-	sig, err := pk.SignCompact(messageHash)
-	if err != nil {
-		applog.Trace("error")
-		//return 0
-	}
-	applog.Trace("signature %x", sig)
+	
+	//sig, err := pk.SignCompact(messageHash)
+	//if err != nil {
+	//	applog.Trace("error")
+	//	//return 0
+	//}
+	//applog.Trace("signature %x", sig)
 
 	// Verify the signature for the message using the public key.
-	verified := sig.Verify(messageHash, pk.PubKey())
-	applog.Trace("Signature Verified? %v", verified)
-	*/
+	//verified := sig.Verify(messageHash, pk.PubKey())
+	//applog.Trace("Signature Verified? %v", verified)
+	
 	return utility.ComputeHash(pk.PubKey().SerializeCompressed())
 }
+
 func (wlt *Wallet) AddAsset(txhash utility.Hash,index uint32,value uint64,privkeyindex uint32,assetstate string) {
 	var emptytxhash utility.Hash
 	tmpasset:=Asset{

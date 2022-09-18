@@ -72,7 +72,7 @@ func Start(appname string) {
 			//}
 		} else {
 			if newuser {
-				passwordCreationDialog(myWindow)
+				newWalletCreationDialog(myWindow)
 			} else {
 				nowalletFoundDialog(myWindow,"walletfile "+daemon.MainwalletFilePath+" does not exist.")
 			}

@@ -99,7 +99,7 @@ func Start(cliname string){
 
     applog.Notice("")
     
-    daemon.Wlt=loadusermainwalletfile()
+    daemon.Wlt=Loadusermainwalletfile()
     //_=wlt
     //
     //go daemon.Mainloop()
@@ -140,16 +140,16 @@ func Start(cliname string){
 
 ////////////////////////////////////////////
 
-func loadusermainwalletfile() *wallet.Wallet{
+func Loadusermainwalletfile() *wallet.Wallet{
     if daemon.MainwalletFilePath==""{
         daemon.MainwalletFilePath= askuserwalletfilepath()
         applog.Notice("wallet file path set %s",daemon.MainwalletFilePath)
     }
     //
    
-    wlt:=new(wallet.Wallet)
+    
 
-for (!daemon.Walletloaded)&&(!daemon.HotMining){    
+for (!daemon.Walletloaded){    
     if _, err := os.Stat( daemon.MainwalletFilePath); !os.IsNotExist(err) {
         
         //if daemon.HotMining{
@@ -163,7 +163,8 @@ for (!daemon.Walletloaded)&&(!daemon.HotMining){
         //} else{
             // TODO better error handdling
             daemon.MainwalletFileKey=askuserwalletfilekey()
-            lerr:=wlt.LoadJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
+            wlt:=new(wallet.Wallet)
+            lerr:=wlt.LoadJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
             //daemon.Walletloaded=true
             if lerr==nil{
                 daemon.Walletloaded=true
@@ -173,10 +174,28 @@ for (!daemon.Walletloaded)&&(!daemon.HotMining){
        // }
         
 	} else {
-        applog.Notice("walletfile %s does not exist.",daemon.MainwalletFilePath)
+        applog.Notice("\nwalletfile %s does not exist.",daemon.MainwalletFilePath)
+        applog.LockDisplay()
+        fmt.Printf("Do you want to create a new wallet at %s (default: no) :",daemon.MainwalletFilePath)
+        var useranswer string
+      
+        fmt.Scanln(&useranswer)
+        applog.UnlockDisplay()
+        if strings.ToLower(useranswer)=="yes"{
+            //TODO support for othe wallet types
+            //
+
+            wlt:=Newsequentialwallet()
+
+            //
+            
+
+            return wlt
+        }
         daemon.MainwalletFilePath= askuserwalletfilepath()
     }
 }
+/*
 for (!wlt.HotWallet)&&(daemon.HotMining){    
     if _, err := os.Stat( wlt.Path); !os.IsNotExist(err) {
         
@@ -197,7 +216,7 @@ for (!wlt.HotWallet)&&(daemon.HotMining){
         //} else{
         //    // TODO better error handdling
         //    daemon.MainwalletFileKey=askuserwalletfilekey()
-        //    wlt.LoadJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
+        //    wlt.LoadJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
         //    daemon.Walletloaded=true
         //}
         
@@ -206,7 +225,91 @@ for (!wlt.HotWallet)&&(daemon.HotMining){
         wlt.Path= askuserwalletfilepath()
     }
 }
-    return wlt 
+*/
+    //return wlt 
+    return nil
+}
+func Newsequentialwallet()  *wallet.Wallet{
+    wlt:=new(wallet.Wallet)
+            
+    wlt.Type=wallet.WALLET_TYPE_SEQUENTIAL
+    
+    applog.LockDisplay()
+    fmt.Printf("\nCreating new sequential wallet \n")
+    randomseedString:=wallet.GenerateRandomSeedString()
+    fmt.Printf("Random Seed String :%s\n",randomseedString)
+    seedStringCorrectlyEntred:=false
+    var seedString string
+    var reentredseedString string
+    for (!seedStringCorrectlyEntred){
+        fmt.Printf("Enter Seed String (default: random seed string will be used) :")
+        
+        
+        fmt.Scanln(&seedString)
+        fmt.Printf("Please Reenter Seed String (default: random seed string will be used) :")
+        
+        fmt.Scanln(&reentredseedString)
+        if seedString==reentredseedString{
+            seedStringCorrectlyEntred=true
+        } else{
+            fmt.Printf("Entred Seed Strings Do not match\n")
+        }
+    }
+    daemon.MainwalletFileKey=createuserwalletfilekey()
+    
+    applog.UnlockDisplay()
+
+    if seedString==""{
+        seedString=randomseedString
+    }
+    InitialHashBytes:=[]byte(seedString)
+    for i:=0;i<wallet.NB_INITIAL_HASHES;i++{
+        InitialHashBytes = utility.ComputeHashBytes(InitialHashBytes)
+        wltgenprogress:=int(i*100/wallet.NB_INITIAL_HASHES)
+        if (i)%(wallet.NB_INITIAL_HASHES/10)==0{
+            fmt.Printf("Wallet Generation Progress %d %%\n",wltgenprogress)
+        }
+        
+    }
+    
+    //fmt.Printf("%x\n",InitialHashBytes)
+
+	pk := utility.PrivKeyFromBytes(InitialHashBytes)
+    wlt.Privatekeyarray=append(wlt.Privatekeyarray,&pk)
+    return wlt    
+}
+func createuserwalletfilekey() []byte{
+    var keystr string
+    var reentredkeystr string
+    for {
+        
+        fmt.Printf("\nPlease enter the walletfile key: ")
+        fmt.Scanln(&keystr)
+        if (len(keystr)<8){
+            fmt.Printf("\nEntered key must be at least 8 characters length ")
+        } else{
+            
+            fmt.Printf("\nPlease reenter the walletfile key: ")
+            fmt.Scanln(&reentredkeystr)
+            if reentredkeystr==keystr{
+                break
+            } else{
+                fmt.Printf("\nEntered keys do not match ")
+            }
+        }
+
+        
+
+    }
+
+    //if (len(key)==32){
+        // No hashing is needed
+    //    return key
+    //} else {
+        // If the key length is 32, the key is hashed first
+        return utility.ComputeHashBytes([]byte(keystr))
+    //}
+
 }
 func askuserwalletfilekey() []byte{
     var key []byte
@@ -224,18 +327,18 @@ func askuserwalletfilekey() []byte{
         fmt.Printf("\nEntered key must be at least 8 characters length ")
     }
 
-    if (len(key)==32){
+    //if (len(key)==32){
         // No hashing is needed
-        return key
-    } else {
+    //    return key
+    //} else {
         // If the key length is 32, the key is hashed first
         return utility.ComputeHashBytes(key)
-    }
+    //}
 
 }
 func askuserwalletfilepath() string{
     var entredpath string
-    fmt.Printf("Please enter wallet file path (default: %s) :",filepath.Join(daemon.AppPath,daemon.MainwalletFilePathDefault))
+    fmt.Printf("\nPlease enter wallet file path (default: %s) :",filepath.Join(daemon.AppPath,daemon.MainwalletFilePathDefault))
     fmt.Scanln(&entredpath)
     if entredpath!=""{
         return entredpath
