@@ -1,4 +1,4 @@
-package wallet
+package daemon
 import
 (
 	//"crypto/sha256"
@@ -14,21 +14,21 @@ import
 	"os"
 )
 //TODO integrate address book in the wallet
-type HotAddresses struct {
-	Addrarray [] utility.Hash
+type MiningAddresses struct {
+	Addressesarray [] utility.Hash
 }
 
-func (hota* HotAddresses) AddAddress(addr utility.Hash){
-	hota.Addrarray=append(hota.Addrarray,addr)
+func (maddresses* MiningAddresses) AddAddress(addr utility.Hash){
+	maddresses.Addressesarray=append(maddresses.Addressesarray,addr)
 }//(rand.Intn(113)
-func (hota* HotAddresses) GetRandomAddress() utility.Hash{
-	maxnb:=len(hota.Addrarray)
+func (maddresses* MiningAddresses) GetRandomAddress() utility.Hash{
+	maxnb:=len(maddresses.Addressesarray)
 	i:=rand.Intn( maxnb )
 	//fmt.Printf("****%d",i)
-	return hota.Addrarray[i]
+	return maddresses.Addressesarray[i]
 }//(rand.Intn(113)
 
-func (hota *HotAddresses) LoadJSONFile(addrbookfilepath string) error{
+func (maddresses *MiningAddresses) LoadJSONFile(addrbookfilepath string) error{
 	f, err := os.OpenFile(addrbookfilepath, os.O_RDONLY, 0755)
 	if err != nil {
 		//log.Fatal(err)
@@ -50,7 +50,7 @@ func (hota *HotAddresses) LoadJSONFile(addrbookfilepath string) error{
 		//log.Fatal(err)
 		fmt.Println("error:", rerr)
 	}
-	uerr:=json.Unmarshal(addrbookfilerawbytes,hota)
+	uerr:=json.Unmarshal(addrbookfilerawbytes,maddresses)
 	if uerr != nil {
 		fmt.Println("error:", uerr)
 		return uerr
@@ -58,8 +58,8 @@ func (hota *HotAddresses) LoadJSONFile(addrbookfilepath string) error{
 	return nil
 }
 
-func (hota *HotAddresses) SaveJSONFile(addrbookfilepath string){
-	addrbookfilerawbytes, err := json.Marshal(*hota)
+func (maddresses *MiningAddresses) SaveJSONFile(addrbookfilepath string){
+	addrbookfilerawbytes, err := json.Marshal(*maddresses)
 	if err != nil {
 		fmt.Println("error:", err)
 	}

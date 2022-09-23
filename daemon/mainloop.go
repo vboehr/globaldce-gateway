@@ -24,23 +24,30 @@ func listenSigInt() chan os.Signal {
 /////////////////////////////
 
 func startmining(){
-    Miningrunning=true
-        for  Wireswarm.Syncingdone {
-              fmt.Println("Working..")
-                success,mb:=Mn.Mine(Wlt)
-                if success {
-                    Wireswarm.BroadcastMainblock(mb)
-                }
-                if !Wlt.HotWallet{
-                    Mn.SyncWallet(Wlt)
-                    if Walletloaded && success{
-                        Wlt.SaveJSONFile(MainwalletFilePath,MainwalletFileKey)
-                    }
-                }
-                
-            //applog.Trace("mainchaillength %d",Mn.GetConfirmedMainchainLength())
+    fmt.Println("Miningrequested",Miningrequested)
+    for {
+        if Miningrequested && Walletloaded && Wireswarm.Syncingdone {
+            fmt.Println("Working..")
+            Miningrunning=true
+              //success,mb:=Mn.Mine(Wlt)
+              miningaddress:=Wlt.GenerateKeyPair()
+              success,mb:=Mn.Mine(miningaddress)
+              if success {
+                  Wireswarm.BroadcastMainblock(mb)
+              }
+              //if !Wlt.HotWallet{
+                  Mn.SyncWallet(Wlt)
+                  if Walletloaded && success{
+                      Wlt.SaveJSONFile(MainwalletFilePath,MainwalletFileKey)
+                  }
+              //}
+              
+          //applog.Trace("mainchaillength %d",Mn.GetConfirmedMainchainLength())
+            } else {
+                Miningrunning=false
         }
-
+    }
+    
 }
 
 /////////////////////////////
@@ -85,6 +92,8 @@ func Mainloop(){
     //ticker3 := time.Tick(time.Second * 66)
 
     //
+    go startmining()
+    //
     for {
 
         //
@@ -99,15 +108,16 @@ func Mainloop(){
        
         }*/
         //
-        if  Miningrequested && ((Wlt.HotWallet) || (Walletloaded)) && Wireswarm.Syncingdone{
-           if !Wlt.HotWallet{
+        //if  Miningrequested && ((Wlt.HotWallet) || (Walletloaded)) && Wireswarm.Syncingdone{
+        if Walletloaded && Wireswarm.Syncingdone{
+           //if !Wlt.HotWallet{
                 Mn.SyncWallet(Wlt)
                 Mn.LoadUnconfirmedBroadcastedTxs(Wlt)   
-           }
-
-            go startmining()
-             Miningrequested=false
-       
+           //}
+            //if Miningrequested {
+                //go startmining()
+                //Miningrequested=false
+            //}
         }
 
         

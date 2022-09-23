@@ -73,8 +73,11 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 	sendtoaddressarraytxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Send to addresses fee"))
 	sendtoaddressarraytxfeeContainer:=container.NewHBox(sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeEntryContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer)
 	//
-	MiningrequestedCheck:=widget.NewCheck("Mining", func(checkstatus bool) { daemon.Usersettings.Miningrequested=checkstatus })
-	MiningrequestedCheck.SetChecked(daemon.Usersettings.Miningrequested)
+	MiningrequestedCheck:=widget.NewCheck("Mining", func(checkstatus bool) { 
+		daemon.Usersettings.Miningrequested=checkstatus
+		daemon.Miningrequested=checkstatus
+	})
+	MiningrequestedCheck.SetChecked(daemon.Miningrequested)//daemon.Usersettings.Miningrequested)
 	// save settings button section
 	saveSettingsButton:= widget.NewButton("Save settings", func() {
 		fmt.Println("Saving settings")

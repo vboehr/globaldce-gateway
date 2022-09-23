@@ -21,6 +21,7 @@ type Walletfile struct {
 	Assetarray [] Asset
 	Lastknownblock uint64
 	Broadcastedtxarray [] Broadcastedtx
+	Groupnamearray [] string
 	Contactarray [] Contact
 }
 
@@ -36,6 +37,7 @@ func (wlt *Wallet) SaveJSONFile(walletfilepath string,key []byte) {
 	walletfile.Assetarray=wlt.Assetarray
 	walletfile.Lastknownblock=wlt.Lastknownblock
 	walletfile.Broadcastedtxarray=wlt.Broadcastedtxarray
+	walletfile.Groupnamearray=wlt.Groupnamearray
 	walletfile.Contactarray=wlt.Contactarray
 	walletfilerawstring, err := json.Marshal(walletfile)
 	if err != nil {

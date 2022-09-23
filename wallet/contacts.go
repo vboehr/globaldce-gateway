@@ -1,8 +1,8 @@
 
 package wallet
-import
-(
-	"github.com/globaldce/globaldce-gateway/utility"
+//import
+//(
+	//"github.com/globaldce/globaldce-gateway/utility"
 	//"encoding/json"
 	//"encoding/binary"
 	//"bytes"
@@ -11,18 +11,20 @@ import
 	//"fmt"
 	//"os"
 	//"sync"
-)
+//)
 
 
 type Contact struct{
 	Name string
-	Address utility.Hash
+	AddrString string
+	GroupIdArray [] uint32
 }
-func (wlt *Wallet) AddContact(name string,hash utility.Hash) {
+func (wlt *Wallet) AddContact(tmpname string,tmpaddrstring string, tmpgroupidarray []uint32) {
 	//var emptytxhash utility.Hash
 	tmpcontact:=Contact{
-		Name:name,
-		Address:hash,
+		Name:tmpname,
+		AddrString:tmpaddrstring,
+		GroupIdArray: tmpgroupidarray,
 	}
 	wlt.Contactarray=append(wlt.Contactarray,tmpcontact)
 }

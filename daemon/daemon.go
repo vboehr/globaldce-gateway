@@ -18,7 +18,8 @@ import (
 		Walletstate=""
 		Miningrequested=false
 		Miningrunning=false
-		HotMining=false
+		//HotMining=false
+		//Miningaddressesloaded=false
 		Managingwalletrequested=false
 		Seed=false
 		SyncingMinNbPeers=0

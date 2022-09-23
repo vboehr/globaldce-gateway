@@ -5,7 +5,7 @@ import (
 	//"github.com/globaldce/globaldce-gateway/mainchain"
 	//"github.com/syndtr/goleveldb/leveldb"
 	"github.com/globaldce/globaldce-gateway/utility"
-	"github.com/globaldce/globaldce-gateway/wallet"
+	//"github.com/globaldce/globaldce-gateway/wallet"
 	//"github.com/globaldce/globaldce-gateway/mainchain"
 	//"os"
 	"time"
@@ -17,11 +17,12 @@ import (
 
 
 ////////////////////////////////////////////////////////////////////
-func (mn *Maincore) Mine(wlt *wallet.Wallet) (bool,*Mainblock){
+func (mn *Maincore) Mine(miningaddress utility.Hash) (bool,*Mainblock){//(wlt *wallet.Wallet) (bool,*Mainblock){
 	applog.Notice("Mining")
 	mainblock:=NewMainblock()
 	mainblock.Height=uint32 (mn.GetMainchainLength())
-	pubkeyhash:=wlt.GetLastAddress()
+	//pubkeyhash:=wlt.GetLastAddress()
+	pubkeyhash:=miningaddress
 	selectedtxs,totalfees:= mn.txspool.GetHighestPriorityTxs(mn.GetConfirmedMainchainLength())
 
 	rewardtx:=utility.NewRewardTransaction(GetMainblockReward(mainblock.Height),uint64(totalfees),pubkeyhash)//GENESIS_BLOCK_REWARD
@@ -80,7 +81,7 @@ func (mn *Maincore) Mine(wlt *wallet.Wallet) (bool,*Mainblock){
 			applog.Trace("Mined mainblock added to mainchain")
 			applog.Trace("Mainchain length %d Mainchain confirmed length %d",mn.GetMainchainLength(),mn.mainbf.NbChunks())
 
-			wlt.GenerateKeyPair()
+			//wlt.GenerateKeyPair()
 			return true,mainblock
 		} else {
 			applog.Warning("mined mainblock rejected - hash of mainblock found do not match previous block hash")

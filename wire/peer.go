@@ -11,7 +11,7 @@ type Peer struct {
 	SyncingMainchainlength uint32
 	GoodIPArray []string
 	BadIPArray []string
-	BannedNameArray []string
+	//BannedNameArray []string
 }
 func NewPeer(peeraddress string,conn net.Conn) * Peer {
 	np:=new(Peer)

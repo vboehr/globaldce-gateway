@@ -87,8 +87,8 @@ func Start(cliname string){
         if strings.Index(tmparg, "-seed")==0{
             daemon.Seed=true
         }
-        if strings.Index(tmparg, "-hotmining")==0{
-            daemon.HotMining=true
+        if strings.Index(tmparg, "-miningaddressesfile=")==0{
+            //daemon.HotMining=true
             applog.EnableDisplayTrace()
         }
         if strings.Index(tmparg, "-trace")==0{

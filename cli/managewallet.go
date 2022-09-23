@@ -44,7 +44,7 @@ func managewallet(ws *wire.Swarm,mn *mainchain.Maincore,wlt * wallet.Wallet){
     //fmt.Printf("\nSaving mainwallet file ...")
     //wlt.SaveJSONFile(mainwalletFilePath,mainwalletFileKey)
 	
-	fmt.Printf("\nEntered manage wallet mode. Here are some options to choose from:\n")
+	fmt.Printf("\nEntered manage wallet mode. Here are some features to choose from:\n")
 	managewallethelp()
 	fmt.Printf("\n")
 	

@@ -18,16 +18,18 @@ const (
 )
 // 
 type Wallet struct {
-	HotWallet bool
-	Hotaddresses HotAddresses
+	//HotWallet bool
+	//Hotaddresses HotAddresses
 	//Chain []byte
+	Path string
 	Type uint32
 	Privatekeyarray [] *btcec.PrivateKey
 	Assetarray [] Asset
-	Path string
 	Lastknownblock uint64
 	Broadcastedtxarray [] Broadcastedtx
+	Groupnamearray [] string
 	Contactarray [] Contact
+
 	mu sync.Mutex
 }
 func (wlt *Wallet) Lock() {

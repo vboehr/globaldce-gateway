@@ -22,7 +22,7 @@ import (
 type Maincore struct{
 	MissingDataHashArray []utility.Hash
 	MissingDataFileHashArray []utility.Hash
-	BannedNameArray []string
+	//BannedNameArray []string
 	path string
 	genesisblock Mainblock
 	mainheaders [] Mainheader
