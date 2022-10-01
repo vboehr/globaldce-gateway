@@ -42,7 +42,7 @@ func managewallet(ws *wire.Swarm,mn *mainchain.Maincore,wlt * wallet.Wallet){
     //fmt.Printf("Wallet ballance: %d\n",wlt.ComputeBalance())
 	applog.Trace("Wallet ballance %f",float64 (wlt.ComputeBalance())/1000000.0)
     //fmt.Printf("\nSaving mainwallet file ...")
-    //wlt.SaveJSONFile(mainwalletFilePath,mainwalletFileKey)
+    //wlt.SaveJSONWalletFile(mainwalletFilePath,mainwalletFileKey)
 	
 	fmt.Printf("\nEntered manage wallet mode. Here are some features to choose from:\n")
 	managewallethelp()

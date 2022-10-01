@@ -135,13 +135,13 @@ func Start(appname string) {
 	
 	//myWindow.SetOnClosed(func(){
 	//	fmt.Println("Closing")
-	//	daemon.Wlt.SaveJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
+	//	daemon.Wlt.SaveJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
 	//})
 	
 	myWindow.ShowAndRun()
 		fmt.Println("Closing")
 		if daemon.Walletloaded {
-			daemon.Wlt.SaveJSONFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
+			daemon.Wlt.SaveJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
 		}
 		_=daemon.SaveUsersettingsFile()
 }

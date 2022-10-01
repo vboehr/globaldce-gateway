@@ -103,7 +103,7 @@ func (mn *Maincore) ConfirmMainblock(mb*Mainblock) {
 	i:=mb.Height
 	if !mn.ValidateMainblockTransactions(uint32 (i), &mb.Transactions){
 		applog.Warning("ConfirmMainblock - Invalid mainblock %d",i)
-		mn.PutMainblockState(uint32 (i),StateValueIdentifierUnvalidMainblock)
+		mn.PutMainblockState(uint32 (i),StateValueIdentifierInvalidMainblock)
 	} else {
 		mn.PutMainblockState(uint32 (i),StateValueIdentifierValidMainblock)
 	}

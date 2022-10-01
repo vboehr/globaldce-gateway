@@ -193,10 +193,11 @@ func newSequentialWalletCreationDialog(win fyne.Window) {
 ///////////////////////////////////////////////////////////////////
 
 func newSequentialWalletCreationProgressDialog(win fyne.Window,seedString string) {
-	wlt:=new(wallet.Wallet)        
-    wlt.Type=wallet.WALLET_TYPE_SEQUENTIAL
+	//wlt:=new(wallet.Wallet)        
+    //wlt.Type=wallet.WALLET_TYPE_SEQUENTIAL
 	//creationProgressDialog:=dialog.NewProgress("New Sequential Wallet", "Please stand by", win)
-	
+	wlt:=wallet.Newsequentialwallet(seedString)
+	/*
     InitialHashBytes:=[]byte(seedString)
     for i:=0;i<wallet.NB_INITIAL_HASHES;i++{
         InitialHashBytes = utility.ComputeHashBytes(InitialHashBytes)
@@ -213,6 +214,7 @@ func newSequentialWalletCreationProgressDialog(win fyne.Window,seedString string
 
 	pk := utility.PrivKeyFromBytes(InitialHashBytes)
     wlt.Privatekeyarray=append(wlt.Privatekeyarray,&pk)
+	*/
 	daemon.Wlt=wlt
 	daemon.Walletloaded=true    
 }

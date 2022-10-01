@@ -25,7 +25,7 @@ type Walletfile struct {
 	Contactarray [] Contact
 }
 
-func (wlt *Wallet) SaveJSONFile(walletfilepath string,key []byte) {
+func (wlt *Wallet) SaveJSONWalletFile(walletfilepath string,key []byte) {
 
 	walletfile:=new(Walletfile)
 	//walletfile.Chain=wlt.Chain
@@ -117,14 +117,16 @@ func (wlt *Wallet) LoadJSONWalletFile(path string,key []byte) error{
 	_, rerr := f.Read(walletfilerawstring)
 	if rerr != nil {
 		//log.Fatal(err)
-		fmt.Println("error:", rerr)
+		fmt.Println("reading error:", rerr)
 	}
 
 	var walletfilestring []byte
+	fmt.Println("key length",len(key))
 	if (len(key)!=0){
 		walletfilestring,_=utility.Decrypt(key,walletfilerawstring)
 	} else {
 		fmt.Println("No encryption key set")
+		fmt.Println("data:",walletfilerawstring)
 		walletfilestring=walletfilerawstring
 	}
 
@@ -132,7 +134,7 @@ func (wlt *Wallet) LoadJSONWalletFile(path string,key []byte) error{
 	walletfile:=new(Walletfile)
 	uerr:=json.Unmarshal(walletfilestring,walletfile)
 	if uerr != nil {
-		fmt.Println("error:", uerr)
+		fmt.Println("unmarshal error:", uerr)
 		return uerr
 	}
 	//applog.Trace("read JSONFILE CONTENT: %d %d", len (walletfile.Keypairarray),len(walletfile.Assetarray))

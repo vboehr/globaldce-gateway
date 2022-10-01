@@ -38,7 +38,7 @@ func startmining(){
               //if !Wlt.HotWallet{
                   Mn.SyncWallet(Wlt)
                   if Walletloaded && success{
-                      Wlt.SaveJSONFile(MainwalletFilePath,MainwalletFileKey)
+                      Wlt.SaveJSONWalletFile(MainwalletFilePath,MainwalletFileKey)
                   }
               //}
               
@@ -223,7 +223,7 @@ func Mainloop(){
             applog.UnlockDisplay()
             applog.Notice("Quitting ...")
             if Walletloaded {
-                Wlt.SaveJSONFile(MainwalletFilePath,MainwalletFileKey)
+                Wlt.SaveJSONWalletFile(MainwalletFilePath,MainwalletFileKey)
             }
             _=SaveUsersettingsFile()
             os.Exit(0)

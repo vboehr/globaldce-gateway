@@ -12,7 +12,7 @@ import (
     "github.com/globaldce/globaldce-gateway/utility"
 )
 const (
-    AppVersion="0.2.0"
+    AppVersion="0.2.3"
 )
 var appName string
 func Start(cliname string){
@@ -184,11 +184,13 @@ for (!daemon.Walletloaded){
         if strings.ToLower(useranswer)=="yes"{
             //TODO support for othe wallet types
             //
-
+            applog.LockDisplay()
             wlt:=Newsequentialwallet()
 
             //
-            
+            daemon.MainwalletFileKey=createuserwalletfilekey()
+    
+            applog.UnlockDisplay()
 
             return wlt
         }
@@ -230,12 +232,11 @@ for (!wlt.HotWallet)&&(daemon.HotMining){
     return nil
 }
 func Newsequentialwallet()  *wallet.Wallet{
-    wlt:=new(wallet.Wallet)
-            
-    wlt.Type=wallet.WALLET_TYPE_SEQUENTIAL
+
     
-    applog.LockDisplay()
+    
     fmt.Printf("\nCreating new sequential wallet \n")
+
     randomseedString:=wallet.GenerateRandomSeedString()
     fmt.Printf("Random Seed String :%s\n",randomseedString)
     seedStringCorrectlyEntred:=false
@@ -255,27 +256,15 @@ func Newsequentialwallet()  *wallet.Wallet{
             fmt.Printf("Entred Seed Strings Do not match\n")
         }
     }
-    daemon.MainwalletFileKey=createuserwalletfilekey()
-    
-    applog.UnlockDisplay()
+
 
     if seedString==""{
         seedString=randomseedString
     }
-    InitialHashBytes:=[]byte(seedString)
-    for i:=0;i<wallet.NB_INITIAL_HASHES;i++{
-        InitialHashBytes = utility.ComputeHashBytes(InitialHashBytes)
-        wltgenprogress:=int(i*100/wallet.NB_INITIAL_HASHES)
-        if (i)%(wallet.NB_INITIAL_HASHES/10)==0{
-            fmt.Printf("Wallet Generation Progress %d %%\n",wltgenprogress)
-        }
-        
-    }
-    
-    //fmt.Printf("%x\n",InitialHashBytes)
+    ///////////////////////////////////
+    wlt:=wallet.Newsequentialwallet(seedString)
 
-	pk := utility.PrivKeyFromBytes(InitialHashBytes)
-    wlt.Privatekeyarray=append(wlt.Privatekeyarray,&pk)
+    ////////////////////////////////////
     return wlt    
 }
 func createuserwalletfilekey() []byte{

@@ -8,3 +8,4 @@ rm info.log
 rm settings.ini
 mkdir ./WalletFiles
 mkdir ./MiningFiles
+mkdir ./Mainblocks

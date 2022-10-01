@@ -15,13 +15,13 @@ import (
 		AppPath=""
 		AppLocalPort=""
 		Walletloaded=false
-		Walletstate=""
+		//Walletstate=""
 		Miningrequested=false
 		Miningrunning=false
 		//HotMining=false
 		//Miningaddressesloaded=false
 		Managingwalletrequested=false
-		Seed=false
+		Seed=true
 		SyncingMinNbPeers=0
 		AppIsClosing=false
 		Mn *mainchain.Maincore

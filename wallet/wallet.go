@@ -9,6 +9,7 @@ import
 	//"github.com/globaldce/globaldce-gateway/applog"
 	"fmt"
 	//"os"
+	//"time"
 	"sync"
 )
 const (
@@ -21,6 +22,8 @@ type Wallet struct {
 	//HotWallet bool
 	//Hotaddresses HotAddresses
 	//Chain []byte
+	Waletloaded bool
+	Walletstate string
 	Path string
 	Type uint32
 	Privatekeyarray [] *btcec.PrivateKey
@@ -52,6 +55,30 @@ type Asset struct {
 	StateString string
 	SpendingTxHash utility.Hash
 	SpendingIndex uint32
+}
+func Newsequentialwallet(seedString string)  *Wallet{
+    wlt:=new(Wallet)
+	wlt.Waletloaded=false     
+	go Gensequentialwallet(wlt,seedString)
+	return wlt
+}
+func Gensequentialwallet(wlt *Wallet,seedString string){
+	wlt.Type=WALLET_TYPE_SEQUENTIAL
+    InitialHashBytes:=[]byte(seedString)
+	for i:=0;i<NB_INITIAL_HASHES;i++{
+		InitialHashBytes = utility.ComputeHashBytes(InitialHashBytes)
+		wltgenprogress:=int(i*100/NB_INITIAL_HASHES)
+		if (i)%(NB_INITIAL_HASHES/10)==0{
+			wlt.Walletstate=fmt.Sprintf("Wallet Generation Progress %d %%\n",wltgenprogress)
+			fmt.Printf("Wallet Generation Progress %d %%\n",wltgenprogress)
+		}
+		
+	}
+	fmt.Printf("%x\n",InitialHashBytes)
+	pk := utility.PrivKeyFromBytes(InitialHashBytes)
+	wlt.Privatekeyarray=append(wlt.Privatekeyarray,&pk)
+	wlt.Walletstate=""
+	//wlt.Waletloaded=true
 }
 /*
 func (wlt *Wallet) GetAssetInfo(int i) ([]byte,value){
@@ -92,8 +119,18 @@ func (wlt *Wallet) GetPrivatekeyindexFromAddress(addr utility.Hash) int{
 func (wlt *Wallet) GetNbAddresses() int{
 	return len(wlt.Privatekeyarray)
 }
+/*
 
+
+*/
+func (wlt *Wallet) GenerateKeyPairs(nbkeypair int){
+	for i:=0;i<nbkeypair;i++{
+		wlt.GenerateKeyPair()
+
+	}
+}
 func (wlt *Wallet) GenerateKeyPair() utility.Hash{
+
 
 	//message:="message text"
 	//messageHash:=ComputeHashBytes([]byte(message))

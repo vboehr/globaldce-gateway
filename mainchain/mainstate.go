@@ -13,9 +13,15 @@ import (
 
 const (
 	StateKeyIdentifierTxOutput=1
-	StateKeyIdentifierTx=3
+	StateKeyIdentifierTx=2
+	StateKeyIdentifierMainblock=3
 	StateKeyIdentifierNameRegistration=4
-	StateKeyIdentifierMainblock=6
+
+	StateKeyIdentifierAddressBalance=5
+	//StateKeyIdentifierAddressNbAssets
+	//StateKeyIdentifierAddressAsset
+
+	
 	//StateKeyIdentifierData=6
 	//StateKeyIdentifierDataFile=7
 	//StateKeyIdentifierEngagementName=8
@@ -28,13 +34,20 @@ const (
 )
 const (
 	StateValueIdentifierNotFound=0
-	StateValueIdentifierUnspentTxOutput=1
-	StateValueIdentifierSpentTxOutput=2
-	StateValueIdentifierTx=3
-	StateValueIdentifierActifNameRegistration=4
-	StateValueIdentifierInactifNameRegistration=5
-	StateValueIdentifierValidMainblock=6
-	StateValueIdentifierUnvalidMainblock=7
+
+	StateValueIdentifierUnspentTxOutput=1001
+	StateValueIdentifierSpentTxOutput=1002
+
+	StateValueIdentifierTx=2001
+
+	StateValueIdentifierValidMainblock=3001
+	StateValueIdentifierInvalidMainblock=3002
+
+	StateValueIdentifierActifNameRegistration=4001
+	StateValueIdentifierInactifNameRegistration=4002
+
+	StateValueIdentifierAddressBalance=5001
+
 	//StateValueIdentifierData=6
 	//StateValueIdentifierDataFile=7
 	//StateValueIdentifierEngagementName=8
@@ -145,6 +158,57 @@ func (mn *Maincore) GetNameState(name []byte) uint32 {
 }
 
 
+func (mn *Maincore) PutAddressBalanceState(addr utility.Hash,amount uint64) error {
+
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierAddressBalance)
+	tmpkeybw.PutBytes(addr[:])
+	//tmpkeybw.PutUint32(index)
+
+	tmpbw:=utility.NewBufferWriter()
+	tmpbw.PutUint32(StateKeyIdentifierAddressBalance)
+	tmpbw.PutUint64(amount)
+
+	err := mn.mainstatedb.Put(tmpkeybw.GetContent(), tmpbw.GetContent(), nil)
+	return err
+}
+
+func (mn *Maincore) GetAddressBalanceState(addr utility.Hash) (uint32,uint64) {
+	tmpkeybw:=utility.NewBufferWriter()
+	tmpkeybw.PutUint32(StateKeyIdentifierAddressBalance)
+	tmpkeybw.PutBytes(addr[:])
+	//tmpkeybw.PutUint32(index)
+
+	data, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
+	if err != nil {
+		applog.Trace("GetAddressBalanceState - address %x : %v",addr, err)
+		return StateValueIdentifierNotFound,0
+	}
+	tmpbr:=utility.NewBufferReader(data)
+
+	stateidentifier:=tmpbr.GetUint32()
+	amount:=tmpbr.GetUint64()
+	return stateidentifier,amount
+}
+
+//////////////////////////////
+func (mn *Maincore) AddToAddressBalance(addr utility.Hash,amount uint64) error {
+
+	_,balance:=mn.GetAddressBalanceState(addr)
+	balance+=amount
+	_=mn.PutAddressBalanceState(addr,balance)
+
+	return nil
+}
+func (mn *Maincore) SubtractFromAddressBalance(addr utility.Hash,amount uint64) error {
+
+	_,balance:=mn.GetAddressBalanceState(addr)
+	balance-=amount
+	_=mn.PutAddressBalanceState(addr,balance)
+
+	return nil
+}
+//////////////////////////////
 func (mn *Maincore) PutMainblockState(height uint32,state uint32) error{
 	tmpkeybw:=utility.NewBufferWriter()
 	tmpkeybw.PutUint32(StateKeyIdentifierMainblock)
@@ -176,7 +240,7 @@ func (mn *Maincore) GetMainblockState(height uint32) (uint32) {
 	applog.Trace("type %d ",stateidentifier)
 	return stateidentifier
 }
-
+////////////////////////////////////////
 
 /*
 func (mn *Maincore) PutPublicPostState(datahash utility.Hash,namebytes []byte,txhash utility.Hash,index uint32,id uint32) error{

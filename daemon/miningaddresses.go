@@ -13,7 +13,7 @@ import
 	"fmt"
 	"os"
 )
-//TODO integrate address book in the wallet
+//TODO integrate address  in the wallet
 type MiningAddresses struct {
 	Addressesarray [] utility.Hash
 }
@@ -21,6 +21,9 @@ type MiningAddresses struct {
 func (maddresses* MiningAddresses) AddAddress(addr utility.Hash){
 	maddresses.Addressesarray=append(maddresses.Addressesarray,addr)
 }//(rand.Intn(113)
+func (maddresses* MiningAddresses) GetAddress(i int) utility.Hash{
+	return maddresses.Addressesarray[i]
+}
 func (maddresses* MiningAddresses) GetRandomAddress() utility.Hash{
 	maxnb:=len(maddresses.Addressesarray)
 	i:=rand.Intn( maxnb )
@@ -28,29 +31,29 @@ func (maddresses* MiningAddresses) GetRandomAddress() utility.Hash{
 	return maddresses.Addressesarray[i]
 }//(rand.Intn(113)
 
-func (maddresses *MiningAddresses) LoadJSONFile(addrbookfilepath string) error{
-	f, err := os.OpenFile(addrbookfilepath, os.O_RDONLY, 0755)
+func (maddresses *MiningAddresses) LoadJSONFile(filepath string) error{
+	f, err := os.OpenFile(filepath, os.O_RDONLY, 0755)
 	if err != nil {
 		//log.Fatal(err)
 		fmt.Println("error:", err)
 	}
-	bufferAddrbookfileseize := make([]byte, 4)
-	_, rserr := f.Read(bufferAddrbookfileseize)
+	bufferMiningAddrfileseize := make([]byte, 4)
+	_, rserr := f.Read(bufferMiningAddrfileseize)
 	if rserr != nil {
 		//log.Fatal(err)
 		fmt.Println("error:", rserr)
 	}
-	var addrbookfileseize uint32
-	readerAddrbookfileseize := bytes.NewReader(bufferAddrbookfileseize)
-	binary.Read(readerAddrbookfileseize, binary.LittleEndian, &addrbookfileseize)
+	var miningaddrfileseize uint32
+	readerMiningAddrfileseize := bytes.NewReader(bufferMiningAddrfileseize)
+	binary.Read(readerMiningAddrfileseize, binary.LittleEndian, &miningaddrfileseize)
 
-	addrbookfilerawbytes := make([]byte, addrbookfileseize)
-	_, rerr := f.Read(addrbookfilerawbytes)
+	addrfilerawbytes := make([]byte, miningaddrfileseize)
+	_, rerr := f.Read(addrfilerawbytes)
 	if rerr != nil {
 		//log.Fatal(err)
 		fmt.Println("error:", rerr)
 	}
-	uerr:=json.Unmarshal(addrbookfilerawbytes,maddresses)
+	uerr:=json.Unmarshal(addrfilerawbytes,maddresses)
 	if uerr != nil {
 		fmt.Println("error:", uerr)
 		return uerr
@@ -58,26 +61,26 @@ func (maddresses *MiningAddresses) LoadJSONFile(addrbookfilepath string) error{
 	return nil
 }
 
-func (maddresses *MiningAddresses) SaveJSONFile(addrbookfilepath string){
-	addrbookfilerawbytes, err := json.Marshal(*maddresses)
+func (maddresses *MiningAddresses) SaveJSONFile(addrfilepath string){
+	addrfilerawbytes, err := json.Marshal(*maddresses)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
 	
-	bufferAddrbookfileseize := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bufferAddrbookfileseize, uint32(len(addrbookfilerawbytes)))
+	bufferMiningAddrfileseize := make([]byte, 4)
+	binary.LittleEndian.PutUint32(bufferMiningAddrfileseize, uint32(len(addrfilerawbytes)))
 
-	f, err := os.OpenFile(addrbookfilepath, os.O_WRONLY|os.O_CREATE, 0755)
+	f, err := os.OpenFile(addrfilepath, os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {
 		//log.Fatal(err)
 		fmt.Println("error:", err)
 	}
-	_, wserr := f.Write(bufferAddrbookfileseize)
+	_, wserr := f.Write(bufferMiningAddrfileseize)
 	if wserr != nil {
 		//log.Fatal(err)
 		fmt.Println("error:", wserr)
 	}
-	_, werr := f.Write(addrbookfilerawbytes)
+	_, werr := f.Write(addrfilerawbytes)
 	if werr != nil {
 		//log.Fatal(err)
 		fmt.Println("error:", werr)

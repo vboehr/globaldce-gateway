@@ -22,6 +22,11 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 			case utility.ModuleIdentifierECDSATxOut:
 				mn.PutTxOutputState(txhash,uint32(k),StateValueIdentifierUnspentTxOutput)
 				applog.Trace("Puttting %x %d  stat %d",txhash,uint32(k),StateValueIdentifierUnspentTxOutput)
+				if TRACKING_ADDRESSES {
+					addr,_,derr:= utility.DecodeECDSATxOutBytecode(tx.Vout[k].Bytecode)
+					_=derr
+					mn.AddToAddressBalance(*addr,tx.Vout[k].Value)
+				}
 			case utility.ModuleIdentifierECDSANameRegistration:
 				_,name,_,_:=utility.DecodeECDSANameRegistration(tx.Vout[k].Bytecode) 
 				if mn.GetNameState(name)==StateValueIdentifierActifNameRegistration{
@@ -67,6 +72,27 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 		switch moduleid {
 			case utility.ModuleIdentifierECDSATxIn:
 				mn.PutTxOutputState(tx.Vin[l].Hash,tx.Vin[l].Index,StateValueIdentifierSpentTxOutput)
+				if TRACKING_ADDRESSES {
+					pubcompressed,_,derr:=utility.DecodeECDSATxInBytecode(tx.Vin[l].Bytecode)
+					_=derr
+					addr:=utility.ComputeHash(pubcompressed)
+					_,height,number:=mn.GetTxState(tx.Vin[l].Hash)
+					//applog.Trace("height%d,number%d",height,number)
+					
+					if int(number)>=len(mn.GetMainblock(int(height)).Transactions){
+						applog.Warning("Invalide transaction in updatestate")
+						//os.Exit(0)
+						return
+					}
+					if int(tx.Vin[l].Index)>=len(mn.GetMainblock(int(height)).Transactions[number].Vout){
+						applog.Warning("Invalide transaction in updatestate")
+						//os.Exit(0)
+						return
+					}
+					
+					tmpinpututxo:=mn.GetMainblock(int(height)).Transactions[number].Vout[tx.Vin[l].Index]
+					mn.SubtractFromAddressBalance(addr,tmpinpututxo.Value)
+				}
 			/*
 			case utility.ModuleIdentifierECDSANamePublicPost:
 				_,height,number:=mn.GetTxState(tx.Vin[l].Hash)

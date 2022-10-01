@@ -22,7 +22,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 		//	applog.Warning("ConfirmMainblock - Invalid mainblock %d",i)
 		//	return
 		//}
-		if mn.GetMainblockState(uint32(i))==StateValueIdentifierUnvalidMainblock{
+		if mn.GetMainblockState(uint32(i))==StateValueIdentifierInvalidMainblock{
 			continue
 		}
 		
