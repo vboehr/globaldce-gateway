@@ -42,7 +42,7 @@ func Start(appname string) {
 	daemon.ApplyUsersettings()
 	applog.Notice("Mainwalletpath %s",daemon.MainwalletFilePath)
 	//daemon.Miningrequested=true
-	daemon.Seed=true
+	//daemon.Seed=false
 	
 
 

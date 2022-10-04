@@ -21,7 +21,7 @@ import (
 		//HotMining=false
 		//Miningaddressesloaded=false
 		Managingwalletrequested=false
-		Seed=true
+		Seed=false
 		SyncingMinNbPeers=0
 		AppIsClosing=false
 		Mn *mainchain.Maincore
