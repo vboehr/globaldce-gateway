@@ -3,6 +3,7 @@
 /Data
 /Mainstatedb
 /WalletFiles
+/MiningFiles
 /Sync
 /Tmp/*
 # Files types to ignore
