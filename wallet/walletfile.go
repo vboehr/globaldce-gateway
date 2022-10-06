@@ -53,6 +53,11 @@ func (wlt *Wallet) SaveJSONWalletFile(walletfilepath string,key []byte) {
 	bufferWalletfiletype := make([]byte, 4)
 	binary.LittleEndian.PutUint32(bufferWalletfiletype, uint32(WALLET_TYPE_SEQUENTIAL))// type 1
 
+	//
+	bufferWalletfileversion := make([]byte, 4)
+	binary.LittleEndian.PutUint32(bufferWalletfileversion, uint32(WALLET_TYPE_SEQUENTIAL_VERSION))// type 1
+	//
+
 	bufferWalletfileseize := make([]byte, 4)
 	binary.LittleEndian.PutUint32(bufferWalletfileseize, uint32(len(walletfilestring)))
 	//applog.Trace("  walletfile: %s", walletfilestring)
@@ -69,6 +74,13 @@ func (wlt *Wallet) SaveJSONWalletFile(walletfilepath string,key []byte) {
 		//log.Fatal(err)
 		fmt.Println("error:", wterr)
 	}
+	//
+	_, wverr := f.Write(bufferWalletfileversion)
+	if wverr != nil {
+		//log.Fatal(err)
+		fmt.Println("error:", wverr)
+	}
+	//
 	_, werr := f.Write(bufferWalletfileseize)
 	if werr != nil {
 		//log.Fatal(err)
@@ -89,7 +101,7 @@ func (wlt *Wallet) LoadJSONWalletFile(path string,key []byte) error{
 		//log.Fatal(err)
 		fmt.Println("error:", err)
 	}
-	
+	/////////////////////////////
 	bufferWalletfiletype := make([]byte, 4)
 	_, rterr := f.Read(bufferWalletfiletype)
 	if rterr != nil {
@@ -101,6 +113,19 @@ func (wlt *Wallet) LoadJSONWalletFile(path string,key []byte) error{
 
 	binary.Read(readerWalletfiletype, binary.LittleEndian, &walletfiletype)
 	fmt.Println("type:", walletfiletype)
+	////////////////////////////
+	bufferWalletfileversion := make([]byte, 4)
+	_, rverr := f.Read(bufferWalletfiletype)
+	if rverr != nil {
+		//log.Fatal(err)
+		fmt.Println("error:", rverr)
+	}
+	var walletfileversion uint32
+	readerWalletfileversion := bytes.NewReader(bufferWalletfileversion)
+
+	binary.Read(readerWalletfileversion, binary.LittleEndian, &walletfileversion)
+	fmt.Println("version:", walletfileversion)
+	////////////////////////////
 
 	bufferWalletfileseize := make([]byte, 4)
 	_, rserr := f.Read(bufferWalletfileseize)
@@ -148,7 +173,7 @@ func (wlt *Wallet) LoadJSONWalletFile(path string,key []byte) error{
 	wlt.Path=path
 	wlt.Broadcastedtxarray=walletfile.Broadcastedtxarray
 	wlt.Contactarray=walletfile.Contactarray
-
+	wlt.Walletloaded=true
 
 	return nil
 }

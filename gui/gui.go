@@ -63,7 +63,7 @@ func Start(appname string) {
 	wlt:=new(wallet.Wallet)
 	//wlt.SetupDone=false
 	
-	//for (!daemon.Walletloaded) {
+	//for (!daemon.Walletinstantiated) {
 
 		if _, err := os.Stat( daemon.MainwalletFilePath); !os.IsNotExist(err) {
 		
@@ -140,7 +140,7 @@ func Start(appname string) {
 	
 	myWindow.ShowAndRun()
 		fmt.Println("Closing")
-		if daemon.Walletloaded {
+		if daemon.Walletinstantiated {
 			daemon.Wlt.SaveJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
 		}
 		_=daemon.SaveUsersettingsFile()

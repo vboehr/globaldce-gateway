@@ -161,13 +161,14 @@ searchButton:=widget.NewButton("Fixed size window", func() {
         fmt.Println("got :",componentsList)
         var addressarray []string
         var amountarray []string
-        if len(addressarray)==0 {
-            dialog.ShowInformation("Error no recipient address was added", "Add at least one recipient address ", win)
-            return
-        }
+
         for i,_:=range componentsList{
             addressarray=append(addressarray,componentsList[i].address)
             amountarray=append(amountarray,componentsList[i].amount)
+        }
+        if len(addressarray)==0 {
+            dialog.ShowInformation("Error no recipient address was added", "Add at least one recipient address ", win)
+            return
         }
         cli.Sendtoaddressarray(daemon.Wireswarm, daemon.Wlt,addressarray,amountarray,sendtoaddressarraytxfeeEntry.Text)
         var emptycomponentsList []TxInfo

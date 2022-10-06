@@ -26,7 +26,7 @@ func listenSigInt() chan os.Signal {
 func startmining(){
     fmt.Println("Miningrequested",Miningrequested)
     for {
-        if Miningrequested && Walletloaded && Wireswarm.Syncingdone {
+        if Miningrequested && Walletinstantiated && Wireswarm.Syncingdone {
             fmt.Println("Working..")
             Miningrunning=true
               //success,mb:=Mn.Mine(Wlt)
@@ -37,7 +37,7 @@ func startmining(){
               }
               //if !Wlt.HotWallet{
                   Mn.SyncWallet(Wlt)
-                  if Walletloaded && success{
+                  if Walletinstantiated && success{
                       Wlt.SaveJSONWalletFile(MainwalletFilePath,MainwalletFileKey)
                   }
               //}
@@ -46,6 +46,7 @@ func startmining(){
             } else {
                 Miningrunning=false
         }
+        time.Sleep(60*time.Second)
     }
     
 }
@@ -98,7 +99,7 @@ func Mainloop(){
 
         //
         /*
-        if  Miningrequested && Walletloaded && Wireswarm.Syncingdone{
+        if  Miningrequested && Walletinstantiated && Wireswarm.Syncingdone{
            
             Mn.SyncWallet(Wlt)
             Mn.LoadUnconfirmedBroadcastedTxs(Wlt)
@@ -108,8 +109,8 @@ func Mainloop(){
        
         }*/
         //
-        //if  Miningrequested && ((Wlt.HotWallet) || (Walletloaded)) && Wireswarm.Syncingdone{
-        if Walletloaded && Wireswarm.Syncingdone{
+        //if  Miningrequested && ((Wlt.HotWallet) || (Walletinstantiated)) && Wireswarm.Syncingdone{
+        if Walletinstantiated && Wireswarm.Syncingdone{
            //if !Wlt.HotWallet{
                 Mn.SyncWallet(Wlt)
                 Mn.LoadUnconfirmedBroadcastedTxs(Wlt)   
@@ -180,7 +181,7 @@ func Mainloop(){
             }
         */
         case <-time.After(180 * time.Minute):
-            if Walletloaded {
+            if Walletinstantiated {
                 // (re)broadcasting wallet transactions that have not been included in the mainchain
                 Mn.SyncWallet(Wlt)
                 broadcastingtxs:=Wlt.GetUnconfirmedBroadcastedTxs()
@@ -222,7 +223,7 @@ func Mainloop(){
             AppIsClosing = true 
             applog.UnlockDisplay()
             applog.Notice("Quitting ...")
-            if Walletloaded {
+            if Walletinstantiated {
                 Wlt.SaveJSONWalletFile(MainwalletFilePath,MainwalletFileKey)
             }
             _=SaveUsersettingsFile()

@@ -149,7 +149,7 @@ func Loadusermainwalletfile() *wallet.Wallet{
    
     
 
-for (!daemon.Walletloaded){    
+for (!daemon.Walletinstantiated){    
     if _, err := os.Stat( daemon.MainwalletFilePath); !os.IsNotExist(err) {
         
         //if daemon.HotMining{
@@ -165,9 +165,9 @@ for (!daemon.Walletloaded){
             daemon.MainwalletFileKey=askuserwalletfilekey()
             wlt:=new(wallet.Wallet)
             lerr:=wlt.LoadJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
-            //daemon.Walletloaded=true
+            //daemon.Walletinstantiated=true
             if lerr==nil{
-                daemon.Walletloaded=true
+                daemon.Walletinstantiated=true
             } else {
                 applog.Notice("wallet file %s not loaded",wlt.Path)
             }
@@ -219,7 +219,7 @@ for (!wlt.HotWallet)&&(daemon.HotMining){
         //    // TODO better error handdling
         //    daemon.MainwalletFileKey=askuserwalletfilekey()
         //    wlt.LoadJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
-        //    daemon.Walletloaded=true
+        //    daemon.Walletinstantiated=true
         //}
         
 	} else {

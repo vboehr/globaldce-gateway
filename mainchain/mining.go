@@ -8,7 +8,7 @@ import (
 	//"github.com/globaldce/globaldce-gateway/wallet"
 	//"github.com/globaldce/globaldce-gateway/mainchain"
 	//"os"
-	"time"
+	//"time"
 	//"encoding/json"
 	"math/big"
 	//"net"
@@ -70,7 +70,7 @@ func (mn *Maincore) Mine(miningaddress utility.Hash) (bool,*Mainblock){//(wlt *w
 	///////////////////
 	tmplastmainheader:=mn.GetLastMainheader()
 	//TODO unlocking maincore and wallet
-	time.Sleep(60*time.Second)
+	
 	applog.Trace("Lets go .......")
 	success:=mainblock.Mine( tmplastmainheader.Timestamp, tmplastmainheader.Hash,targetbits)
 	//TODO locking maincore and wallet

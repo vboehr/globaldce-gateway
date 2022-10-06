@@ -14,14 +14,14 @@ import (
 		MainwalletFileKey []byte
 		AppPath=""
 		AppLocalPort=""
-		Walletloaded=false
+		Walletinstantiated=false
 		//Walletstate=""
 		Miningrequested=false
 		Miningrunning=false
 		//HotMining=false
 		//Miningaddressesloaded=false
 		Managingwalletrequested=false
-		Seed=false
+		Seed=true
 		SyncingMinNbPeers=0
 		AppIsClosing=false
 		Mn *mainchain.Maincore

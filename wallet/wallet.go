@@ -16,16 +16,18 @@ const (
 	NB_INITIAL_HASHES int = 10000000 
 	
 	WALLET_TYPE_SEQUENTIAL uint32=1
+	WALLET_TYPE_SEQUENTIAL_VERSION uint32=1
 )
 // 
 type Wallet struct {
 	//HotWallet bool
 	//Hotaddresses HotAddresses
 	//Chain []byte
-	Waletloaded bool
+	Walletloaded bool
 	Walletstate string
 	Path string
 	Type uint32
+	Version uint32
 	Privatekeyarray [] *btcec.PrivateKey
 	Assetarray [] Asset
 	Lastknownblock uint64
@@ -58,12 +60,13 @@ type Asset struct {
 }
 func Newsequentialwallet(seedString string)  *Wallet{
     wlt:=new(Wallet)
-	wlt.Waletloaded=false     
+	wlt.Walletloaded=false     
 	go Gensequentialwallet(wlt,seedString)
 	return wlt
 }
 func Gensequentialwallet(wlt *Wallet,seedString string){
 	wlt.Type=WALLET_TYPE_SEQUENTIAL
+	wlt.Version=WALLET_TYPE_SEQUENTIAL_VERSION
     InitialHashBytes:=[]byte(seedString)
 	for i:=0;i<NB_INITIAL_HASHES;i++{
 		InitialHashBytes = utility.ComputeHashBytes(InitialHashBytes)
@@ -78,7 +81,7 @@ func Gensequentialwallet(wlt *Wallet,seedString string){
 	pk := utility.PrivKeyFromBytes(InitialHashBytes)
 	wlt.Privatekeyarray=append(wlt.Privatekeyarray,&pk)
 	wlt.Walletstate=""
-	//wlt.Waletloaded=true
+	wlt.Walletloaded=true
 }
 /*
 func (wlt *Wallet) GetAssetInfo(int i) ([]byte,value){

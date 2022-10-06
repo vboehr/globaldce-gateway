@@ -71,7 +71,7 @@ func  passwordDialog(win fyne.Window){
 					//nowalletFoundDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
 					passwordDecryptionFailedDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
 				} else {
-					daemon.Walletloaded=true
+					daemon.Walletinstantiated=true
 					daemon.Mn.SyncWallet(daemon.Wlt)
 					//
 				}
@@ -216,7 +216,7 @@ func newSequentialWalletCreationProgressDialog(win fyne.Window,seedString string
     wlt.Privatekeyarray=append(wlt.Privatekeyarray,&pk)
 	*/
 	daemon.Wlt=wlt
-	daemon.Walletloaded=true    
+	daemon.Walletinstantiated=true    
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -280,7 +280,7 @@ func selectWalletFileDialog(win fyne.Window) {
 		walletsettingsDisplayedMainwalletFilePath.Set(filepath.Path())
 		daemon.MainwalletFilePath=filepath.Path()
 		daemon.Usersettings.MainwalletFilePath=filepath.Path()
-		if !daemon.Walletloaded{
+		if !daemon.Walletinstantiated{
 			daemon.MainwalletFilePath=filepath.Path()
 			passwordDialog(win)
 		} 

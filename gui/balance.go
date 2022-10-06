@@ -54,7 +54,7 @@ func overviewScreen() fyne.CanvasObject {
 			//fmt.Println("*******",daemon.Wlt.ComputeBalance())
 			walletpathstr:=fmt.Sprintf("Wallet path: %s",daemon.MainwalletFilePath)
 			var walletbalancestr string
-			if daemon.Walletloaded{
+			if daemon.Walletinstantiated{
 				if daemon.Wlt.Walletstate=="" {
 					walletbalancestr=fmt.Sprintf("Wallet balance is %f", float64(daemon.Wlt.ComputeBalance()/1000000.0))
 				} else {
@@ -175,7 +175,7 @@ func addressesScreen() fyne.CanvasObject {
 	label.Add(saveButton)
 	genAddrButton := widget.NewButton("Generate New Address", func() {
 		fmt.Println("New address generation ... ")
-		if daemon.Wlt.Waletloaded{
+		if daemon.Wlt.Walletloaded{
 			daemon.Wlt.GenerateKeyPair()
 		} else {
 			fmt.Println("New address generation CANCELED - wallet not loaded")
