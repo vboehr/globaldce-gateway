@@ -39,11 +39,11 @@ func helpCMD(){
     //applog.Notice("getblock                           ......")
     //applog.Notice("gettransaction                     ......")
     //applog.Notice("version or v                       version")
+    applog.Notice("help or h               provide description of commands usage")
     applog.Notice("")
     applog.Notice("[OPTIONS]: for general use like with mine and managewallet commands")
     applog.Notice("-path=                  Sets appPath")
     applog.Notice("-port=                  Sets appLocalPort")
-    applog.Notice("help or h               provide description of commands usage")
     applog.Notice("")
     //
 

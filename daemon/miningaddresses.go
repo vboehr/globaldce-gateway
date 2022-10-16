@@ -31,7 +31,7 @@ func (maddresses* MiningAddresses) GetRandomAddress() utility.Hash{
 	return maddresses.Addressesarray[i]
 }//(rand.Intn(113)
 
-func (maddresses *MiningAddresses) LoadJSONFile(filepath string) error{
+func (maddresses *MiningAddresses) LoadJSONMiningAddressesFile(filepath string) error{
 	f, err := os.OpenFile(filepath, os.O_RDONLY, 0755)
 	if err != nil {
 		//log.Fatal(err)
@@ -61,7 +61,7 @@ func (maddresses *MiningAddresses) LoadJSONFile(filepath string) error{
 	return nil
 }
 
-func (maddresses *MiningAddresses) SaveJSONFile(addrfilepath string){
+func (maddresses *MiningAddresses) SaveJSONMiningAddressesFile(addrfilepath string){
 	addrfilerawbytes, err := json.Marshal(*maddresses)
 	if err != nil {
 		fmt.Println("error:", err)

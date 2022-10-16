@@ -88,7 +88,10 @@ func Start(cliname string){
             daemon.Seed=true
         }
         if strings.Index(tmparg, "-miningaddressesfile=")==0{
-            //daemon.HotMining=true
+            tmpMiningaddrressesfilepath:=strings.TrimPrefix(tmparg, "-miningaddressesfile=")
+            daemon.MAddresses=new(daemon.MiningAddresses)
+            daemon.MAddresses.LoadJSONMiningAddressesFile(tmpMiningaddrressesfilepath)
+            daemon.Miningaddrressesfileloaded=true
             applog.EnableDisplayTrace()
         }
         if strings.Index(tmparg, "-trace")==0{

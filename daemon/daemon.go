@@ -18,7 +18,7 @@ import (
 		//Walletstate=""
 		Miningrequested=false
 		Miningrunning=false
-		//HotMining=false
+		Miningaddrressesfileloaded=false
 		//Miningaddressesloaded=false
 		Managingwalletrequested=false
 		Seed=true
@@ -27,5 +27,6 @@ import (
 		Mn *mainchain.Maincore
 		Wireswarm *wire.Swarm
 		Wlt *wallet.Wallet
+		MAddresses *MiningAddresses
 	)
 

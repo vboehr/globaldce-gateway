@@ -8,24 +8,22 @@ import (
 	"github.com/globaldce/globaldce-gateway/utility"
 )
 type Mainblock struct {
-	// 
 	Height uint32
 	Header Mainheader
 	Transactions [] utility.Transaction
 }
 
 type Mainheader struct {
-	// 
 	Version int32
 	Prevblockhash utility.Hash
-	Roothash utility.Hash//
+	Roothash utility.Hash
 	Timestamp int64
 	Bits uint32
 	Nonce uint32
 	Hash utility.Hash
 }
-func (mb *Mainblock) Mine( prevtime int64, prevblockhash utility.Hash, bits uint32) bool {
 
+func (mb *Mainblock) Mine( prevtime int64, prevblockhash utility.Hash, bits uint32) bool {
 	fmt.Println("Minining")
 	mb.Header.Bits=bits
 	targetbigint:=utility.BigIntFromCompact(bits)
