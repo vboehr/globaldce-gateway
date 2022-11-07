@@ -369,14 +369,15 @@ func sendnameregistrationhelp(){
     fmt.Printf("sendnameregistration X N \n")
     //
 }
-/*
-func sendpublicposthelp(){
+
+func sendregistrednamecontentcommithelp(){
     fmt.Printf("\nError: sendpublicpost inappropiate usage\n")
     fmt.Printf("In order to proceed with a public post for the registred name X with a web link of Y, a text Z and attached files F1 F2 ... Fn, enter as follows:\n")
     fmt.Printf("sendpublicpost X Y Z F1 F2 ... Fn\n")
     //
 }
-func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,linkstring string,textstring string,filepatharray []string,amountfeestring string){
+
+func Sendregistrednamecontentcommit(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,contentfolderstring string,amountfeestring string) error{
 	//
 	//a,aerr:=wlt.GetAssetFromRegisteredName(namestring)
     //if aerr!=nil{
@@ -388,50 +389,35 @@ func Sendpublicpost(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,nam
     if ferr!=nil{
         fmt.Printf("Error: inappropriate fee provided - %v",ferr)
         //os.Exit(0)
-		return
+		return ferr
     }
 	//amountfee:=amountfeestring//TODO customizable fees based on bytes - fee = 1 to 10 globals * transaction bytes
 	amountfee*=1000000
+	//
+	contentid,cerr:=mainchain.CacheExistingDirectoryWithUniformPieceSize(contentfolderstring,mainchain.ContentDefaultUniformPieceSize,[]byte(namestring))
+    if cerr!=nil{
+        fmt.Printf("Error: caching - %v",cerr)
+        //os.Exit(0)
+		return cerr
+    }
+
 	
-	tmpbw:=utility.NewBufferWriter()
-	tmpbw.PutUint32(mainchain.DataIdentifierPublicPost)
-	tmpbw.PutVarUint(uint64(len([]byte(linkstring))))
-	tmpbw.PutBytes([]byte(linkstring))
-
-	tmpbw.PutVarUint(uint64(len([]byte(textstring))))
-	tmpbw.PutBytes([]byte(textstring))
-	/////////////////////////////////
-	tmpbw.PutVarUint(uint64(len(filepatharray)))
-	for _, filepath := range filepatharray {
-		cfed,cerr:=mn.CacheExistingFile(filepath)
-		if cerr!=nil{
-			fmt.Printf("%v",cerr)
-			return
-		}
-		tmpbw.PutVarUint((*cfed).Size)
-		tmpbw.PutHash((*cfed).Hash)
-	}
-	/////////////////////////////////
-
-	//databytes:=[]byte(datastring)//
-	databytes:=tmpbw.GetContent()
-	ed:=utility.NewExtradataFromBytes(databytes)
-
-	tx,err:=wlt.SetupTransactionForNamePublicPost(namestring,ed,uint64 (amountfee))
+	tx,err:=wlt.SetupTransactionForRegistredNameCommit(namestring,contentid,uint64 (amountfee))
     if err!=nil{
         fmt.Printf("%v",err)
-        return
+        return err
     }
     fmt.Printf("new public post seize %d tx %x",len(tx.Serialize()),tx)
     if tx!=nil{
-		mn.AddLocalPublicPostData(namestring,ed.Hash,databytes)
+		mn.PushRegistredNameCommit([]byte(namestring),contentid)
 		_,fee:= mn.ValidateTransaction(tx)
 		priority:=fee
 		mn.AddTransactionToTxsPool(tx,fee,priority)
         wlt.AddBroadcastedtx(*tx)
 		ws.BroadcastTransaction(tx)
     }
-}*/
+	return nil
+}
 func Sendnameregistration(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,amountstring string) error{
     //applog.Trace("Wallet ballance %f",float64 (wlt.ComputeBalance())/1000000.0)
     //applog.Trace("Wallet Lastknownblock %d",wlt.Lastknownblock)

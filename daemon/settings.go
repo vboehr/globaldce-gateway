@@ -5,7 +5,7 @@ import(
 	"encoding/json"
 	"path/filepath"
 	"github.com/globaldce/globaldce-gateway/utility"
-	//"github.com/globaldce/globaldce-gateway/daemon"
+	//"github.com/globaldce/globaldce-gateway/mainchain"
 )
 var MainwalletFilePathDefault=filepath.Join("WalletFiles","Wallet.dat")
 var (
@@ -34,6 +34,9 @@ type UsersettingsType struct {
 	//mu sync.Mutex
 	//BannedNameArray []string
 	Miningrequested bool
+	CachedDirInfoArray []CachedDirInfo
+	Recentdappnamesarray []string
+	Activeloginname string
 }
 var Usersettings UsersettingsType
 	
@@ -50,6 +53,8 @@ func SetDefaultSettings(){
 		Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
 		//BannedNameArray:nil,
 		Miningrequested:false,
+		CachedDirInfoArray:nil,
+		Activeloginname:"",
 	}
 }
 
@@ -88,9 +93,49 @@ func LoadUsersettingsFile() error{
 	}
 	uerr:=json.Unmarshal(*usersettingsfilebytes,&Usersettings)
 	if uerr != nil {
-		fmt.Println("error:", uerr)
+		fmt.Println("error:",uerr)
 		return uerr
 	}
 
 	return nil
+}
+type CachedDirInfo struct {
+	RegistredName string
+	Path string
+}
+func GetCachedDirPathForRegistredName(name string) (string,int){
+		for i , cacheddirinfo:= range Usersettings.CachedDirInfoArray{
+			if cacheddirinfo.RegistredName==name{
+				//fmt.Println("********************", cacheddirinfo.Path,i)
+				return cacheddirinfo.Path,i
+			}
+		}
+		return "",-1
+}
+func PutCachedDirPathForRegistredName(name string,path string) {
+	p,i:=GetCachedDirPathForRegistredName(name)
+	if p==""{
+		newcacheddirinfo:=new(CachedDirInfo)
+		newcacheddirinfo.RegistredName=name
+		newcacheddirinfo.Path=path
+		Usersettings.CachedDirInfoArray=append(Usersettings.CachedDirInfoArray,*newcacheddirinfo)
+	} else{
+		Usersettings.CachedDirInfoArray[i].Path=path
+	}
+
+}
+func AddToRecentDappNames(dappnameinputText string) {
+	Usersettings.Recentdappnamesarray=append([]string{dappnameinputText}, Usersettings.Recentdappnamesarray ...)
+}
+func GetRecentDappNames() ([]string){
+	return Usersettings.Recentdappnamesarray
+}
+func ClearRecentDappNameWithId(dappnameselectedid int){
+	if (dappnameselectedid<0)||(dappnameselectedid>=len(Usersettings.Recentdappnamesarray)){
+		return
+	}
+	Usersettings.Recentdappnamesarray=append(Usersettings.Recentdappnamesarray[:dappnameselectedid], Usersettings.Recentdappnamesarray[dappnameselectedid+1:] ...)
+}
+func ClearAllRecentDappNames(){
+	Usersettings.Recentdappnamesarray=make([]string, 0)
 }

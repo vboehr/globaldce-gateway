@@ -27,6 +27,9 @@ func startmining(){
     fmt.Println("Miningrequested",Miningrequested)
     for {
         if Miningrequested && Walletinstantiated && Wireswarm.Syncingdone {
+            if !Wlt.Walletloaded{
+                continue
+            }
             fmt.Println("Working..")
             Miningrunning=true
               //success,mb:=Mn.Mine(Wlt)
@@ -46,7 +49,7 @@ func startmining(){
             } else {
                 Miningrunning=false
         }
-        time.Sleep(60*time.Second)
+        time.Sleep(3*time.Second)
     }
     
 }
@@ -59,7 +62,7 @@ func MainInit(){
     Mn=mainchain.NewMaincore()
     Mn.PutPath( AppPath)
 	Mn.LoadMaincore()
-	
+	go mainchain.InitLocalhost()
     //Mn.BannedNameArray=Usersettings.BannedNameArray
     Wireswarm=wire.NewSwarm()
 

@@ -4,7 +4,7 @@ import (
 	"github.com/globaldce/globaldce-gateway/applog"
 
 	"github.com/globaldce/globaldce-gateway/utility"
-	//"fmt"
+	"fmt"
 	"os"
 	//"math/big"
 	//leveldberrors "github.com/syndtr/goleveldb/leveldb/errors"//
@@ -16,8 +16,8 @@ const (
 	StateKeyIdentifierTx=2
 	StateKeyIdentifierMainblock=3
 	StateKeyIdentifierNameRegistration=4
-
-	StateKeyIdentifierAddressBalance=5
+	StateKeyIdentifierRegistredNameCommit=5
+	StateKeyIdentifierAddressBalance=7
 	//StateKeyIdentifierAddressNbAssets
 	//StateKeyIdentifierAddressAsset
 
@@ -46,7 +46,8 @@ const (
 	StateValueIdentifierActifNameRegistration=4001
 	StateValueIdentifierInactifNameRegistration=4002
 
-	StateValueIdentifierAddressBalance=5001
+	StateValueIdentifierRegistredNameCommit=5001
+	StateValueIdentifierAddressBalance=7001
 
 	//StateValueIdentifierData=6
 	//StateValueIdentifierDataFile=7
@@ -286,44 +287,50 @@ func (mn *Maincore) GetPublicPostState(datahash utility.Hash)([]byte,*utility.Ha
 }
 
 */
-/*
 
-func (mn *Maincore) PutDataFileState(datafilehash utility.Hash,size uint64) error{
+
+func (mn *Maincore) PutRegistredNameCommitState(name []byte,contentid []byte) error{
 	tmpkeybw:=utility.NewBufferWriter()
-	tmpkeybw.PutUint32(StateKeyIdentifierDataFile)
-	tmpkeybw.PutHash(datafilehash)
+	tmpkeybw.PutUint32(StateKeyIdentifierRegistredNameCommit)
+	tmpkeybw.PutVarUint(uint64(len(name)))
+	tmpkeybw.PutBytes(name)
+
 	//tmpkeybw.GetContent()
 
 	tmpbw:=utility.NewBufferWriter()
-	tmpbw.PutUint32(StateValueIdentifierData)// transaction type
-	tmpbw.PutVarUint(size)
+	tmpbw.PutUint32(StateValueIdentifierRegistredNameCommit)//
+	tmpbw.PutVarUint(uint64(len(contentid)))
+	tmpbw.PutBytes(contentid)
+	//tmpbw.PutVarUint(cachefilepath)
+	//tmpbw.PutBytes(string(cachefilepath))
 	err := mn.mainstatedb.Put(tmpkeybw.GetContent(), tmpbw.GetContent(), nil)
 	return err
 }
 
-func (mn *Maincore) GetDataFileState(datafilehash utility.Hash)(uint64, error){
+func (mn *Maincore) GetRegistredNameCommitState(name []byte)([]byte, error){
 	
 
 	tmpkeybw:=utility.NewBufferWriter()
-	tmpkeybw.PutUint32(StateKeyIdentifierDataFile)
-	tmpkeybw.PutHash(datafilehash)
+	tmpkeybw.PutUint32(StateKeyIdentifierRegistredNameCommit)
+	tmpkeybw.PutVarUint(uint64(len(name)))
+	tmpkeybw.PutBytes(name)
 	//tmpkeybw.PutUint32(index)
 
 	valuebytes, err := mn.mainstatedb.Get(tmpkeybw.GetContent(), nil)
 	if err != nil {
 		//applog.Trace("GetNameState - txhash %x - index %d : %v",txhash,index, err)
-		return 0,err
+		return nil,err
 	}
 	tmpbr:=utility.NewBufferReader(valuebytes)
 	stateidentifier:=tmpbr.GetUint32()
-	if stateidentifier!=StateValueIdentifierDataFile{
-		return 0,fmt.Errorf("Found an incorrect stateidentifier associated with data file hash %x - identifier found")
+	if stateidentifier!=StateValueIdentifierRegistredNameCommit{
+		return nil,fmt.Errorf("Incorrect RegistredNameCommit State Id")
 	}
-	size:=tmpbr.GetVarUint()
-
-	return size,nil
+	contentidlen:=tmpbr.GetVarUint()
+	contentid:=tmpbr.GetBytes(uint(contentidlen))
+	return contentid,nil
 }
-
+/*
 
 //
 func (mn *Maincore) PutEngagementNameState(name []byte,engagementidentifier uint32,nbengagement uint64,totalstake big.Int) error {

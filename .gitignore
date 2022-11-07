@@ -4,6 +4,7 @@
 /Mainstatedb
 /WalletFiles
 /MiningFiles
+/Cache
 /Sync
 /Tmp/*
 # Files types to ignore

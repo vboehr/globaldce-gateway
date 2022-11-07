@@ -3,7 +3,7 @@ import (
 	"github.com/globaldce/globaldce-gateway/applog"
 	"fmt"
 	"github.com/globaldce/globaldce-gateway/utility"
-	//"github.com/btcsuite/btcd/btcec/v2/ecdsa"
+	"github.com/btcsuite/btcd/btcec/v2/ecdsa"
 )
 
 func (wlt * Wallet) ComputeBalance() (uint64){
@@ -66,8 +66,8 @@ func (wlt * Wallet) SetupTransactionForNameUnregistration(name string,fee uint64
 
 	return tx,nil
 }
-/*
-func (wlt * Wallet) SetupTransactionForNamePublicPost(name string,ed utility.Extradata,fee uint64)  (*utility.Transaction,error){
+
+func (wlt * Wallet) SetupTransactionForRegistredNameCommit(name string,commitbytes []byte,fee uint64)  (*utility.Transaction,error){
 	a,aerr:=wlt.GetAssetFromRegisteredName(name)
 	if aerr!=nil{
 		return nil,aerr
@@ -78,7 +78,7 @@ func (wlt * Wallet) SetupTransactionForNamePublicPost(name string,ed utility.Ext
 	//
 	pubkey:=wlt.Privatekeyarray[prvkeyindex].PubKey().SerializeCompressed()
 	
-	tmptxin:=utility.NewECDSANamePublicPost(hash,index,pubkey,ed)
+	tmptxin:=utility.NewECDSANameRegistredNameCommit(hash,index,pubkey,commitbytes)
 	tx,err:=wlt.SetupTransactionAmount(0,fee,&tmptxin,nil)
 	//tx:=new(utility.Transaction)
 	//tx.Version=1
@@ -108,7 +108,7 @@ func (wlt * Wallet) SetupTransactionForNamePublicPost(name string,ed utility.Ext
 
 	return tx,err
 }
-
+/*
 func (wlt * Wallet) SetupTransactionForEngagementPublicPost(eid uint32,txhash utility.Hash,index uint32,claimaddress utility.Hash,stakedamount uint64, fee uint64)  (*utility.Transaction,error){
 	tmptxout:=utility.NewECDSAEngagementPublicPost(eid,stakedamount,txhash,index,claimaddress)
 	tx,err:=wlt.SetupTransactionAmount(stakedamount,fee,nil,&tmptxout)

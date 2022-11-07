@@ -13,7 +13,7 @@ const (
 	ModuleIdentifierECDSATxIn=2
 	ModuleIdentifierECDSANameRegistration=3
 	ModuleIdentifierECDSANameUnregistration=4
-	//ModuleIdentifierECDSANamePublicPost=5
+	ModuleIdentifierECDSARegistredNameCommit=5
 	//ModuleIdentifierECDSAEngagementPublicPost=6
 	//ModuleIdentifierECDSAEngagementPublicPostRewardClaim=7
 )
@@ -81,21 +81,21 @@ func NewECDSATxIn(inhash Hash,index uint32,pubkeycompressedbytes []byte) TxIn{
 	tmptxin.Bytecode=append(tmptxin.Bytecode,tmpbw.GetContent()...)
 	return tmptxin
 }
-/*
-func NewECDSANamePublicPost(inhash Hash,index uint32,pubkeycompressedbytes []byte,ed Extradata) TxIn{		
+
+func NewECDSANameRegistredNameCommit(inhash Hash,index uint32,pubkeycompressedbytes []byte,commitbytes []byte) TxIn{		
 	var tmptxin TxIn
 	tmptxin.Hash=inhash
 	tmptxin.Index=index
 	tmpbw:=NewBufferWriter()
-	tmpbw.PutUint32(ModuleIdentifierECDSANamePublicPost)
+	tmpbw.PutUint32(ModuleIdentifierECDSARegistredNameCommit)
 	tmpbw.PutVarUint(uint64(len(pubkeycompressedbytes)))
 	tmpbw.PutBytes(pubkeycompressedbytes)
-	tmpbw.PutVarUint(uint64 (ed.Size)) //
-	tmpbw.PutHash(ed.Hash)
+	tmpbw.PutVarUint(uint64 (len(commitbytes))) //
+	tmpbw.PutBytes(commitbytes)
 	tmptxin.Bytecode=append(tmptxin.Bytecode,tmpbw.GetContent()...)
 	return tmptxin
 }
-*/
+
 func NewECDSANameUnregistration(inhash Hash,index uint32,pubkeycompressedbytes []byte) TxIn{		
 	var tmptxin TxIn
 	tmptxin.Hash=inhash

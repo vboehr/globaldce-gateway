@@ -289,3 +289,36 @@ func selectWalletFileDialog(win fyne.Window) {
 	fd.SetFilter(storage.NewExtensionFileFilter([]string{".dat"}))
 	fd.Show()
 }
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+func registrationLoginDialog(win fyne.Window){
+
+	//TODO support other types of wallets
+	//combo := widget.NewSelect([]string{"Sequential Wallet", "Option 2"}, func(value string) {
+	registerednames:=daemon.Wlt.GetRegisteredNames()
+	combo := widget.NewSelect(registerednames, func(value string) {
+		fmt.Println("Select set to", value)
+
+		daemon.Usersettings.Activeloginname=value
+	})
+	//registerednamesarray:=daemon.Wlt.GetRegisteredNames()
+	combo.SetSelected("")
+	content := container.NewVBox(widget.NewLabel("LOGIN AS:"),combo)
+	registrationLoginCallback := func(response bool){
+		fmt.Println("Responded with", response)
+		if response {
+			
+			//newSequentialWalletCreationDialog(win)
+		}// else {
+			//
+			
+			//nowalletFoundDialog(win,"")
+
+		//}
+		
+	}
+	cnf:=dialog.NewCustomConfirm("Would you like to login using the selected registration ?", "Yes ", "No  ", content,registrationLoginCallback, win)
+	cnf.Show()
+}

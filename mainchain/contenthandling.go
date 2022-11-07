@@ -1,13 +1,36 @@
 package mainchain
 import(
 	"path/filepath"
-	"os"
-	"bufio"
+	//"os"
+	//"bufio"
 	"fmt"
-	"github.com/globaldce/globaldce-gateway/utility"
+	//"github.com/globaldce/globaldce-gateway/utility"
+	"net/http"
+    "html/template"
 )
 
+func  (mn *Maincore) ServeContent(name string)  error{
+	
+	return nil
+}
 
+func HandleContent(w http.ResponseWriter, r *http.Request) {
+    contentfilepath:= filepath.Join("Cache","Content",filepath.FromSlash(r.URL.Path[1:]))////filepath.FromSlash() for win compatibility
+    fmt.Printf("Content file path %s loading ... \n",contentfilepath)
+
+	doc, err := template.ParseFiles(contentfilepath)
+	if err != nil {
+		fmt.Fprint(w, err.Error())
+		return
+	}
+	doc.Execute(w, nil)
+}
+func InitLocalhost(){
+	http.HandleFunc("/", HandleContent)
+	fmt.Println(http.ListenAndServe(":8080", nil))
+
+}
+/*
 func  (mn *Maincore) CacheExistingFile(path string) (*utility.Extradata,error){
 	
 	f, err := os.Open(path)
@@ -38,15 +61,15 @@ func  (mn *Maincore) CacheExistingFile(path string) (*utility.Extradata,error){
 	if _, err := os.Stat(datafilesdirpath); os.IsNotExist(err) {
 		os.Mkdir(datafilesdirpath, os.ModePerm)
 	}
-	/*
-	if _, err := os.Stat( filepath.Join(mn.path,"Data","Data000")); os.IsNotExist(err) {
+	//
+	//if _, err := os.Stat( filepath.Join(mn.path,"Data","Data000")); os.IsNotExist(err) {
 		// path does not exist
-		mn.dataf = utility.OpenChunkStorage( filepath.Join(mn.path,"Data","Data"))
-		mn.dataf.AddChunk([]byte("emptydata"))
-	} else {
-		mn.dataf = utility.OpenChunkStorage(filepath.Join(mn.path,"Data","Data"))
-	}
-	*/
+	//	mn.dataf = utility.OpenChunkStorage( filepath.Join(mn.path,"Data","Data"))
+	//	mn.dataf.AddChunk([]byte("emptydata"))
+	//} else {
+	//	mn.dataf = utility.OpenChunkStorage(filepath.Join(mn.path,"Data","Data"))
+	//}
+	//
 	newdatafilename:=fmt.Sprintf("%x",ed.Hash)
 	newdatafilepath:=filepath.Join(datafilesdirpath,newdatafilename)
 	fmt.Println("creating file",newdatafilepath)
@@ -68,42 +91,14 @@ func  (mn *Maincore) CacheExistingFile(path string) (*utility.Extradata,error){
 
 	return &ed,nil	
 }
-func  (mn *Maincore) AddDataFile(hash utility.Hash,databytes []byte) {
-	datafilesdirpath:=filepath.Join(mn.path,"Data","DataFiles")
-	
-	if _, err := os.Stat(datafilesdirpath); os.IsNotExist(err) {
-		os.Mkdir(datafilesdirpath, os.ModePerm)
-	}
-	/*
-	if _, err := os.Stat( filepath.Join(mn.path,"Data","Data000")); os.IsNotExist(err) {
-		// path does not exist
-		mn.dataf = utility.OpenChunkStorage( filepath.Join(mn.path,"Data","Data"))
-		mn.dataf.AddChunk([]byte("emptydata"))
-	} else {
-		mn.dataf = utility.OpenChunkStorage(filepath.Join(mn.path,"Data","Data"))
-	}
-	*/
-	newdatafilename:=fmt.Sprintf("%x",hash)
-	newdatafilepath:=filepath.Join(datafilesdirpath,newdatafilename)
-	fmt.Println("creating file",newdatafilepath)
-	cf, err := os.OpenFile(newdatafilepath, os.O_WRONLY|os.O_CREATE, 0755)
-	
-	if err != nil {
-		//
-		fmt.Println("error:", err)
-	}
-	defer cf.Close()
-	_, wterr :=  cf.Write(databytes)
-	if wterr != nil {
-		//
-		fmt.Println("error:", wterr)
-	}
+*/
 
-	//////////////////////////////////////////
-	mn.PutDataFileState(hash,uint64(len(databytes)))
+func  (mn *Maincore) PushRegistredNameCommit(name []byte,contentid []byte)  {
 
-	//return &ed,nil	
+	mn.PutRegistredNameCommitState(name,contentid) 
+
 }
+/*
 func  (mn *Maincore) GetDataFile(hash utility.Hash) ([]byte,error) {
 	//TODO check if file has been add to mainstate
 	datafilesdirpath:=filepath.Join(mn.path,"Data","DataFiles")
@@ -134,3 +129,4 @@ func  (mn *Maincore) GetDataFile(hash utility.Hash) ([]byte,error) {
 	return filebytes,nil
 
 }
+*/

@@ -36,7 +36,7 @@ func (myTheme) Color(c fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
 	case theme.ColorNamePressed:
 		return color.NRGBA{R: 0xff, G: 0xff, B: 0xff, A: 0x66}
 	case theme.ColorNamePrimary:
-		return color.NRGBA{R: 0xee, G: 0xd7, B: 0x00, A: 0xff}//TODO goldish color
+		return color.NRGBA{R: 0xff, G: 0xff, B: 0x44, A: 0xff}///{R: 0xee, G: 0xd7, B: 0x00, A: 0xff}//TODO goldish color
 	case theme.ColorNameScrollBar:
 		return color.NRGBA{R: 0x0, G: 0x0, B: 0x0, A: 0x99}
 	case theme.ColorNameShadow:

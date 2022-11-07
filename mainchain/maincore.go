@@ -20,8 +20,8 @@ import (
 	"sync"
 )
 type Maincore struct{
-	MissingDataHashArray []utility.Hash
-	MissingDataFileHashArray []utility.Hash
+	MissingContentArray []ContentFileInfo
+	//MissingDataFileHashArray []utility.Hash
 	//BannedNameArray []string
 	path string
 	genesisblock Mainblock
@@ -109,6 +109,7 @@ func (mn *Maincore) LoadMaincore(){
 		mn.mainbf = utility.OpenChunkStorage(filepath.Join(mn.path,"Mainblocks","Mainblocks"))
 	}
 	////////////////////
+	/*
 	datadirpath:=filepath.Join(mn.path,"Data")
 	if _, err := os.Stat(datadirpath); os.IsNotExist(err) {
 		os.Mkdir(datadirpath, os.ModePerm)
@@ -121,7 +122,7 @@ func (mn *Maincore) LoadMaincore(){
 	} else {
 		mn.dataf = utility.OpenChunkStorage(filepath.Join(mn.path,"Data","Data"))
 	}
-
+	*/
 	///////////////////
 
 	for i:=1;i<mn.mainbf.NbChunks();i++{
@@ -150,6 +151,9 @@ func (mn *Maincore) LoadMaincore(){
 	}
 	//
 	applog.Notice("Maincore loading done.")
+
+	//////////////////////////////
+	
 }
 func (mn *Maincore) CleanMainstate(){
 	mn.mainstatedb.Close()
