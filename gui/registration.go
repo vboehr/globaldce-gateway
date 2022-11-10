@@ -60,6 +60,7 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 			textvalue,_:=registerednames.GetValue(id)
 			//selectednameregistration=textvalue
 			_=textvalue
+			selectednameregistrationid=id
 
 		}
 		//
@@ -70,7 +71,7 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 				for i,registeredname:= range registerednamesdescriptionarray{
 					registerednamepath,_:=daemon.GetCachedDirPathForRegistredName(registeredname)
 					if registerednamepath!=""{
-						registerednamesdescriptionarray[i]+=registeredname+" CONTENT DIRECTORY: "+registerednamepath
+						registerednamesdescriptionarray[i]+=" CONTENT DIRECTORY: "+registerednamepath
 					}
 					
 				}
@@ -162,10 +163,11 @@ func selectContentDirDialog(win fyne.Window) {
 
 		folderpath:= uri.Path()
 		
-		fmt.Println("content folder path",folderpath)
+		
 		registerednamesdescriptionarray:=daemon.Wlt.GetRegisteredNames()
+		fmt.Printf("Putting content folder path %s for selectednameregistrationid %d to registred name %s \n",folderpath,selectednameregistrationid,registerednamesdescriptionarray[selectednameregistrationid])
 		daemon.PutCachedDirPathForRegistredName(registerednamesdescriptionarray[selectednameregistrationid],folderpath)
-
+		//os.Exit(0)
 
 	}, win)
 	folderd.Show()

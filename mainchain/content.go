@@ -183,7 +183,7 @@ func CacheExistingDirectoryWithUniformPieceSize(dirpath string,piecesize uint64,
 		tmpcontentfileinfo.FilePath=relpath
 		tmpcontentfileinfo.FileName=oldcontentdirinfo.ContentFileInfoArray[i].FileName
 		tmpcontentfileinfo.ContentId=oldcontentdirinfo.ContentFileInfoArray[i].ContentId
-		tmpcontentfileinfo.Priority=uint32(len(tmpcontentfileinfo.FilePath)+1) //
+		tmpcontentfileinfo.Priority=uint32(len(tmpcontentfileinfo.FilePath)-len(tmpcontentfileinfo.FileName)+1) //
 		newcontentdirinfo.ContentFileInfoArray=append(newcontentdirinfo.ContentFileInfoArray,*tmpcontentfileinfo)
 		//newfilepath:=filepath.Join("./","Cache","Content",string(registredname),/***/newcontentdirinfo.ContentFileInfoArray[i].FileName)
 

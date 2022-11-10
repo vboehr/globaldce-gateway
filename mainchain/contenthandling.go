@@ -10,14 +10,20 @@ import(
 )
 
 func  (mn *Maincore) ServeContent(name string)  error{
-	
+	//p:="/"+name+"/sytle.css"
+	//http.HandleFunc(p, HandleContent)
+	//http.Handle("/", http.FileServer("./style.css"))
+	//http.Handle("/"+name+"/", fileServer("./style.css"))
+	//http.Handle("/"+name+"/",http.FileServer(http.Dir("./Cache/Content/"+name+"/")))
+
+	_=name
 	return nil
 }
 
 func HandleContent(w http.ResponseWriter, r *http.Request) {
     contentfilepath:= filepath.Join("Cache","Content",filepath.FromSlash(r.URL.Path[1:]))////filepath.FromSlash() for win compatibility
-    fmt.Printf("Content file path %s loading ... \n",contentfilepath)
-
+    fmt.Printf("Content file path %s loading ... url %s \n",contentfilepath,r.URL.Path)
+	//os.Exit(0)
 	doc, err := template.ParseFiles(contentfilepath)
 	if err != nil {
 		fmt.Fprint(w, err.Error())
@@ -25,8 +31,22 @@ func HandleContent(w http.ResponseWriter, r *http.Request) {
 	}
 	doc.Execute(w, nil)
 }
+/*
+func newRouter() *mux.Router {
+	r := mux.NewRouter()
+	r.HandleFunc("/index.html", HandleContent)
+	//r.HandleFunc("/requestfreecoins", createRequestFreeCoinsHandler).Methods("POST")
+	//r.HandleFunc("/requestfreecoinscaptcha", createRequestFreeCoinsCaptchaHandler).Methods("POST")
+	return r
+}
+*/
 func InitLocalhost(){
-	http.HandleFunc("/", HandleContent)
+	//http.HandleFunc("/", HandleContent)/////////////////Was removed
+	//http.Handle("/static/", http.FileServer(http.Dir("/")))
+	
+	fs := http.FileServer(http.Dir("./Cache/Content"))
+	http.Handle("/", http.StripPrefix("/", fs))
+
 	fmt.Println(http.ListenAndServe(":8080", nil))
 
 }
