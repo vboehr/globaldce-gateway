@@ -301,7 +301,8 @@ func registrationLoginDialog(win fyne.Window){
 	combo := widget.NewSelect(registerednames, func(value string) {
 		fmt.Println("Select set to", value)
 
-		daemon.Usersettings.Activeloginname=value
+		//daemon.Usersettings.Activeloginname=value
+		daemon.PutActiveloginname(value)
 	})
 	//registerednamesarray:=daemon.Wlt.GetRegisteredNames()
 	combo.SetSelected("")

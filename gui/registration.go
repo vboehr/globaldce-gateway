@@ -21,27 +21,73 @@ import (
 	"github.com/globaldce/globaldce-gateway/cli"
 )
 
-//type RegistredNameInfo struct {
-//    name string
-//}
 
 //var selectednameregistration string
-var selectednameregistrationid int
+//var selectednameregistrationid int
+//var selectedregistredname string
 
 func registrationScreen(win fyne.Window) fyne.CanvasObject {
-	/*
-	tabs := container.NewAppTabs(
-		container.NewTabItem("Send to",  txbuilderScreen()),
-		//container.NewTabItem("List of Contacts",  contactslistScreen()),
-		//container.NewTabItem("Add Contact",  addContactScreen()),
+		/////////////////////////
+		registrationloginstr:= binding.NewString()
+
+		////////////////////////
+				//
+				go func() {
+					for {
+						
+						if daemon.GetActiveloginname()==""{
+							registrationloginstr.Set("Not logged in")
+						} else {
+							registrationloginstr.Set(daemon.GetActiveloginname())
+						}
+						time.Sleep(time.Second * 2)
+	
+						
+					}
+				}()
+		////////////////////////
+	registrationloginlabel := widget.NewLabelWithData(registrationloginstr)
+
+	registrationlogininputContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),registrationloginlabel)
+	registrationloginentryContainer := container.NewHBox(registrationlogininputContainer, 
+		widget.NewButton("LOGIN AS", func() {
+			fmt.Println("Entred registrationlogininput:")
+			registrationLoginDialog(win)
+		}),
+		widget.NewButton("LOGOUT", func() {
+			fmt.Println("LOGOUT:")
+			daemon.PutActiveloginname("")
+		}),
 
 	)
-	tabs.SetTabLocation(container.TabLocationTop)
-	*/
-	//text :=widget.NewLabel("Hello")
-	//var registrednameslist * widget.List
-	//var registerednames [] string//RegistredNameInfo
+	//-////////////////////////////
+	contentdirectorystr:= binding.NewString()
 
+		////////////////////////
+				//
+				go func() {
+					for {
+						activeloginname:=daemon.GetActiveloginname()
+						registerednamecontentpath,_:=daemon.GetCachedDirPathForRegistredName(activeloginname)
+						if registerednamecontentpath!=""{
+							//registerednamesdescriptionarray[i]+=" CONTENT DIRECTORY: "+registerednamepath
+							contentdirectorystr.Set(" CONTENT DIRECTORY: "+registerednamecontentpath)
+						} else if activeloginname!="" {
+							contentdirectorystr.Set(" CONTENT DIRECTORY: ")
+						} else {
+							contentdirectorystr.Set("")
+						}
+						time.Sleep(time.Second * 2)
+
+						
+					}
+				}()
+		////////////////////////
+	contentdirectorylabel := widget.NewLabelWithData(contentdirectorystr)
+
+	contentdirectoryContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),contentdirectorylabel)
+	//-////////////////////////////
+	/*
 	registerednames := binding.BindStringList(
 		&[]string{},
 	)
@@ -63,9 +109,11 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 			selectednameregistrationid=id
 
 		}
+	
 		//
 		go func() {
 			for {
+			
 				//fmt.Println("*******!!!!!!!!",registerednames)
 				registerednamesdescriptionarray:=daemon.Wlt.GetRegisteredNames()
 				for i,registeredname:= range registerednamesdescriptionarray{
@@ -77,11 +125,12 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 				}
 				registerednames.Set(registerednamesdescriptionarray)
 				time.Sleep(time.Second * 2)
-				//str.Set(fmt.Sprintf("WALLET BALANCE is %d", daemon.Wlt.ComputeBalance()))
 				
+			
+
 			}
 		}()
-	
+	*/
 
 	nameregistrationbutton:= widget.NewButton("NEW NAME REGISTRATION", func() {
         fmt.Println("creating a new name :")
@@ -93,10 +142,11 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 	nameunregistrationbutton:= widget.NewButton("NAME UNREGISTRATION", func() {
 		
         fmt.Println("name unregistration")
-		//requestNameUnregistrationDialog(win)
 		//
-		registerednamesarray:=daemon.Wlt.GetRegisteredNames()
-		err:=cli.Sendnameunregistration(daemon.Wireswarm,daemon.Mn,daemon.Wlt,registerednamesarray[selectednameregistrationid])
+		//
+		//registerednamesarray:=daemon.Wlt.GetRegisteredNames()
+		
+		err:=cli.Sendnameunregistration(daemon.Wireswarm,daemon.Mn,daemon.Wlt,daemon.GetActiveloginname())
 		if err!=nil{
 			dialog.ShowError(err,win)
 		} else {
@@ -113,12 +163,14 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
         fmt.Println("commit content directory")
 		commitContentDirDialog(win)
     })
-	nameunregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),nameunregistrationbutton)
-	setcontentdirbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),setcontentdirbutton)
-	commitcontentdirbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),commitcontentdirbutton)
-	//layout:=container.New(layout.NewPaddedLayout(),container.NewVBox(registrednameslist,nameregistrationcontainer))
-	registrednameslistcontainer:=container.New(layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth, appscreenHeight*3/4)),registrednameslist)
-	layout:=container.NewVBox(nameregistrationbuttoncontainer,registrednameslistcontainer,nameunregistrationbuttoncontainer,setcontentdirbuttoncontainer,commitcontentdirbuttoncontainer)
+	nameunregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(250, 40)),nameunregistrationbutton)
+	setcontentdirbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(250, 40)),setcontentdirbutton)
+	commitcontentdirbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(250, 40)),commitcontentdirbutton)
+
+	//registrednameslistcontainer:=container.New(layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth, appscreenHeight*3/4)),registrednameslist)
+	registrationbuttonsContainer:=container.NewHBox(nameunregistrationbuttoncontainer,setcontentdirbuttoncontainer,commitcontentdirbuttoncontainer)
+
+	layout:=container.NewVBox(nameregistrationbuttoncontainer,registrationloginentryContainer,contentdirectoryContainer/*,registrednameslistcontainer*/,registrationbuttonsContainer)
 	return layout
 
 }
@@ -130,10 +182,7 @@ func  requestNameRegistrationDialog(win fyne.Window){
 	items := []*widget.FormItem{
 		widget.NewFormItem("Requested Name", requestedname),
 		widget.NewFormItem("Deposit Amount", depositamount),
-		//widget.NewFormItem("Password", password),
-		//widget.NewFormItem("Remember me", widget.NewCheck("", func(checked bool) {
-		//	remember = checked
-		//})),
+
 	}
 
 	dialog.ShowForm("Inorder to proceed with the name registration, please provide the following:    ", "Okay  ", "Cancel", items, func(b bool) {
@@ -164,9 +213,9 @@ func selectContentDirDialog(win fyne.Window) {
 		folderpath:= uri.Path()
 		
 		
-		registerednamesdescriptionarray:=daemon.Wlt.GetRegisteredNames()
-		fmt.Printf("Putting content folder path %s for selectednameregistrationid %d to registred name %s \n",folderpath,selectednameregistrationid,registerednamesdescriptionarray[selectednameregistrationid])
-		daemon.PutCachedDirPathForRegistredName(registerednamesdescriptionarray[selectednameregistrationid],folderpath)
+		//registerednamesdescriptionarray:=daemon.Wlt.GetRegisteredNames()
+		//fmt.Printf("Putting content folder path %s for selectednameregistrationid %d to registred name %s \n",folderpath,selectednameregistrationid,registerednamesdescriptionarray[selectednameregistrationid])
+		daemon.PutCachedDirPathForRegistredName(daemon.GetActiveloginname(),folderpath)
 		//os.Exit(0)
 
 	}, win)
@@ -174,16 +223,7 @@ func selectContentDirDialog(win fyne.Window) {
 }
 ////////////////////////////////
 func commitContentDirDialog(win fyne.Window) {
-//Are you sure
-	//var registrednamecommittxfeevalue string
 
-	//TODO support other types of wallets
-	//combo := widget.NewSelect([]string{"Sequential Wallet", "Option 2"}, func(value string) {
-	//combo := widget.NewSelect([]string{"Sequential Wallet"}, func(value string) {
-	//	fmt.Println("Select set to", value)
-	//})
-	//combo.SetSelected("Sequential Wallet")
-	//content := container.NewVBox(widget.NewLabel("Wallet Type :"),combo)
 	registrednamecommittxfeeEntry:=widget.NewEntry()
 	registrednamecommittxfeeEntry.Text=fmt.Sprintf("%d",daemon.Usersettings.Nameregistrationtxfee)
 	registrednamecommittxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
@@ -198,10 +238,11 @@ func commitContentDirDialog(win fyne.Window) {
 	selectWalletFileCallback := func(response bool){
 		fmt.Println("Responded with", response)
 		if response {
-			registerednamesdescriptionarray:=daemon.Wlt.GetRegisteredNames()
-			selectednameregistration:=registerednamesdescriptionarray[selectednameregistrationid]
-			path,_:=daemon.GetCachedDirPathForRegistredName(selectednameregistration)
-			cerr:=cli.Sendregistrednamecontentcommit(daemon.Wireswarm,daemon.Mn,daemon.Wlt,selectednameregistration,path,registrednamecommittxfeeEntry.Text)
+			//registerednamesdescriptionarray:=daemon.Wlt.GetRegisteredNames()
+			//selectedregistredname:=registerednamesdescriptionarray[selectednameregistrationid]
+			selectedregistredname:=daemon.GetActiveloginname()
+			path,_:=daemon.GetCachedDirPathForRegistredName(selectedregistredname)
+			cerr:=cli.Sendregistrednamecontentcommit(daemon.Wireswarm,daemon.Mn,daemon.Wlt,selectedregistredname,path,registrednamecommittxfeeEntry.Text)
 			//Sendregistrednamecontentcommit(ws *wire.Swarm,mn *mainchain.Maincore,wlt *wallet.Wallet,namestring string,contentfolderstring string,amountfeestring string){
 			if cerr!=nil{
 				dialog.ShowError(cerr,win)
@@ -209,8 +250,7 @@ func commitContentDirDialog(win fyne.Window) {
 				dialog.ShowInformation("Registred Name Content", "Registred name content is being broadcasted", win)
 			}		
 			
-		}// else {
-		//}
+		}
 		
 	}
 	/////////

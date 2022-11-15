@@ -20,7 +20,7 @@ import (
     //"strings"
     //"path/filepath"
     "github.com/globaldce/globaldce-gateway/daemon"
-	//"github.com/globaldce/globaldce-gateway/cli"
+	"github.com/globaldce/globaldce-gateway/cli"
 )
 
 const appscreenWidth =1000
@@ -33,6 +33,7 @@ var guiApp fyne.App
 
 func Start(appname string) {
 	applog.Init()
+	cli.InterpretOptions()
 	settingserr:=daemon.LoadUsersettingsFile()
 	if settingserr!=nil{
 		//
@@ -41,11 +42,11 @@ func Start(appname string) {
 	}
 	daemon.ApplyUsersettings()
 	applog.Notice("Mainwalletpath %s",daemon.MainwalletFilePath)
-	//daemon.Miningrequested=true
-	//daemon.Seed=false
+
+
 	
 
-
+	
 	/////////////////////////////////////////
 	guiApp = app.New()
 	//guiApp := app.NewWithID("***.**") //TOBETESTED

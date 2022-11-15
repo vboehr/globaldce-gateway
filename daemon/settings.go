@@ -39,7 +39,21 @@ type UsersettingsType struct {
 	Activeloginname string
 }
 var Usersettings UsersettingsType
-	
+
+func GetActiveloginname() string{
+	registerednames:=Wlt.GetRegisteredNames()
+	for _,regname:=range registerednames{
+		if regname==Usersettings.Activeloginname{
+			return Usersettings.Activeloginname
+		}
+	}
+	return ""
+}
+
+func PutActiveloginname(newlogin string) {
+	Usersettings.Activeloginname=newlogin
+}
+
 func SetDefaultSettings(){
 	
 	Usersettings=UsersettingsType{

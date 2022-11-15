@@ -58,10 +58,10 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 			go func() {
 				for {
 					
-					if daemon.Usersettings.Activeloginname==""{
+					if daemon.GetActiveloginname()==""{
 						registrationloginstr.Set("Not logged in")
 					} else {
-						registrationloginstr.Set(daemon.Usersettings.Activeloginname)
+						registrationloginstr.Set(daemon.GetActiveloginname())
 					}
 					time.Sleep(time.Second * 2)
 
@@ -80,7 +80,8 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 	}),
 	widget.NewButton("LOGOUT", func() {
 		fmt.Println("LOGOUT:")
-		daemon.Usersettings.Activeloginname=""
+		//daemon.Usersettings.Activeloginname=""
+		daemon.PutActiveloginname("")
 	}),
 
 	)
