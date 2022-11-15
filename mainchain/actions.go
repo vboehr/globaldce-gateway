@@ -1,0 +1,73 @@
+package mainchain
+
+import (
+    "log"
+    "net/http"
+    //"strings"
+
+    "github.com/gorilla/websocket"
+)
+
+var upgrader = websocket.Upgrader{}
+var LoadedDAppName string =""
+var RegistredNameActionArray []string
+
+
+
+func updateTodoList(input string) {
+    tmpList := RegistredNameActionArray
+    RegistredNameActionArray = []string{}
+    for _, val := range tmpList {
+        if val == input {
+            continue
+        }
+        RegistredNameActionArray = append(RegistredNameActionArray, val)
+    }
+}
+///////////////////////////////////
+func HandleWebSocket(dappname string) {
+	if LoadedDAppName==dappname{
+		return
+	}
+	LoadedDAppName=dappname
+
+    http.HandleFunc("/"+dappname, func(w http.ResponseWriter, r *http.Request) {
+        // Upgrade upgrades the HTTP server connection to the WebSocket protocol.
+        conn, err := upgrader.Upgrade(w, r, nil)
+        if err != nil {
+            log.Print("upgrade failed: ", err)
+            return 
+        }
+        defer conn.Close()
+
+        // Continuosly read and write actions
+        for {
+			//if LoadedDAppName!=dappname{
+			//	break
+			//}
+            mt, actionmsg, err := conn.ReadMessage()
+            _=mt
+            if err != nil {
+                log.Println("read failed:", err)
+                break
+            }
+            actionstring := string(actionmsg)
+
+
+            log.Printf("*****%s \n",actionstring)
+             RegistredNameActionArray = append(RegistredNameActionArray, actionstring)
+             
+	var messagetxt []byte
+            messagetxt = []byte("OK GOT IT")
+            err = conn.WriteMessage(mt, messagetxt)
+            if err != nil {
+                log.Println("write failed:", err)
+                break
+            }
+            
+        }
+    })
+
+
+}
+///////////////////////////////////

@@ -18,7 +18,7 @@ import (
 	//"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/data/binding"
 	//"fyne.io/fyne/v2/widget"
-	//"github.com/globaldce/globaldce-gateway/cli"
+	"github.com/globaldce/globaldce-gateway/mainchain"
 	"github.com/globaldce/globaldce-gateway/daemon"
 )
 /*
@@ -98,6 +98,7 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 		serr:=daemon.Mn.ServeContent(dappnameinputText)
 		if serr==nil{
 			//dappnameinputstr.Set(dappnameinputText)
+			mainchain.HandleWebSocket(dappnameinputText)
 			u, err := url.Parse("http://localhost:8080/"+dappnameinputText+"/index.html")//("http://localhost:8080/"+dappnameinputText+"/index.html")//("./Cache/Content/dapptest/index.html")//("https://fyne.io/")
 			_=err
 			guiApp.OpenURL(u)
