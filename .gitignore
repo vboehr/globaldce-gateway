@@ -1,9 +1,9 @@
-/Mainblocks
+#/Mainblocks
 /MainblocksBackup
 /Data
 /Mainstatedb
 /WalletFiles
-/MiningFiles
+#/MiningFiles
 /Cache
 /Sync
 /Tmp/*

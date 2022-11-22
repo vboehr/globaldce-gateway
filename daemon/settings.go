@@ -139,7 +139,13 @@ func PutCachedDirPathForRegistredName(name string,path string) {
 
 }
 func AddToRecentDappNames(dappnameinputText string) {
+	for _ , tmpname:= range Usersettings.Recentdappnamesarray{
+		if tmpname==dappnameinputText{
+			return 
+		}
+	}
 	Usersettings.Recentdappnamesarray=append([]string{dappnameinputText}, Usersettings.Recentdappnamesarray ...)
+	return
 }
 func GetRecentDappNames() ([]string){
 	return Usersettings.Recentdappnamesarray

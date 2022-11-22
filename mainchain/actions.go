@@ -27,6 +27,7 @@ func updateTodoList(input string) {
 ///////////////////////////////////
 func HandleWebSocket(dappname string) {
 	if LoadedDAppName==dappname{
+        log.Print("DAPP already loaded ")
 		return
 	}
 	LoadedDAppName=dappname
@@ -42,9 +43,9 @@ func HandleWebSocket(dappname string) {
 
         // Continuosly read and write actions
         for {
-			//if LoadedDAppName!=dappname{
-			//	break
-			//}
+			if LoadedDAppName!=dappname{
+				break
+			}
             mt, actionmsg, err := conn.ReadMessage()
             _=mt
             if err != nil {
@@ -55,7 +56,7 @@ func HandleWebSocket(dappname string) {
 
 
             log.Printf("*****%s \n",actionstring)
-             RegistredNameActionArray = append(RegistredNameActionArray, actionstring)
+            RegistredNameActionArray = append(RegistredNameActionArray, actionstring)
              
 	var messagetxt []byte
             messagetxt = []byte("OK GOT IT")

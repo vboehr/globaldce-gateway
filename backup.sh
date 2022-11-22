@@ -1,2 +1,2 @@
-rm -r ./MainblocksBackup
-cp -r ./Mainblocks ./MainblocksBackup
+BACKUPFOLDER="MainblocksBackup/MainblocksBackup-"`date +%d-%m-%y`
+cp -r ./Mainblocks $BACKUPFOLDER
