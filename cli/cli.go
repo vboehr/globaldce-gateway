@@ -76,7 +76,7 @@ func Start(cliname string){
 
 
     applog.Notice("")
-    
+    InterpretOptions()
     daemon.Wlt=Loadusermainwalletfile()
     //_=wlt
     //
@@ -113,7 +113,10 @@ func Start(cliname string){
     }()
     //
     daemon.MainInit()
-    daemon.Mainloop()
+    go daemon.Mainloop()
+    for {
+        time.Sleep(3*time.Second)
+    }
 }
 
 ////////////////////////////////////////////
@@ -127,7 +130,7 @@ func Loadusermainwalletfile() *wallet.Wallet{
    
     
 
-for (!daemon.Walletinstantiated){    
+for (!daemon.Walletinstantiated) && (!daemon.Miningaddrressesfileloaded){    
     if _, err := os.Stat( daemon.MainwalletFilePath); !os.IsNotExist(err) {
         
         //if daemon.HotMining{

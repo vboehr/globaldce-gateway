@@ -28,7 +28,7 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 					mn.AddToAddressBalance(*addr,tx.Vout[k].Value)
 				}
 			case utility.ModuleIdentifierECDSANameRegistration:
-				_,name,_,_:=utility.DecodeECDSANameRegistration(tx.Vout[k].Bytecode) 
+				_,name,_,_,_:=utility.DecodeECDSANameRegistration(tx.Vout[k].Bytecode) 
 				if mn.GetNameState(name)==StateValueIdentifierActifNameRegistration{
 					applog.Warning("Names is already taken")
 				}
@@ -44,7 +44,7 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 
 				ppinput:=mn.GetMainblock(int(height)).Transactions[number].Vin[pptxindex]
 				stakeheight:=ENGAGEMENT_REWARD_FINALIZATION_INTERVAL-(blockheight-height)
-				_,name,_,_:=utility.DecodeECDSANameRegistration(ppinput.Bytecode)
+				_,name,_,_,_:=utility.DecodeECDSANameRegistration(ppinput.Bytecode)
 				if eid==utility.EngagementIdentifierLikePublicPost {
 					applog.Trace("EngagementIdentifierLikePublicPost hash %x index %d stakeheight %d height %d blockheight %d",*pptxhash,pptxindex,stakeheight,height,blockheight)
 					mn.AddEngagementLikeName(name,tx.Vout[k].Value)
@@ -110,7 +110,7 @@ func  (mn *Maincore)  UpdateMainstate(tx utility.Transaction,blockheight uint32)
 				}
 				
 				tmpinpututxo:=mn.GetMainblock(int(height)).Transactions[number].Vout[tx.Vin[l].Index]
-				_,name,_,_:=utility.DecodeECDSANameRegistration(tmpinpututxo.Bytecode)
+				_,name,_,_,_:=utility.DecodeECDSANameRegistration(tmpinpututxo.Bytecode)
 			
 				_,ed,_:=utility.DecodeECDSANamePublicPost(tx.Vin[l].Bytecode)
 				

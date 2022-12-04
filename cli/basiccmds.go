@@ -42,8 +42,9 @@ func helpCMD(){
     applog.Notice("help or h               provide description of commands usage")
     applog.Notice("")
     applog.Notice("[OPTIONS]: for general use like with mine and managewallet commands")
-    applog.Notice("-path=                  Sets appPath")
-    applog.Notice("-port=                  Sets appLocalPort")
+    applog.Notice("-path=                               Sets appPath")
+    applog.Notice("-port=                               Sets appLocalPort")
+    applog.Notice("-miningaddressesfile=                Sets mining addresses file path")
     applog.Notice("")
     //
 

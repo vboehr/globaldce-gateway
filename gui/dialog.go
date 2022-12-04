@@ -216,7 +216,7 @@ func newSequentialWalletCreationProgressDialog(win fyne.Window,seedString string
     wlt.Privatekeyarray=append(wlt.Privatekeyarray,&pk)
 	*/
 	daemon.Wlt=wlt
-	daemon.Walletinstantiated=true    
+	   
 }
 
 ///////////////////////////////////////////////////////////////////

@@ -32,6 +32,7 @@ type Wallet struct {
 	Assetarray [] Asset
 	Lastknownblock uint64
 	Broadcastedtxarray [] Broadcastedtx
+	Commcredentialarray [] Commcredential
 	Groupnamearray [] string
 	Contactarray [] Contact
 

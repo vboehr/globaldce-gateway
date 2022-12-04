@@ -105,7 +105,7 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				//fmt.Println("UNregistration **********")
 				//os.Exit(0)
 				/*
-				_,name,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
+				_,name,_,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
 				_,totalstakedislike:=mn.GetEngagementDislikeName(name)
 				_,totalstakelike:=mn.GetEngagementLikeName(name)
 				if inpututxo.Value<mn.freezingcoef*uint64(totalstakedislike-totalstakelike){
@@ -135,7 +135,7 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash,tmptxin utility.TxIn)(
 				}
 				//applog.Trace("Value",inpututxo.Value)
 				//
-				//_,name,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
+				//_,name,_,_,_:=utility.DecodeECDSANameRegistration(inpututxo.Bytecode)
 				//_,totalstakedislike:=mn.GetEngagementDislikeName(name)
 				//_,totalstakelike:=mn.GetEngagementLikeName(name)
 				//if inpututxo.Value<mn.freezingcoef*uint64(totalstakedislike-totalstakelike){
@@ -207,7 +207,7 @@ func (mn *Maincore) ValidateTxOut(tmptxout utility.TxOut)(uint64,error){
 			return tmptxout.Value,nil
 
 		case utility.ModuleIdentifierECDSANameRegistration:
-			_,name,_,err:=utility.DecodeECDSANameRegistration(tmptxout.Bytecode)
+			_,name,_,_,err:=utility.DecodeECDSANameRegistration(tmptxout.Bytecode)
 			if err!=nil {
 				return 0,err
 			}

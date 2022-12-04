@@ -3,6 +3,7 @@ import (
 	"github.com/globaldce/globaldce-gateway/applog"
 	"github.com/globaldce/globaldce-gateway/daemon"
     "os"
+    "fmt"
 	"strings"
 )
 
@@ -19,6 +20,7 @@ func InterpretOptions() {
             applog.Notice("appLocalPort set to: %s",daemon.AppLocalPort)
         }
         if strings.Index(tmparg, "-seed")==0{
+            fmt.Println("Seed")
             daemon.Seed=true
         }
         if strings.Index(tmparg, "-miningaddressesfile=")==0{

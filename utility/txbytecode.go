@@ -138,19 +138,25 @@ func DecodeECDSANameUnregistration(bytecode []byte) ([]byte,[]byte,error){
 	
 	return pubkeycompressed,extrabytes,nil
 }
-func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,[]byte,error){
+func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,[]byte,[]byte,error){
 	tmpbr:=NewBufferReader(bytecode)
 	primitivemoduleid:=tmpbr.GetUint32()
 	if primitivemoduleid != ModuleIdentifierECDSANameRegistration{
-		return nil,nil,nil,fmt.Errorf("Not an ECDSA Name Unregistration")
+		return nil,nil,nil,nil,fmt.Errorf("Not an ECDSA Name Unregistration")
 	}
 
 	namelen:=tmpbr.GetVarUint()
 	if namelen>RegistredNameMaxSize{
-		return nil,nil,nil,fmt.Errorf("Name in ECDSANameRegistration is too long - %d",namelen)
+		return nil,nil,nil,nil,fmt.Errorf("Name in ECDSANameRegistration is too long - %d",namelen)
 	}
 	name:=tmpbr.GetBytes(uint(namelen)) 
 	pubkeyhash:=tmpbr.GetHash()
+	commkeyid:=tmpbr.GetUint32()
+	var commpubkey []byte
+	if commkeyid!=CommKeyIdentifierUndefined{
+		commpubkeylen:=tmpbr.GetVarUint()
+		commpubkey=tmpbr.GetBytes(uint(commpubkeylen))
+	}
 	/*
 	extradatalen:=tmpbr.GetVarUint()
 	if extradatalen>ExtradataMaxSize{
@@ -165,13 +171,13 @@ func DecodeECDSANameRegistration(bytecode []byte) (*Hash,[]byte,[]byte,error){
 	extrabytes:=tmpbr.GetExtrabytes()
 	tmpbrerr:=tmpbr.GetError()
 	if tmpbrerr!=nil{
-		return nil,nil,nil,tmpbrerr
+		return nil,nil,nil,nil,tmpbrerr
 	}
 	if !tmpbr.EndOfBytes(){
-		return nil,nil,nil,fmt.Errorf("End of bytes not reached")
+		return nil,nil,nil,nil,fmt.Errorf("End of bytes not reached")
 	}
 	
-	return &pubkeyhash,name,extrabytes,nil
+	return &pubkeyhash,name,commpubkey,extrabytes,nil
 
 }
 /*

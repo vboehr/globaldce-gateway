@@ -78,7 +78,7 @@ func (wlt * Wallet) SetupTransactionForRegistredNameCommit(name string,commitbyt
 	//
 	pubkey:=wlt.Privatekeyarray[prvkeyindex].PubKey().SerializeCompressed()
 	
-	tmptxin:=utility.NewECDSANameRegistredNameCommit(hash,index,pubkey,commitbytes)
+	tmptxin:=utility.NewECDSARegistredNameCommit(hash,index,pubkey,commitbytes)
 	tx,err:=wlt.SetupTransactionAmount(0,fee,&tmptxin,nil)
 	//tx:=new(utility.Transaction)
 	//tx.Version=1
@@ -157,7 +157,8 @@ func (wlt * Wallet) SetupTransactionForEngagementRewardClaim(etxhash utility.Has
 */
 
 func (wlt * Wallet) SetupTransactionForNameRegistration(name []byte,pubkeyhash utility.Hash,amount uint64,fee uint64)  (*utility.Transaction,error){
-	tmptxout:=utility.NewECDSANameRegistration(amount,name,pubkeyhash)
+	CommPubkey:=wlt.GenerateCommKey(name)
+	tmptxout:=utility.NewECDSANameRegistration(amount,name,pubkeyhash,utility.CommKeyIdentifierRSAOAEP,CommPubkey)
 	tx,err:=wlt.SetupTransactionAmount(amount,fee,nil,&tmptxout)
 	return tx,err
 }

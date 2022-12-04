@@ -42,7 +42,7 @@ type Transaction struct {
 	Vout []TxOut
 }
 
-func NewECDSANameRegistration(Value uint64,Name []byte,Pubkeyhash Hash) TxOut{
+func NewECDSANameRegistration(Value uint64,Name []byte,Pubkeyhash Hash,CommKeyIdentifier uint32,CommPubkey []byte) TxOut{
 	var tmptxout TxOut
 	tmptxout.Value=Value
 	tmpbw:=NewBufferWriter()
@@ -51,6 +51,11 @@ func NewECDSANameRegistration(Value uint64,Name []byte,Pubkeyhash Hash) TxOut{
 	//applog.Trace("****** %d",len(Name))
 	tmpbw.PutBytes(Name)
 	tmpbw.PutHash(Pubkeyhash)
+	tmpbw.PutUint32(CommKeyIdentifier)
+	if CommKeyIdentifier!=CommKeyIdentifierUndefined {
+		tmpbw.PutVarUint(uint64(len(CommPubkey)))
+		tmpbw.PutBytes(CommPubkey)
+	} 
 	tmpbw.PutVarUint(0)// No extradata
 	tmptxout.Bytecode=tmpbw.GetContent()
 	return tmptxout
@@ -82,7 +87,7 @@ func NewECDSATxIn(inhash Hash,index uint32,pubkeycompressedbytes []byte) TxIn{
 	return tmptxin
 }
 
-func NewECDSANameRegistredNameCommit(inhash Hash,index uint32,pubkeycompressedbytes []byte,commitbytes []byte) TxIn{		
+func NewECDSARegistredNameCommit(inhash Hash,index uint32,pubkeycompressedbytes []byte,commitbytes []byte) TxIn{		
 	var tmptxin TxIn
 	tmptxin.Hash=inhash
 	tmptxin.Index=index
@@ -90,6 +95,8 @@ func NewECDSANameRegistredNameCommit(inhash Hash,index uint32,pubkeycompressedby
 	tmpbw.PutUint32(ModuleIdentifierECDSARegistredNameCommit)
 	tmpbw.PutVarUint(uint64(len(pubkeycompressedbytes)))
 	tmpbw.PutBytes(pubkeycompressedbytes)
+	//tmpbw.PutVarUint(uint64 (len(recipientregisteredname))) //recipientregisteredname
+	//tmpbw.PutBytes(recipientregisteredname)
 	tmpbw.PutVarUint(uint64 (len(commitbytes))) //
 	tmpbw.PutBytes(commitbytes)
 	tmptxin.Bytecode=append(tmptxin.Bytecode,tmpbw.GetContent()...)
@@ -150,7 +157,7 @@ func (txout * TxOut) CompareWithAddress(addr Hash) bool{
 					return true
 				}
 		case ModuleIdentifierECDSANameRegistration:
-			pubkeyhash,_,_,err:=DecodeECDSANameRegistration(txout.Bytecode)
+			pubkeyhash,_,_,_,err:=DecodeECDSANameRegistration(txout.Bytecode)
 				if err!=nil{
 					return false
 				}
@@ -167,7 +174,7 @@ func (txout * TxOut) GetAssetState() string{
 		case ModuleIdentifierECDSATxOut:
 			return "UNSPENT"
 		case ModuleIdentifierECDSANameRegistration:
-			_,name,_,_:=DecodeECDSANameRegistration(txout.Bytecode)
+			_,name,_,_,_:=DecodeECDSANameRegistration(txout.Bytecode)
 			return "NAMEREGISTERED_"+string(name)//
 	}
 	return "UNKNOWNASSET"

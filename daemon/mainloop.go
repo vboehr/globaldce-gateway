@@ -5,6 +5,7 @@ import (
     "os"
     "os/signal"
     "time"
+    "github.com/globaldce/globaldce-gateway/utility"
     "github.com/globaldce/globaldce-gateway/mainchain"
     "github.com/globaldce/globaldce-gateway/wire"
     "log"
@@ -26,22 +27,32 @@ func listenSigInt() chan os.Signal {
 func startmining(){
     fmt.Println("Miningrequested",Miningrequested)
     for {
-        if Miningrequested && Walletinstantiated && Wireswarm.Syncingdone {
-            if !Wlt.Walletloaded{
+        //fmt.Printf("****** %v %v %v %v\n",Miningrequested ,Miningaddrressesfileloaded , Walletinstantiated, Wireswarm.Syncingdone )
+        //fmt.Printf("?.????? %v\n",Miningrequested && (Miningaddrressesfileloaded || Walletinstantiated) && Wireswarm.Syncingdone )
+        if Miningrequested && (Miningaddrressesfileloaded || Walletinstantiated) && Wireswarm.Syncingdone {
+            var miningaddress utility.Hash
+            if Walletinstantiated {
+                miningaddress=Wlt.GenerateKeyPair()
+            } else if Miningaddrressesfileloaded {
+                miningaddress=MAddresses.GetRandomAddress()
+            } else {
+                fmt.Println("Not mining")
                 continue
             }
             fmt.Println("Working..")
             Miningrunning=true
               //success,mb:=Mn.Mine(Wlt)
-              miningaddress:=Wlt.GenerateKeyPair()
+
+              
               success,mb:=Mn.Mine(miningaddress)
               if success {
                   Wireswarm.BroadcastMainblock(mb)
               }
               //if !Wlt.HotWallet{
-                  Mn.SyncWallet(Wlt)
+                  
                   if Walletinstantiated && success{
-                      Wlt.SaveJSONWalletFile(MainwalletFilePath,MainwalletFileKey)
+                    Mn.SyncWallet(Wlt)
+                    Wlt.SaveJSONWalletFile(MainwalletFilePath,MainwalletFileKey)
                   }
               //}
               
@@ -67,6 +78,7 @@ func MainInit(){
     Wireswarm=wire.NewSwarm()
 
     if Seed {
+        fmt.Println("This is a seed")
         Wireswarm.Syncingdone=true
     }
 
@@ -99,6 +111,12 @@ func Mainloop(){
     go startmining()
     //
     for {
+        //fmt.Println("Main loop")
+        if Wlt!=nil{
+            if Wlt.Walletloaded{ 
+                Walletinstantiated=true
+            }
+        }
 
         //
         /*
