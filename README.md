@@ -1,15 +1,8 @@
 ## globaldce-gateway
-This is the reference implementation of globaldce protocole coded in the go programming language.
+This is the reference implementation of globaldce protocol coded in the go programming language.
 
 ## What is globaldce ?
-Even though cryptocurrency and blockchain technologies have the potential to disrupt every aspect of our daily life their use cases are currently still limited. Most real-world situations can not be tackled using existing smart contracts and dapps platforms and this due to the fact that building smart contracts and decentralized applications using existing platforms is like trying to building skyskrapers on sands.
-
-
-Existing smart contracts and dapps platforms do not have built-in native decentralization, governance, privacy and scalability. And that led to painful and catastrophic situations for users.
-* A lack of decentralization threatens the uncensored nature of blockchains
-* A lack of governance leads to numerous forking
-* A lack of privacy makes linking users addresses to their real-world identities easy
-* A lack of scalability slows transactions and increases fees
+It is is a decentralized applications platform built on a peer-to-peer content delivery network and powered by its own crypotcurrency which enables censorship resistance, native registration, an integrated reputation system and version control features.
 
 ## What is a globaldce gateway ?
 A globaldce gateway acts as a bridge between users and globaldce. Through the gateway, users can handle their wallet assets while accessing and interacting with globaldce based decentralized applications as if they were traditional web server based applications.
