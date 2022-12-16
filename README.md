@@ -2,7 +2,7 @@
 This is the reference implementation of globaldce protocol coded in the go programming language.
 
 ## What is globaldce ?
-It is is a decentralized applications platform built on a peer-to-peer content delivery network and powered by its own crypotcurrency which enables censorship resistance, native registration, an integrated reputation system and version control features.
+It is a decentralized applications platform built on a peer-to-peer content delivery network and powered by its own crypotcurrency which enables censorship resistance, native registration, an integrated reputation system and version control features.
 
 ## What is a globaldce gateway ?
 A globaldce gateway acts as a bridge between users and globaldce. Through the gateway, users can handle their wallet assets while accessing and interacting with globaldce based decentralized applications as if they were traditional web server based applications.
