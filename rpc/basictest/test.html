@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>....</h2>
+<p id="demo"></p>
+
+<script>
+//const obj = {name: "John", age: 30, city: "New York"};
+//const myJSON = JSON.stringify(obj);
+//document.getElementById("demo").innerHTML = myJSON;
+
+const socket = new WebSocket('ws://localhost:8080/rpc');
+
+socket.addEventListener('open', function (event) {
+  console.log('WebSocket connection established');
+  
+  const pingRequest = {
+    jsonrpc: '2.0',
+    method: 'ping',
+    params: null,
+    id: 1
+  };
+  
+  const helloRequest = {
+    jsonrpc: '2.0',
+    method: 'hello',
+    params: null,
+    id: 2
+  };
+  
+  socket.send(JSON.stringify(pingRequest));
+  socket.send(JSON.stringify(helloRequest));
+});
+
+socket.addEventListener('message', function (event) {
+  const response = JSON.parse(event.data);
+  
+  if (response.error) {
+    console.error(response.error.message);
+  } else {
+    console.log(response.result);
+  }
+});
+
+socket.addEventListener('close', function (event) {
+  console.log('WebSocket connection closed');
+});
+</script>
+
+</body>
+</html>
