@@ -1,5 +1,6 @@
 package daemon
 import (
+	"github.com/globaldce/globaldce-gateway/content"
 	"github.com/globaldce/globaldce-gateway/mainchain"
 	"github.com/globaldce/globaldce-gateway/wire"
 	"github.com/globaldce/globaldce-gateway/wallet"
@@ -25,6 +26,7 @@ import (
 		SyncingMinNbPeers=0
 		AppIsClosing=false
 		Mn *mainchain.Maincore
+		Mncc *content.ContentClient
 		Wireswarm *wire.Swarm
 		Wlt *wallet.Wallet
 		MAddresses *MiningAddresses

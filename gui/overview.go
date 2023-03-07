@@ -18,7 +18,7 @@ import (
 	//"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/data/binding"
 	//"fyne.io/fyne/v2/widget"
-	"github.com/globaldce/globaldce-gateway/mainchain"
+	//"github.com/globaldce/globaldce-gateway/mainchain"
 	"github.com/globaldce/globaldce-gateway/daemon"
 )
 /*
@@ -72,7 +72,7 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 	
 	registrationloginlabel := widget.NewLabelWithData(registrationloginstr)
 
-	registrationlogininputContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),registrationloginlabel)
+	registrationlogininputContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(300, 40)),registrationloginlabel)
 	registrationloginentryContainer := container.NewHBox(registrationlogininputContainer, 
 	widget.NewButton("LOGIN AS", func() {
 		fmt.Println("Entred registrationlogininput:")
@@ -91,14 +91,14 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 	dappnameinput := widget.NewEntry()
 	//dappnameinput.Bind(dappnameinputstr)
 	dappnameinput.SetPlaceHolder("Dapp name to be loaded ...")
-	dappnameinputContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(300, 40)),dappnameinput)
+	dappnameinputContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(400, 40)),dappnameinput)
 	dappentryContainer := container.NewHBox(dappnameinputContainer, widget.NewButton("LOAD", func() {
 		fmt.Println("Entred dapp name:", dappnameinput.Text)
 		dappnameinputText:=dappnameinput.Text
 		serr:=daemon.Mn.ServeContent(dappnameinputText)
 		if serr==nil{
 			//dappnameinputstr.Set(dappnameinputText)
-			mainchain.HandleWebSocket(dappnameinputText)
+			//mainchain.HandleWebSocket(dappnameinputText)
 			u, err := url.Parse("http://localhost:8080/"+dappnameinputText+"/index.html")//("http://localhost:8080/"+dappnameinputText+"/index.html")//("./Cache/Content/dapptest/index.html")//("https://fyne.io/")
 			_=err
 			guiApp.OpenURL(u)
@@ -179,6 +179,7 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 			registrationloginentryContainer,
 			dappentryContainer,
 			recentdappnamesContainer,
+			widget.NewLabel(" "),
 		)
 	hbox:=label
 	//hbox := container.NewVBox( widget.NewIcon(nil), label)	
@@ -198,9 +199,12 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 
 			
 			syncingstr:=""
-			if daemon.Wireswarm.Syncingdone {
-				syncingstr="SYNCING DONE"
+			if daemon.Wireswarm!=nil{
+				if daemon.Wireswarm.Syncingdone {
+					syncingstr="SYNCING DONE"
+				}
 			}
+
 			if daemon.Miningrunning{
 				syncingstr="CPU MINING RUNNING"
 			}
@@ -284,5 +288,5 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 	//containerhbox:=container.New(layout.NewBorderLayout(nil, nil, hbox, nil))
 	//return container.NewHSplit(containerhbox,assestsdestailslist)
 
-	return container.NewHSplit( container.NewCenter(hbox),assestsdestailslist)
+	return container.NewVSplit( container.NewCenter(hbox),assestsdestailslist)
 }

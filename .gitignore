@@ -14,5 +14,4 @@
 *.dat
 *.ini
 # Directories to ignore
-rawtest
-functest
+/oldrawtest

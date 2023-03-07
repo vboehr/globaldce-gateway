@@ -23,8 +23,8 @@ import (
 	"github.com/globaldce/globaldce-gateway/cli"
 )
 
-const appscreenWidth =1000
-const appscreenHeight = 600
+const appscreenWidth =400
+const appscreenHeight = 800
 //var winredraw bool 
 //var searchtext string
 var newuser bool=false
@@ -81,7 +81,7 @@ func Start(appname string) {
 		}
 	//}
 	daemon.Wlt=wlt
-	daemon.MainInit()
+	//daemon.MainInit()
 	fmt.Printf("Starting main loop\n")
 	go daemon.Mainloop()
 	/////////////////////////////////////

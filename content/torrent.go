@@ -1,12 +1,13 @@
 package content
 
 import (
-	//"fmt"
+	"fmt"
 	"context"
 	"path/filepath"
 	"strings"
 	"time"
 	"log"
+	"encoding/json"
 	"github.com/anacrolix/torrent"
 	"github.com/anacrolix/torrent/storage"
 	"github.com/anacrolix/torrent/metainfo"
@@ -23,7 +24,8 @@ func (contentclient *ContentClient) AddCacheTorrentRequest(tmpdappname string,tm
 	cachetorrentrequest.DAppName=tmpdappname
 	cachetorrentrequest.Path=tmppath
 	cachetorrentrequest.Magnet=tmpmagnet
-	contentclient.CacheTorrentRequestChannel<-*cachetorrentrequest
+	fmt.Println(cachetorrentrequest)
+	contentclient.CacheTorrentRequestChannel <- *cachetorrentrequest
 
 }
 type ContentClient struct {
@@ -111,7 +113,7 @@ func (contentclient *ContentClient) Initcontentclient() {
 		}*/
 	//}()
 	for {
-		log.Println("Content client is up...")
+		//log.Println("Content client is up...")
 		select {
 		case tmpcachetorrentrequest:=<-contentclient.CacheTorrentRequestChannel:
 			//log.Println("Received a new magnet",nmagnet)
@@ -253,9 +255,66 @@ func (contentclient *ContentClient)  ProtorizeTorrentPiecesInterval(tmpmagnet st
 			filei.SetPriority(torrent.PiecePriorityNone)
 		}
 	}
-
-
 }
+//
+
+//
+type TorrentFileInfo struct {
+	Path string
+	Progress int
+}
+
+type TorrentDetails struct {
+	Magnet string  //    `json:"magnet"`
+	Name string    //  `json:"name"`
+	Nbpeers int    //     `json:"nbpeers"`
+	FileInfoArray  []TorrentFileInfo //interface{} `json:"name,omitempty"`
+}
+
+func (contentclient *ContentClient)  GetTorrentDetails(tmpmagneturi string) string{
+	tmpmagnet, perr := metainfo.ParseMagnetUri(tmpmagneturi)
+	if perr != nil {
+		return ""
+	}
+
+	t, ok := contentclient.torrentclient.Torrent(tmpmagnet.InfoHash)
+	if !ok {
+		return ""
+	}
+	if t == nil {
+		return ""
+	}
+	if t.Info() == nil {
+		return ""
+	}
+	files := t.Files()
+	if files == nil {
+		return ""
+	}
+	var tmpTorrentDetails TorrentDetails
+	tmpTorrentDetails.Magnet=tmpmagneturi
+	tmpTorrentDetails.Name=""
+	tmpTorrentDetails.Nbpeers=len(t.PeerConns())
+	//tmpreturnstring += "*" + tmpmagneturi
+	//tmpreturnstring += "*" + "TORRENTNAME"
+	//tmpreturnstring += "*" + fmt.Sprintf("%d", len(t.PeerConns())) //"333"//nbpeers
+
+	
+	for _, filei := range files {
+		//tmpreturnstring += "*" + fmt.Sprintf("%s*%d", filei.Path(), filei.BytesCompleted()*100/filei.Length())
+		var tmpTorrentFileInfo TorrentFileInfo
+		tmpTorrentFileInfo.Path=filei.Path()
+		tmpTorrentFileInfo.Progress=int(filei.BytesCompleted()*100/filei.Length())//fmt.Sprintf("%d",filei.BytesCompleted()*100/filei.Length())
+		tmpTorrentDetails.FileInfoArray=append(tmpTorrentDetails.FileInfoArray,tmpTorrentFileInfo)
+	}
+    tmpTorrentDetailsBytes, err := json.Marshal(tmpTorrentDetails)
+    if err != nil {
+        
+        return fmt.Sprintf("Error:", err)
+    }
+	return string(tmpTorrentDetailsBytes)
+}
+//
 func CustomMin(i int, j int) int {
 	if i > j {
 		return j

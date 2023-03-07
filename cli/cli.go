@@ -112,7 +112,7 @@ func Start(cliname string){
         //////////////////////////////
     }()
     //
-    daemon.MainInit()
+    //daemon.MainInit()
     go daemon.Mainloop()
     for {
         time.Sleep(3*time.Second)

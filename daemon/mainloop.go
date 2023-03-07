@@ -10,6 +10,9 @@ import (
     "github.com/globaldce/globaldce-gateway/wire"
     "log"
     "fmt"
+	"github.com/globaldce/globaldce-gateway/content"
+	"context"
+    "github.com/globaldce/globaldce-gateway/rpc"
 )
 //
 
@@ -66,7 +69,7 @@ func startmining(){
 }
 
 /////////////////////////////
-func MainInit(){
+func Mainloop(){
     applog.Init()
     
     
@@ -74,6 +77,16 @@ func MainInit(){
     Mn.PutPath( AppPath)
 	Mn.LoadMaincore()
 	go mainchain.InitLocalhost()
+    //
+	// Create a context with a cancellation function
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	Mncc:=content.Newcontentclient(ctx,"./Cache")
+    
+	go Mncc.Initcontentclient()
+    rpc.RPCInit(Mncc)
+    //
     //Mn.BannedNameArray=Usersettings.BannedNameArray
     Wireswarm=wire.NewSwarm()
 
@@ -82,8 +95,7 @@ func MainInit(){
         Wireswarm.Syncingdone=true
     }
 
-}
-func Mainloop(){
+
 	quitChan := listenSigInt()
 	defer Mn.UnloadMaincore()
     err:=Wireswarm.SetupListener()

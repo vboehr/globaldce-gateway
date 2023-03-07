@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>WebSocket Test</title>
+	<script>
+		var ws = null;
+
+		function connect() {
+			var url = "wss://localhost:8080/ws";
+			ws = new WebSocket(url);
+			ws.onopen = function() {
+				console.log("Connected to WebSocket server");
+			};
+			ws.onmessage = function(event) {
+				console.log("Received message: " + event.data);
+			};
+			ws.onerror = function(event) {
+				console.log("WebSocket error: " + event);
+			};
+			ws.onclose = function(event) {
+				console.log("WebSocket closed: " + event.code + " " + event.reason);
+			};
+		}
+
+		function disconnect() {
+			if (ws != null) {
+				ws.close();
+				ws = null;
+				console.log("Disconnected from WebSocket server");
+			}
+		}
+
+		function sendRequest() {
+			var a = parseInt(document.getElementById("a").value);
+			var b = parseInt(document.getElementById("b").value);
+			var request = {
+				"jsonrpc": "2.0",
+				"method": "Arith.Multiply",
+				"params": {
+					"A": a,
+					"B": b
+				},
+				"id": 1
+			};
+			ws.send(JSON.stringify(request));
+			console.log("Sent request: " + JSON.stringify(request));
+		}
+	</script>
+</head>
+<body>
+	<button onclick="connect()">Connect</button>
+	<button onclick="disconnect()">Disconnect</button>
+	<br><br>
+	<label for="a">A:</label>
+	<input type="number" id="a" name="a">
+	<br><br>
+	<label for="b">B:</label>
+	<input type="number" id="b" name="b">
+	<br><br>
+	<button onclick="sendRequest()">Send Request</button>
+</body>
+</html>

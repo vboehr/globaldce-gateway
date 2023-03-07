@@ -184,7 +184,7 @@ searchButton:=widget.NewButton("Fixed size window", func() {
     formlayout:=container.New(layout.NewPaddedLayout(),container.NewVBox(outputform,completiontext,sendtoaddressarraytxfeeContainer,completebuttoncontainer))
     //layout:= container.NewHSplit(label,formlayout)
 
-    return container.NewHSplit(label,formlayout)//layout
+    return container.NewVSplit(label,formlayout)//layout
 }
 
 func remove(s []TxInfo, i int) []TxInfo {

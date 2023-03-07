@@ -109,7 +109,7 @@ func receiveScreen() fyne.CanvasObject {
 	}
 	
 
-	return container.NewHSplit( container.NewCenter(hbox),wltaddresseslist)
+	return container.NewVSplit( container.NewCenter(hbox),wltaddresseslist)
 }
 
 
