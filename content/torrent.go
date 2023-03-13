@@ -261,6 +261,7 @@ func (contentclient *ContentClient)  ProtorizeTorrentPiecesInterval(tmpmagnet st
 //
 type TorrentFileInfo struct {
 	Path string
+	Size int
 	Progress int
 }
 
@@ -304,6 +305,7 @@ func (contentclient *ContentClient)  GetTorrentDetails(tmpmagneturi string) stri
 		//tmpreturnstring += "*" + fmt.Sprintf("%s*%d", filei.Path(), filei.BytesCompleted()*100/filei.Length())
 		var tmpTorrentFileInfo TorrentFileInfo
 		tmpTorrentFileInfo.Path=filei.Path()
+		tmpTorrentFileInfo.Size=int(filei.Length())
 		tmpTorrentFileInfo.Progress=int(filei.BytesCompleted()*100/filei.Length())//fmt.Sprintf("%d",filei.BytesCompleted()*100/filei.Length())
 		tmpTorrentDetails.FileInfoArray=append(tmpTorrentDetails.FileInfoArray,tmpTorrentFileInfo)
 	}

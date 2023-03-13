@@ -17,7 +17,7 @@ type Request struct {
 
 type Response struct {
     Jsonrpc string      `json:"jsonrpc"`
-    Result  interface{} `json:"result,omitempty"`
+    Result  *Result      `json:"result,omitempty"`//interface{} `json:"result,omitempty"`
     Error   *Error      `json:"error,omitempty"`
     ID      int         `json:"id"`
 }
@@ -27,6 +27,12 @@ type Error struct {
     Message string      `json:"message"`
     Data    interface{} `json:"data,omitempty"`
 }
+
+type Result struct {
+    Type    string      `json:"type"`
+    Data    interface{} `json:"data,omitempty"`
+}
+
 
 var upgrader = websocket.Upgrader{
     CheckOrigin: func(r *http.Request) bool {
@@ -74,34 +80,34 @@ func RPCHandler(w http.ResponseWriter, r *http.Request) {
         case "ping":
             response = Response{
                 Jsonrpc: "2.0",
-                Result:  "pong",
+                Result:  &Result{Type:"pong"},
                 ID:      request.ID,
             }
         case "CacheTorrent":
             //log.Printf("cacheTorrent params %s",request.Params[0])
             
-            ResultString:=runCmdCacheTorrent(request.Params)
+            tmpResult:=runCmdCacheTorrent(request.Params)
             response = Response{
                 Jsonrpc: "2.0",
-                Result:  ResultString,
+                Result:  &tmpResult,
                 ID:      request.ID,
             }
         //maincontentclient.AddCacheTorrentRequest("cooldapp","",tmpmagnet)
         //maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
         //maincontentclient.ProtorizeTorrentAllPieces(tmpmagnet,".mp4")
         case "ProtorizeTorrentPiecesInterval":
-            ResultString:=runCmdProtorizeTorrentPiecesInterval(request.Params)
+            tmpResult:=runCmdProtorizeTorrentPiecesInterval(request.Params)
             response = Response{
                 Jsonrpc: "2.0",
-                Result:  ResultString,//"ProtorizeTorrentPiecesIntervalSuccess",
+                Result:  &tmpResult,//"ProtorizeTorrentPiecesIntervalSuccess",
                 ID:      request.ID,
             }
 
         case "GetTorrentDetails":
-            ResultString:=runCmdGetTorrentDetails(request.Params)
+            tmpResult:=runCmdGetTorrentDetails(request.Params)
             response = Response{
                 Jsonrpc: "2.0",
-                Result:  ResultString,//tmpTorrentDetailsString,
+                Result:  &tmpResult,//tmpTorrentDetailsString,
                 ID:      request.ID,
             }
         //************************

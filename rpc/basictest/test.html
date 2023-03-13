@@ -38,7 +38,7 @@ socket.addEventListener('open', function (event) {
   const getTorrentDetailsRequest = {
     jsonrpc: '2.0',
     method: 'GetTorrentDetails',
-    params: ['aaaaa'],
+    params: [tmpmagnet],
     id: 2
   };
   socket.send(JSON.stringify(pingRequest));
@@ -46,6 +46,7 @@ socket.addEventListener('open', function (event) {
   setTimeout(myPreview, 10000); 
   function myPreview(){
       socket.send(JSON.stringify(ProtorizeTorrentPiecesIntervalRequest));
+      socket.send(JSON.stringify(getTorrentDetailsRequest));
   }
 
   //socket.send(JSON.stringify(getTorrentDetailsRequest));
