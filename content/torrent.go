@@ -30,7 +30,7 @@ func (contentclient *ContentClient) AddCacheTorrentRequest(tmpdappname string,tm
 }
 type ContentClient struct {
 	torrentclient * torrent.Client
-	AppLocation	string
+	ContentLocation	string
 	ctx context.Context
 	//ClosingChannel chan bool
 	CacheTorrentRequestChannel chan CacheTorrentRequest
@@ -40,7 +40,7 @@ type ContentClient struct {
 func Newcontentclient(ctx context.Context,applocation string) *ContentClient{
     contentclient:=new(ContentClient)
 	contentclient.ctx=ctx
-	contentclient.AppLocation=applocation
+	contentclient.ContentLocation=applocation
 	//contentclient.AppIsClosing=false
 	contentclient.CacheTorrentRequestChannel=make(chan CacheTorrentRequest)
 	contentclient.UncacheTorrentMagnetChannel=make(chan string)
@@ -87,7 +87,7 @@ func (contentclient *ContentClient) AddMagnetWithDownloadDir(uri string,download
 func (contentclient *ContentClient) Initcontentclient() {
 	cfg := torrent.NewDefaultClientConfig()
 	// cfg.Seed = true
-	cfg.DataDir = contentclient.AppLocation //
+	cfg.DataDir = contentclient.ContentLocation filepath.Join(contentclient.ContentLocation,"Cache","Content")//
 	// cfg.NoDHT = true
 	// cfg.DisableTCP = true
 	 cfg.DisableUTP = true
@@ -143,7 +143,7 @@ func (contentclient *ContentClient)  CacheTorrent(tmpdappname string, tmppath st
 
 
 	//////////
-	tmpdownloadDir:=filepath.Join(contentclient.AppLocation,tmpdappname,filepath.FromSlash(tmppath))
+	tmpdownloadDir:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmppath))
 	t, err := contentclient.AddMagnetWithDownloadDir(tmpmagneturi,tmpdownloadDir)
 	//t, err := contentclient.torrentclient.AddMagnet(tmpmagneturi)
 	if err != nil {
@@ -152,7 +152,7 @@ func (contentclient *ContentClient)  CacheTorrent(tmpdappname string, tmppath st
 	//_=tmppath
 	
 	//_=tmpdappname
-	//t.SetDownloadDir(filepath.Join(contentclient.AppLocation,"Cache",tmpdappname,filepath.FromSlash(tmppath)))// "/path/to/download/directory")
+	//t.SetDownloadDir(filepath.Join(contentclient.ContentLocation,"Cache",tmpdappname,filepath.FromSlash(tmppath)))// "/path/to/download/directory")
 	/////////
 
 

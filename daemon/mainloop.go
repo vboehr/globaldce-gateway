@@ -82,7 +82,7 @@ func Mainloop(){
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	Mncc:=content.Newcontentclient(ctx,"./Cache")
+	Mncc:=content.Newcontentclient(ctx,AppPath)
     
 	go Mncc.Initcontentclient()
     rpc.RPCInit(Mncc)
