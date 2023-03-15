@@ -102,7 +102,13 @@ func RPCHandler(w http.ResponseWriter, r *http.Request) {
                 Result:  &tmpResult,//"ProtorizeTorrentPiecesIntervalSuccess",
                 ID:      request.ID,
             }
-
+        case "ProtorizeTorrentDurationPercentageInterval":
+            tmpResult:=runCmdProtorizeTorrentDurationPercentageInterval(request.Params)
+            response = Response{
+                Jsonrpc: "2.0",
+                Result:  &tmpResult,//"ProtorizeTorrentPiecesIntervalSuccess",
+                ID:      request.ID,
+            }
         case "GetTorrentDetails":
             tmpResult:=runCmdGetTorrentDetails(request.Params)
             response = Response{

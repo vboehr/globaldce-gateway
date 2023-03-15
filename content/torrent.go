@@ -5,7 +5,7 @@ import (
 	"context"
 	"path/filepath"
 	"strings"
-	"time"
+	//"time"
 	"log"
 	"encoding/json"
 	"github.com/anacrolix/torrent"
@@ -40,7 +40,7 @@ type ContentClient struct {
 func Newcontentclient(ctx context.Context,applocation string) *ContentClient{
     contentclient:=new(ContentClient)
 	contentclient.ctx=ctx
-	contentclient.ContentLocation=applocation
+	contentclient.ContentLocation=filepath.Join(applocation,"Cache","Content")//applocation
 	//contentclient.AppIsClosing=false
 	contentclient.CacheTorrentRequestChannel=make(chan CacheTorrentRequest)
 	contentclient.UncacheTorrentMagnetChannel=make(chan string)
@@ -65,9 +65,9 @@ func (contentclient *ContentClient) AddMagnetWithDownloadDir(uri string,download
 	}
 	spec.Storage=storage.NewFileOpts(storage.NewFileClientOpts{
 		ClientBaseDir: downloadDir,
-		FilePathMaker: func(opts storage.FilePathMakerOpts) string {
-			return filepath.Join(opts.File.Path...)
-		},
+		//FilePathMaker: func(opts storage.FilePathMakerOpts) string {
+		//	return filepath.Join(opts.File.Path...)
+		//},
 		TorrentDirMaker: nil,
 		PieceCompletion: pieceCompletion,
 	})
@@ -87,7 +87,7 @@ func (contentclient *ContentClient) AddMagnetWithDownloadDir(uri string,download
 func (contentclient *ContentClient) Initcontentclient() {
 	cfg := torrent.NewDefaultClientConfig()
 	// cfg.Seed = true
-	cfg.DataDir = contentclient.ContentLocation filepath.Join(contentclient.ContentLocation,"Cache","Content")//
+	cfg.DataDir = contentclient.ContentLocation //filepath.Join(contentclient.ContentLocation,"Cache","Content")//
 	// cfg.NoDHT = true
 	// cfg.DisableTCP = true
 	 cfg.DisableUTP = true
@@ -120,7 +120,7 @@ func (contentclient *ContentClient) Initcontentclient() {
 			//=tmpdappname
 			//=tmppath
 			//cachetorrentrequest.Magnet=tmpmagnet
-			contentclient.CacheTorrent(tmpcachetorrentrequest.DAppName,tmpcachetorrentrequest.Path,tmpcachetorrentrequest.Magnet)
+			go contentclient.CacheTorrent(tmpcachetorrentrequest.DAppName,tmpcachetorrentrequest.Path,tmpcachetorrentrequest.Magnet)
 			
 			//break
 		//case <-contentclient.ClosingChannel:
@@ -130,9 +130,9 @@ func (contentclient *ContentClient) Initcontentclient() {
 		case <-contentclient.ctx.Done():
 			log.Println("Cancellation signal received. Exiting...")
 			break
-		default:
+		//default:
 			// Do some work here
-			time.Sleep(1 * time.Second)
+		//	time.Sleep(1 * time.Second)
 		}
 	}
 }
@@ -248,6 +248,36 @@ func (contentclient *ContentClient)  ProtorizeTorrentPiecesInterval(tmpmagnet st
 		if strings.Contains(filei.Path(), tmppath) {//tmppreviewfile == filei.Path() {
 			firstpiece := int(filei.BeginPieceIndex()+beginprioritizedpiece)
 			lastpiece := CustomMin(firstpiece+(endprioritizedpiece-beginprioritizedpiece), int(filei.EndPieceIndex()))
+			log.Println("Priority for ",firstpiece,lastpiece)
+			t.DownloadPieces(firstpiece, lastpiece)
+			t.CancelPieces(lastpiece, filei.EndPieceIndex())
+		} else {
+			filei.SetPriority(torrent.PiecePriorityNone)
+		}
+	}
+}
+//
+func (contentclient *ContentClient) ProtorizeTorrentDurationPercentageInterval(tmpmagnet string, tmppath string, beginprioritizeddurationpercentage int,endprioritizeddurationpercentage int) {
+	
+
+	tmpmagnetobj, perr := metainfo.ParseMagnetUri(tmpmagnet)
+
+	if perr != nil {
+		log.Println("Error ",perr)
+		return 
+	}
+
+	t, ok := contentclient.torrentclient.Torrent(tmpmagnetobj.InfoHash)
+	if !ok {
+		log.Println("Torrent not found ")
+		return 
+	}
+	files := t.Files()
+	for _, filei := range files {
+		if strings.Contains(filei.Path(), tmppath) {//tmppreviewfile == filei.Path() {
+			d:=int(filei.EndPieceIndex())-int(filei.BeginPieceIndex())
+			firstpiece := int(filei.BeginPieceIndex())+(beginprioritizeddurationpercentage*d/100)//int(filei.BeginPieceIndex()+beginprioritizedpiece)
+			lastpiece := int(filei.BeginPieceIndex())+(endprioritizeddurationpercentage*d/100)////CustomMin(firstpiece+(endprioritizedpiece-beginprioritizedpiece), int(filei.EndPieceIndex()))
 			log.Println("Priority for ",firstpiece,lastpiece)
 			t.DownloadPieces(firstpiece, lastpiece)
 			t.CancelPieces(lastpiece, filei.EndPieceIndex())

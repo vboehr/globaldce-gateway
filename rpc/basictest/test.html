@@ -35,6 +35,12 @@ socket.addEventListener('open', function (event) {
     params: [tmpmagnet,'.mp4','0','20'],
     id: 3
   };
+  const ProtorizeTorrentDurationPercentageIntervalRequest = {
+    jsonrpc: '2.0',
+    method: 'ProtorizeTorrentDurationPercentageInterval',
+    params: [tmpmagnet,'.mp4','0','50'],
+    id: 3
+  };
   const getTorrentDetailsRequest = {
     jsonrpc: '2.0',
     method: 'GetTorrentDetails',
@@ -43,9 +49,11 @@ socket.addEventListener('open', function (event) {
   };
   socket.send(JSON.stringify(pingRequest));
   socket.send(JSON.stringify(cacheTorrentRequest));
-  setTimeout(myPreview, 10000); 
+  //setTimeout(myPreview, 10000); 
+  setInterval(myPreview, 5000); 
   function myPreview(){
-      socket.send(JSON.stringify(ProtorizeTorrentPiecesIntervalRequest));
+      //socket.send(JSON.stringify(ProtorizeTorrentPiecesIntervalRequest));
+      socket.send(JSON.stringify(ProtorizeTorrentDurationPercentageIntervalRequest));
       socket.send(JSON.stringify(getTorrentDetailsRequest));
   }
 

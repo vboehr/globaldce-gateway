@@ -34,6 +34,25 @@ func runCmdProtorizeTorrentPiecesInterval(tmpparms []string) Result {
 	//maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
 	return Result{Type:"ProtorizeTorrentPiecesIntervalProcessed"}
 }
+//
+func runCmdProtorizeTorrentDurationPercentageInterval(tmpparms []string) Result {
+	//log.Printf("cacheTorrent params %s",request.Params[0])
+	tmpmagnet:=tmpparms[0]
+	tmpfilepath:=tmpparms[1]
+	tmpstartpercentage, cerr1 := strconv.Atoi(tmpparms[2])
+	if cerr1 != nil {
+		return Result{Type:"ProtorizeTorrentPiecesIntervalAborted",Data:fmt.Sprintf("Warning:", cerr1)}
+	}
+	tmpendpercentage, cerr2 := strconv.Atoi(tmpparms[3])
+	if cerr2 != nil {
+		return Result{Type:"ProtorizeTorrentPiecesIntervalAborted",Data:fmt.Sprintf("Warning:", cerr2)}
+	}
+
+
+	Mncc.ProtorizeTorrentDurationPercentageInterval(tmpmagnet,tmpfilepath,tmpstartpercentage,tmpendpercentage)
+	//maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
+	return Result{Type:"ProtorizeTorrentDurationPercentageIntervalProcessed"}
+}
         
 func runCmdProtorizeTorrentAllPieces(tmpparms []string) Result {
 	//log.Printf("cacheTorrent params %s",request.Params[0])
