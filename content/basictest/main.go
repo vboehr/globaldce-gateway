@@ -22,7 +22,7 @@ func main() {
 	maincontentclient.AddCacheTorrentRequest("cooldapp","",tmpmagnet)
 	time.Sleep(5 * time.Second)
 	//maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
-	maincontentclient.ProtorizeTorrentAllPieces(tmpmagnet,".mp4")
+	maincontentclient.ProtorizeTorrentDurationPercentageInterval(tmpmagnet,".mp4","0","100")
 	time.Sleep(200 * time.Second)
 	fmt.Println("closing")
 	cancel()

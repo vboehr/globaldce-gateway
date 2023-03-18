@@ -100,7 +100,7 @@ func SaveUsersettingsFile() error{
 	return nil
 }
 func LoadUsersettingsFile() error{
-	usersettingsfilebytes,lerr:=utility.LoadBytesFile("settings.ini")
+	usersettingsfilebytes,lerr:=utility.LoadBytesFile(filepath.Join(AppPath,"settings.ini"))
 	if lerr != nil {
 		fmt.Println("error:", lerr)
 		return lerr

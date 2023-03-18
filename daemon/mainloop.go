@@ -70,7 +70,7 @@ func startmining(){
 
 /////////////////////////////
 func Mainloop(){
-    applog.Init()
+    //applog.Init()
     
     
     Mn=mainchain.NewMaincore()

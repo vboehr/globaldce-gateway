@@ -86,7 +86,7 @@ func RPCHandler(w http.ResponseWriter, r *http.Request) {
         case "CacheTorrent":
             //log.Printf("cacheTorrent params %s",request.Params[0])
             
-            tmpResult:=runCmdCacheTorrent(request.Params)
+            tmpResult:=runCacheTorrent(request.Params)
             response = Response{
                 Jsonrpc: "2.0",
                 Result:  &tmpResult,
@@ -96,21 +96,21 @@ func RPCHandler(w http.ResponseWriter, r *http.Request) {
         //maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
         //maincontentclient.ProtorizeTorrentAllPieces(tmpmagnet,".mp4")
         case "ProtorizeTorrentPiecesInterval":
-            tmpResult:=runCmdProtorizeTorrentPiecesInterval(request.Params)
+            tmpResult:=runProtorizeTorrentPiecesInterval(request.Params)
             response = Response{
                 Jsonrpc: "2.0",
                 Result:  &tmpResult,//"ProtorizeTorrentPiecesIntervalSuccess",
                 ID:      request.ID,
             }
         case "ProtorizeTorrentDurationPercentageInterval":
-            tmpResult:=runCmdProtorizeTorrentDurationPercentageInterval(request.Params)
+            tmpResult:=runProtorizeTorrentDurationPercentageInterval(request.Params)
             response = Response{
                 Jsonrpc: "2.0",
                 Result:  &tmpResult,//"ProtorizeTorrentPiecesIntervalSuccess",
                 ID:      request.ID,
             }
         case "GetTorrentDetails":
-            tmpResult:=runCmdGetTorrentDetails(request.Params)
+            tmpResult:=runGetTorrentDetails(request.Params)
             response = Response{
                 Jsonrpc: "2.0",
                 Result:  &tmpResult,//tmpTorrentDetailsString,

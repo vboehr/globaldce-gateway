@@ -31,8 +31,18 @@ var newuser bool=false
 
 var guiApp fyne.App
 
-func Start(appname string) {
-	applog.Init()
+func Start(tmpappname string,tmpappversion string,tmpapppath string){
+
+	/////////////////////////////////////////1
+	guiApp = app.NewWithID("globaldce-gateway.app.apptest")
+	if tmpapppath==""{
+		tmpapppath=guiApp.Storage().RootURI().Path()
+	}
+	fmt.Printf("%s %s \n",tmpappname,tmpappversion)
+	fmt.Printf("AppPath: %s \n",tmpapppath)
+	daemon.AppName=tmpappname
+    daemon.AppPath=tmpapppath
+	applog.Init(tmpapppath)
 	cli.InterpretOptions()
 	settingserr:=daemon.LoadUsersettingsFile()
 	if settingserr!=nil{
@@ -47,11 +57,10 @@ func Start(appname string) {
 	
 
 	
-	/////////////////////////////////////////
-	guiApp = app.New()
+
 	//guiApp := app.NewWithID("***.**") //TOBETESTED
 	//guiApp.SetIcon(resourceDPng) //TOBETESTED can be used to set icon
-	myWindow := guiApp.NewWindow(appname)
+	myWindow := guiApp.NewWindow(daemon.AppName)
 	guiApp.Settings().SetTheme(&myTheme{})
 	myWindow.Resize(fyne.NewSize(appscreenWidth, appscreenHeight))
 	//myWindow.SetFixedSize(true)//TODO FOR MOBILE

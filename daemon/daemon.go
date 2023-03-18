@@ -14,6 +14,7 @@ import (
 		MainwalletFilePath=""
 		MainwalletFileKey []byte
 		AppPath=""
+		AppName=""
 		AppLocalPort=""
 		Walletinstantiated=false
 		//Walletstate=""

@@ -204,6 +204,7 @@ func (contentclient *ContentClient)  CacheTorrent(tmpdappname string, tmppath st
 	//	time.Sleep(8 * time.Second)
 	//}
 }
+/*
 func (contentclient *ContentClient)  ProtorizeTorrentAllPieces(tmpmagnet string, tmppath string) {
 	tmpmagnetobj, perr := metainfo.ParseMagnetUri(tmpmagnet)
 	if perr != nil {
@@ -228,6 +229,7 @@ func (contentclient *ContentClient)  ProtorizeTorrentAllPieces(tmpmagnet string,
 		}
 	}
 }
+*/
 func (contentclient *ContentClient)  ProtorizeTorrentPiecesInterval(tmpmagnet string, tmppath string, beginprioritizedpiece int,endprioritizedpiece int) {
 	
 

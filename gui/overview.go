@@ -48,7 +48,7 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 	//syncingstr := binding.NewString()
 	//syncingstr.Set("")
 	//syncingtext := widget.NewLabelWithData(syncingstr)
-	//input:=widget.NewLabel("globaldce gateway "+cli.AppVersion)
+	//input:=widget.NewLabel("globaldce gateway ")
 	
 	/////////////////////////
 	registrationloginstr:= binding.NewString()

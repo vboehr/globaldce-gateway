@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strconv"
 )
-func runCmdCacheTorrent(tmpparms []string) Result {
+func runCacheTorrent(tmpparms []string) Result {
     tmpmagnet:=tmpparms[0]
     tmpdappname:=tmpparms[1]
     tmpdirectory:=tmpparms[2]
@@ -18,7 +18,7 @@ func runCmdCacheTorrent(tmpparms []string) Result {
 	return Result{Type:"CacheTorrentProcessed"}
 }
 
-func runCmdProtorizeTorrentPiecesInterval(tmpparms []string) Result {
+func runProtorizeTorrentPiecesInterval(tmpparms []string) Result {
 	//log.Printf("cacheTorrent params %s",request.Params[0])
 	tmpmagnet:=tmpparms[0]
 	tmpfilepath:=tmpparms[1]
@@ -35,7 +35,7 @@ func runCmdProtorizeTorrentPiecesInterval(tmpparms []string) Result {
 	return Result{Type:"ProtorizeTorrentPiecesIntervalProcessed"}
 }
 //
-func runCmdProtorizeTorrentDurationPercentageInterval(tmpparms []string) Result {
+func runProtorizeTorrentDurationPercentageInterval(tmpparms []string) Result {
 	//log.Printf("cacheTorrent params %s",request.Params[0])
 	tmpmagnet:=tmpparms[0]
 	tmpfilepath:=tmpparms[1]
@@ -53,17 +53,17 @@ func runCmdProtorizeTorrentDurationPercentageInterval(tmpparms []string) Result 
 	//maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
 	return Result{Type:"ProtorizeTorrentDurationPercentageIntervalProcessed"}
 }
-        
-func runCmdProtorizeTorrentAllPieces(tmpparms []string) Result {
+  /*      
+func runProtorizeTorrentAllPieces(tmpparms []string) Result {
 	//log.Printf("cacheTorrent params %s",request.Params[0])
 	tmpmagnet:=tmpparms[0]
 	tmpfilepath:=tmpparms[1]
 	Mncc.ProtorizeTorrentAllPieces(tmpmagnet,tmpfilepath)
 	//maincontentclient.ProtorizeTorrentAllPieces(tmpmagnet,".mp4")
 	return Result{Type:"ProtorizeTorrentAllPiecesProcessed"}
-}	
+}*/
 //
-func runCmdGetTorrentDetails(tmpparms []string) Result {
+func runGetTorrentDetails(tmpparms []string) Result {
     tmpmagnet:=tmpparms[0]
     _=tmpmagnet
 	tmpTorrentDetailsString:=Mncc.GetTorrentDetails(tmpmagnet)

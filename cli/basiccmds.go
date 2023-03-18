@@ -3,6 +3,7 @@ package cli
 import (
     "github.com/globaldce/globaldce-gateway/applog"
     "os"
+    "github.com/globaldce/globaldce-gateway/daemon"
 )
 
 
@@ -15,14 +16,14 @@ func createnewaddressCMD(){
 }
 
 func emptyCMD(){
-    applog.Notice("%s command line interface: missing command",appName)
-    applog.Notice("Try '%s help' for more information.",appName)
+    applog.Notice("%s command line interface: missing command",daemon.AppName)
+    applog.Notice("Try '%s help' for more information.",daemon.AppName)
     os.Exit(0)
 }
 func helpCMD(){
-    applog.Notice("\n%s command line interface",appName)
+    applog.Notice("\n%s command line interface", daemon.AppName)
     applog.Notice("Copyright 2020-2022 globaldce developers\n")
-    applog.Notice("Usage: %s COMMAND [OPTIONS]... ARGUMENTS...\n",appName)
+    applog.Notice("Usage: %s COMMAND [OPTIONS]... ARGUMENTS...\n",)
     applog.Notice("BASIC COMMANDS:")
     applog.Notice("mine                                 Start mining")
     applog.Notice("managewallet                         Manage wallet")

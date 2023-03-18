@@ -5,6 +5,7 @@ import (
     "fmt"
 	"log"
 	"sync"
+    "path/filepath"
 )
 
 
@@ -30,11 +31,11 @@ func EnableDisplayTrace(){
     displaytrace=true
 }
 
-func Init(){
+func Init(tmpapppath string){
     displayunlocked=true
 
     once.Do(func() {
-            file, err := os.OpenFile("info.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+            file, err := os.OpenFile(filepath.Join(tmpapppath,"info.log"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	    if err != nil {
 		log.Fatal(err)
 	    }

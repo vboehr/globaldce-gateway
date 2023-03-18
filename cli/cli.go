@@ -11,12 +11,24 @@ import (
     "github.com/globaldce/globaldce-gateway/daemon"
     "github.com/globaldce/globaldce-gateway/utility"
 )
-const (
-    AppVersion="0.2.5"
-)
-var appName string
-func Start(cliname string){
-    applog.Init()
+
+//var appName string
+func Start(tmpappname string,tmpappversion string,tmpapppath string){
+    
+    if tmpapppath==""{
+    //appPath=os.Args[0]
+        tmpapppathos, err := filepath.Abs(filepath.Dir(os.Args[0]))
+        if err != nil {
+                fmt.Printf("%v",err)
+                os.Exit(0)
+        }
+        tmpapppath=tmpapppathos
+    }
+    fmt.Printf("%s %s \n",tmpappname,tmpappversion)
+    fmt.Printf("AppPath: %s \n",tmpapppath)
+    daemon.AppName=tmpappname
+    daemon.AppPath=tmpapppath
+    applog.Init(tmpapppath)
     //for i:=0;i<len(os.Args);i++{
     //    applog.Notice("arg %d %s",i,os.Args[i])
     //}
@@ -27,18 +39,13 @@ func Start(cliname string){
 	}
 	daemon.ApplyUsersettings()
 
-    appName=cliname
+    //appName=cliname
 
     if len(os.Args)<2{
         emptyCMD()
     }
-    //appPath=os.Args[0]
-    appPathOS, err := filepath.Abs(filepath.Dir(os.Args[0]))
-    if err != nil {
-            applog.Fatal("%v",err)
-    }
-    daemon.AppPath=appPathOS
-    daemon.AppPath=""//TODO include appPathOS
+
+ 
     // common options
     ///////////////////////
     
