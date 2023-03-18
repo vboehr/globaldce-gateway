@@ -35,9 +35,10 @@ func Init(tmpapppath string){
     displayunlocked=true
 
     once.Do(func() {
-            file, err := os.OpenFile(filepath.Join(tmpapppath,"info.log"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+        infologpath:=filepath.Join(tmpapppath,"info.log")
+        file, err := os.OpenFile(infologpath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	    if err != nil {
-		log.Fatal(err)
+            log.Println(err)
 	    }
 	fileLogger=log.New(file, "",log.Ldate|log.Ltime| log.Lshortfile)
     fileLoggerFile=file
