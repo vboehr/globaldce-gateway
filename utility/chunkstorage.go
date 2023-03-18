@@ -35,7 +35,7 @@ for {
 	filepath:=fmt.Sprintf("%s%03d",storagepath,activechunkfileid)
 	f, err := os.OpenFile(filepath, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("OpenFile",err)
 	}
 	cs.file =append(cs.file,f)
 	
@@ -50,7 +50,7 @@ for {
 		_, seekerr := cs.file[activechunkfileid].Seek(position, 0)
 		if seekerr != nil {
 			cs.file[activechunkfileid].Close() // ignore error; Write error takes precedence
-			log.Fatal(seekerr)
+			log.Fatal("seekerr:",seekerr)
 		}
 		//applog.Trace("position %d", position)
 
@@ -108,7 +108,7 @@ func (cs *ChunkStorage) AddChunk(data []byte) error {
 		filepath:=fmt.Sprintf("%s%03d",cs.Path,activechunkfileid)
 		f, err := os.OpenFile(filepath, os.O_CREATE|os.O_RDWR, 0644)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		cs.file =append(cs.file,f)
 		newchunkfile=true

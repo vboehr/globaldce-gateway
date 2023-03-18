@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 	//"time"
+	"os"
 	"log"
 	"encoding/json"
 	"github.com/anacrolix/torrent"
@@ -41,6 +42,18 @@ func Newcontentclient(ctx context.Context,applocation string) *ContentClient{
     contentclient:=new(ContentClient)
 	contentclient.ctx=ctx
 	contentclient.ContentLocation=filepath.Join(applocation,"Cache","Content")//applocation
+	tmpcachelocation:=filepath.Join(applocation,"Cache")
+	if _, err := os.Stat(tmpcachelocation); os.IsNotExist(err) {
+		os.Mkdir(tmpcachelocation, os.ModePerm)
+		fmt.Printf("Creating :%s\n",tmpcachelocation)
+	}
+
+	if _, err := os.Stat(contentclient.ContentLocation); os.IsNotExist(err) {
+		os.Mkdir(contentclient.ContentLocation, os.ModePerm)
+		fmt.Printf("Creating :%s\n",contentclient.ContentLocation)
+	}
+
+
 	//contentclient.AppIsClosing=false
 	contentclient.CacheTorrentRequestChannel=make(chan CacheTorrentRequest)
 	contentclient.UncacheTorrentMagnetChannel=make(chan string)

@@ -98,8 +98,13 @@ func (mn *Maincore) LoadMaincore(){
 	maincoredirpath:=filepath.Join(mn.path,"Mainblocks")
 	if _, err := os.Stat(maincoredirpath); os.IsNotExist(err) {
 		os.Mkdir(maincoredirpath, os.ModePerm)
+		applog.Notice("Creating :%s",maincoredirpath)
 	}
-
+	tmpwalletfilesdirpath:=filepath.Join(mn.path,"WalletFiles")
+	if _, err := os.Stat(tmpwalletfilesdirpath); os.IsNotExist(err) {
+		os.Mkdir(tmpwalletfilesdirpath, os.ModePerm)
+		applog.Notice("Creating :%s",tmpwalletfilesdirpath)
+	}
 	if _, err := os.Stat( filepath.Join(mn.path,"Mainblocks","Mainblocks000")); os.IsNotExist(err) {
 		// path does not exist
 		mn.mainbf = utility.OpenChunkStorage( filepath.Join(mn.path,"Mainblocks","Mainblocks"))
