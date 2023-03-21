@@ -44,10 +44,12 @@ func receiveScreen() fyne.CanvasObject {
 	label.Add(saveButton)
 	genAddrButton := widget.NewButton("Generate New Address", func() {
 		fmt.Println("New address generation ... ")
-		if daemon.Wlt.Walletloaded{
-			daemon.Wlt.GenerateKeyPair()
-		} else {
-			fmt.Println("New address generation CANCELED - wallet not loaded")
+		if daemon.Walletinstantiated() {
+			if daemon.Wlt.Walletloaded{
+				daemon.Wlt.GenerateKeyPair()
+			} else {
+				fmt.Println("New address generation CANCELED - wallet not loaded")
+			}
 		}
 	})
 	hbox := container.NewVBox( widget.NewIcon(nil), label,genAddrButton)
@@ -109,7 +111,7 @@ func receiveScreen() fyne.CanvasObject {
 	}
 	
 
-	return container.NewVSplit( container.NewCenter(hbox),wltaddresseslist)
+	return container.NewVSplit( hbox,wltaddresseslist)
 }
 
 

@@ -23,26 +23,25 @@ import (
 	"github.com/globaldce/globaldce-gateway/cli"
 )
 
-const appscreenWidth =400
-const appscreenHeight = 800
+//const appscreenWidth =400
+//const appscreenHeight = 800
 //var winredraw bool 
 //var searchtext string
 var newuser bool=false
 
 var guiApp fyne.App
 
-func Start(tmpappname string,tmpappversion string,tmpapppath string){
+func Start(tmpappname string,tmpappversion string,tmpappid string){
 
 	/////////////////////////////////////////1
-	guiApp = app.NewWithID("globaldce-gateway.app.apptest")
-	if tmpapppath==""{
-		tmpapppath=guiApp.Storage().RootURI().Path()
-	}
+	guiApp = app.NewWithID(tmpappid)
+	//if tmpapppath==""{
+	//	tmpapppath=guiApp.Storage().RootURI().Path()
+	//}
 	fmt.Printf("%s %s \n",tmpappname,tmpappversion)
-	fmt.Printf("AppPath: %s \n",tmpapppath)
 	daemon.AppName=tmpappname
-    daemon.AppPath=tmpapppath
-	applog.Init(tmpapppath)
+    //daemon.AppPath=tmpapppath
+	applog.Init(daemon.AppPath)
 	cli.InterpretOptions()
 	settingserr:=daemon.LoadUsersettingsFile()
 	if settingserr!=nil{
@@ -62,7 +61,7 @@ func Start(tmpappname string,tmpappversion string,tmpapppath string){
 	//guiApp.SetIcon(resourceDPng) //TOBETESTED can be used to set icon
 	myWindow := guiApp.NewWindow(daemon.AppName)
 	guiApp.Settings().SetTheme(&myTheme{})
-	myWindow.Resize(fyne.NewSize(appscreenWidth, appscreenHeight))
+	myWindow.Resize(fyne.NewSize(500, 600))
 	//myWindow.SetFixedSize(true)//TODO FOR MOBILE
 	myWindow.SetIcon(resourceLogoPng)
 
@@ -151,7 +150,7 @@ func Start(tmpappname string,tmpappversion string,tmpapppath string){
 	
 	myWindow.ShowAndRun()
 		fmt.Println("Closing")
-		if daemon.Walletinstantiated {
+		if daemon.Walletinstantiated() {
 			daemon.Wlt.SaveJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
 		}
 		_=daemon.SaveUsersettingsFile()

@@ -33,8 +33,11 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 		selectWalletFileDialog(win)
 	})
 	selectwalletpathButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(180, 40)),selectwalletpathButton)
-	walletpathentryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth-150, 40)),walletpathentry)
-	walletpathContainer:=container.NewHBox(walletpathentryContainer,selectwalletpathButtonContainer)
+
+	//walletpathentryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth-150, 40)),walletpathentry)
+	//walletpathContainer:=container.NewHBox(walletpathentryContainer,selectwalletpathButtonContainer)
+	walletpathContainer := container.NewBorder(nil, nil, nil, selectwalletpathButtonContainer, walletpathentry)
+
 	//
 	//Nameregistrationtxfee:NameregistrationtxfeeDefault,
 	nameregistrationtxfeeEntry:=widget.NewEntry()
@@ -44,9 +47,14 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 		nameregistrationtxfeeEntry.SetText(fmt.Sprintf("%d",daemon.Usersettings.Nameregistrationtxfee))
 	})
 	nameregistrationtxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),nameregistrationtxfeeSetDefaultButton)
-	nameregistrationtxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),nameregistrationtxfeeEntry)
-	nameregistrationtxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Name registration fee"))
-	nameregistrationtxfeeContainer:=container.NewHBox(nameregistrationtxfeeLabelContainer,nameregistrationtxfeeEntryContainer,nameregistrationtxfeeSetDefaultButtonContainer)
+	//nameregistrationtxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),nameregistrationtxfeeEntry)
+	//nameregistrationtxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Name registration fee"))
+	nameregistrationtxfeeEntryContainer:=nameregistrationtxfeeEntry
+	nameregistrationtxfeeLabelContainer:=widget.NewLabel("Name registration fee")
+
+
+	//nameregistrationtxfeeContainer:=container.NewHBox(nameregistrationtxfeeLabelContainer,nameregistrationtxfeeEntryContainer,nameregistrationtxfeeSetDefaultButtonContainer)
+	nameregistrationtxfeeContainer:=container.NewBorder(nil,nil,nameregistrationtxfeeLabelContainer,nameregistrationtxfeeSetDefaultButtonContainer,nameregistrationtxfeeEntryContainer)
 
 	//Publicposttxfee:PublicposttxfeeDefault,
 	/*
@@ -69,9 +77,14 @@ func settingsScreen(win fyne.Window) fyne.CanvasObject {
 		sendtoaddressarraytxfeeEntry.SetText(fmt.Sprintf("%d",daemon.Usersettings.Sendtoaddressarraytxfee))
 	})
 	sendtoaddressarraytxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),sendtoaddressarraytxfeeSetDefaultButton)
-	sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
-	sendtoaddressarraytxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Send to addresses fee"))
-	sendtoaddressarraytxfeeContainer:=container.NewHBox(sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeEntryContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer)
+	//sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
+	//sendtoaddressarraytxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Send to addresses fee"))
+	//sendtoaddressarraytxfeeContainer:=container.NewHBox(sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeEntryContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer)
+	//
+	sendtoaddressarraytxfeeEntryContainer:=sendtoaddressarraytxfeeEntry
+	sendtoaddressarraytxfeeLabelContainer:=widget.NewLabel("Send to addresses fee")
+	sendtoaddressarraytxfeeContainer:=container.NewBorder(nil,nil,sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer,sendtoaddressarraytxfeeEntryContainer)
+	
 	//
 	MiningrequestedCheck:=widget.NewCheck("Mining", func(checkstatus bool) { 
 		daemon.Usersettings.Miningrequested=checkstatus

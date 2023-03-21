@@ -48,7 +48,8 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 		////////////////////////
 	registrationloginlabel := widget.NewLabelWithData(registrationloginstr)
 
-	registrationlogininputContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),registrationloginlabel)
+	//registrationlogininputContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),registrationloginlabel)
+	/*
 	registrationloginentryContainer := container.NewHBox(registrationlogininputContainer, 
 		widget.NewButton("LOGIN AS", func() {
 			fmt.Println("Entred registrationlogininput:")
@@ -60,6 +61,20 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 		}),
 
 	)
+	*/
+	registrationloginContainer:= container.NewHBox(
+		widget.NewButton("LOGIN AS", func() {
+			fmt.Println("Entred registrationlogininput:")
+			registrationLoginDialog(win)
+		}),
+		widget.NewButton("LOGOUT", func() {
+			fmt.Println("LOGOUT:")
+			daemon.PutActiveloginname("")
+		}),
+
+	)
+	
+	registrationloginentryContainer := container.NewBorder(nil, nil, nil, registrationloginContainer,registrationloginlabel)
 	//-////////////////////////////
 	contentdirectorystr:= binding.NewString()
 
@@ -85,7 +100,9 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
 		////////////////////////
 	contentdirectorylabel := widget.NewLabelWithData(contentdirectorystr)
 
+	//contentdirectoryContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),contentdirectorylabel)
 	contentdirectoryContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(150, 40)),contentdirectorylabel)
+	//
 	//-////////////////////////////
 	/*
 	registerednames := binding.BindStringList(
@@ -136,7 +153,7 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
         fmt.Println("creating a new name :")
 		requestNameRegistrationDialog(win)
     })
-	nameregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),nameregistrationbutton)
+	//nameregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(200, 40)),nameregistrationbutton)
 	//
 	//
 	nameunregistrationbutton:= widget.NewButton("NAME UNREGISTRATION", func() {
@@ -163,14 +180,14 @@ func registrationScreen(win fyne.Window) fyne.CanvasObject {
         fmt.Println("commit content directory")
 		commitContentDirDialog(win)
     })
-	nameunregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(250, 40)),nameunregistrationbutton)
-	setcontentdirbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(250, 40)),setcontentdirbutton)
-	commitcontentdirbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(250, 40)),commitcontentdirbutton)
+	//nameunregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(250, 40)),nameunregistrationbutton)
+	//setcontentdirbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(250, 40)),setcontentdirbutton)
+	//commitcontentdirbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(250, 40)),commitcontentdirbutton)
 
-	//registrednameslistcontainer:=container.New(layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth, appscreenHeight*3/4)),registrednameslist)
-	registrationbuttonsContainer:=container.NewHBox(nameunregistrationbuttoncontainer,setcontentdirbuttoncontainer,commitcontentdirbuttoncontainer)
-
-	layout:=container.NewVBox(nameregistrationbuttoncontainer,registrationloginentryContainer,contentdirectoryContainer/*,registrednameslistcontainer*/,registrationbuttonsContainer)
+	//registrationbuttonsContainer:=container.NewHBox(nameunregistrationbuttoncontainer,setcontentdirbuttoncontainer,commitcontentdirbuttoncontainer)
+	//registrationbuttonsContainer := container.NewBorder(nil, nil, nameunregistrationbutton,commitcontentdirbutton, setcontentdirbutton)
+	registrationbuttonsContainer := container.NewVBox( nameunregistrationbutton, setcontentdirbutton,commitcontentdirbutton)
+	layout:=container.NewVBox(nameregistrationbutton,registrationloginentryContainer,contentdirectoryContainer/*,registrednameslistcontainer*/,registrationbuttonsContainer)
 	return layout
 
 }

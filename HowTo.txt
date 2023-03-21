@@ -1,0 +1,57 @@
+I/WindowManager(  865): Losing focus: Window{357deb14 u0 com.oppo.launcher/com.oppo.launcher.Launcher}
+V/NetworkStats(  865): setKernelCounterSet uid=10237 set=1
+D/ConnectivityService(  865): onUidRulesChanged(uid=10237, uidRules=0)
+V/NetworkStats(  865): setKernelCounterSet uid=10096 set=0
+D/ConnectivityService(  865): onUidRulesChanged(uid=10096, uidRules=0)
+W/ActivityThread( 1377): set disable trim memory for app:com.test.myapp
+W/linker  ( 1377): Unsupported flags DT_FLAGS_1=0x9
+W/linker  ( 1377): /data/app/com.test.myapp-2/lib/arm64/libglobaldce_gateway.so: unused DT entry: type 0x6ffffef5 arg 0x5ac0
+W/linker  ( 1377): /data/app/com.test.myapp-2/lib/arm64/libglobaldce_gateway.so: unused DT entry: type 0x6ffffffe arg 0x5a60
+W/linker  ( 1377): /data/app/com.test.myapp-2/lib/arm64/libglobaldce_gateway.so: unused DT entry: type 0x6fffffff arg 0x3
+E/Process ( 1377): android_os_Process_getProcessNameByPid pid is 1377
+E/Process ( 1377): android_os_Process_getProcessNameByPid value is com.test.myapp
+I/Fyne    ( 1377): open info.log: read-only file system
+E/JavaBinder(  865): !!! FAILED BINDER TRANSACTION !!!
+V/WallpaperService(14054): Visibility change in com.android.systemui.ImageWallpaper$DrawableEngine@1baa377e: 0
+V/WallpaperService(14054): onVisibilityChanged(false): com.android.systemui.ImageWallpaper$DrawableEngine@1baa377e
+W/ADB_SERVICES(  769): terminating JDWP 1377 connection: Try again
+I/Zygote  (  368): Process 1377 exited cleanly (1)
+I/ActivityManager(  865): Process com.test.myapp (pid 1377) has died
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+********************************
+********************************
+./fyne-cmd-dev package -os android -appID com.test.myapp -icon ./Icon.png --tags=disable_libutp
+
+./fyne-cmd-dev02 package -os android -appID globaldcegateway.test.myapp -icon ./Icon.png --tags=disable_libutp
+
+
+
+
+
+
+
+
+
+************************
+
+git add .
+git commit -m 'vvv'
+git push
+
+
+git remote set-url origin git@github.com:kendrickjung/fantazybay
+

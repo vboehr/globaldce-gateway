@@ -10,7 +10,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	///////////////
 	"net/url"
-	"fyne.io/fyne/v2/layout"
+	//"fyne.io/fyne/v2/layout"
 	///////////////
 	"fyne.io/fyne/v2"
 	"time"
@@ -72,8 +72,8 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 	
 	registrationloginlabel := widget.NewLabelWithData(registrationloginstr)
 
-	registrationlogininputContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(300, 40)),registrationloginlabel)
-	registrationloginentryContainer := container.NewHBox(registrationlogininputContainer, 
+	//registrationlogininputContainer :=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),registrationloginlabel)
+	registrationloginentrybuttonsContainer := container.NewHBox(
 	widget.NewButton("LOGIN AS", func() {
 		fmt.Println("Entred registrationlogininput:")
 		registrationLoginDialog(win)
@@ -85,21 +85,21 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 	}),
 
 	)
-	
+	registrationloginentryContainer:= container.NewBorder(nil, nil, nil, registrationloginentrybuttonsContainer, registrationloginlabel)//registrationlogininputContainer
 	//dappnameinputstr := binding.NewString()
 	
 	dappnameinput := widget.NewEntry()
 	//dappnameinput.Bind(dappnameinputstr)
 	dappnameinput.SetPlaceHolder("Dapp name to be loaded ...")
-	dappnameinputContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(400, 40)),dappnameinput)
-	dappentryContainer := container.NewHBox(dappnameinputContainer, widget.NewButton("LOAD", func() {
+	//dappnameinputContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(400, 40)),dappnameinput)
+	dappentrybutton := widget.NewButton("LOAD", func() {
 		fmt.Println("Entred dapp name:", dappnameinput.Text)
 		dappnameinputText:=dappnameinput.Text
 		serr:=daemon.Mn.ServeContent(dappnameinputText)
 		if serr==nil{
 			//dappnameinputstr.Set(dappnameinputText)
 			//mainchain.HandleWebSocket(dappnameinputText)
-			u, err := url.Parse("http://localhost:8080/"+dappnameinputText+"/index.html")//("http://localhost:8080/"+dappnameinputText+"/index.html")//("./Cache/Content/dapptest/index.html")//("https://fyne.io/")
+			u, err := url.Parse("http://localhost:8088/"+dappnameinputText+"/index.html")//("http://localhost:8088/"+dappnameinputText+"/index.html")//("./Cache/Content/dapptest/index.html")//("https://fyne.io/")
 			_=err
 			guiApp.OpenURL(u)
 			////////////////
@@ -107,7 +107,8 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 		}
 
 		//recentdappnamesarray=append([]string{dappnameinputText}, recentdappnamesarray ...)
-	}))
+	})
+	dappentryContainer := container.NewBorder(nil, nil, nil, dappentrybutton, dappnameinput)
 	/////////////////////////
 
 	/////////////////////////////////////////////
@@ -162,15 +163,20 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 		daemon.ClearAllRecentDappNames()
 		//recentdappnamesarray=make([]string, 0)
     })
-	recentdappnamesclearbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(100, 40)),recentdappnamesclearbutton)
+	//recentdappnamesclearbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(100, 40)),recentdappnamesclearbutton)
 	//
 	//
-	recentdappnamesclearallbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(100, 40)),recentdappnamesclearallbutton)
+	//recentdappnamesclearallbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(100, 40)),recentdappnamesclearallbutton)
 	//nameunregistrationbuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 40)),recentdappnamesclearbuttoncontainer)
 	//layout:=container.New(layout.NewPaddedLayout(),container.NewVBox(recentdappnameslist,nameregistrationcontainer))
-	recentdappnameslistcontainer:=container.New(layout.NewGridWrapLayout(fyne.NewSize(300, 200)),recentdappnameslist)
-	recentdappnamesclearbuttonscontainer := container.NewHBox(recentdappnamesclearbuttoncontainer,recentdappnamesclearallbuttoncontainer)
-	recentdappnamesContainer:=container.NewVBox(recentdappnameslistcontainer,recentdappnamesclearbuttonscontainer)
+	
+	//recentdappnameslistcontainer:=container.New(layout.NewGridWrapLayout(fyne.NewSize(200, 200)),recentdappnameslist)
+	
+	
+	recentdappnamesclearbuttonscontainer := container.NewHBox(recentdappnamesclearbutton,recentdappnamesclearallbutton)
+	//recentdappnamesContainer:=container.NewVBox(recentdappnameslistcontainer,recentdappnamesclearbuttonscontainer)
+
+	
 	/////////////////////////////////////////////
 	/////////////////////////////////////////////
 	label := container.NewVBox(
@@ -178,10 +184,11 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 			balancetext,
 			registrationloginentryContainer,
 			dappentryContainer,
-			recentdappnamesContainer,
-			widget.NewLabel(" "),
+			//recentdappnamesContainer,
+			//widget.NewLabel(" "),
 		)
-	hbox:=label
+	hbox := container.NewBorder(label, recentdappnamesclearbuttonscontainer, nil, nil,recentdappnameslist)
+	//hbox:=label
 	//hbox := container.NewVBox( widget.NewIcon(nil), label)	
 
 	go func() {
@@ -189,8 +196,8 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 			//fmt.Println("*******",daemon.Wlt.ComputeBalance())
 			walletpathstr:=fmt.Sprintf("Wallet path: %s",daemon.MainwalletFilePath)
 			var walletbalancestr string
-			if daemon.Walletinstantiated{
-				if daemon.Wlt.Walletstate=="" {
+			if daemon.Wlt!=nil{
+				if daemon.Wlt.Walletloaded {
 					walletbalancestr=fmt.Sprintf("Wallet balance is %f", float64(daemon.Wlt.ComputeBalance()/1000000.0))
 				} else {
 					walletbalancestr=daemon.Wlt.Walletstate
@@ -209,7 +216,7 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 				syncingstr="CPU MINING RUNNING"
 			}
 			balancestr.Set(syncingstr+"\n"+walletpathstr+"\n"+walletbalancestr+"")
-			time.Sleep(time.Second * 2)
+			time.Sleep(time.Second * 1)
 		}
 	}()
 
@@ -288,5 +295,5 @@ func overviewScreen(win fyne.Window) fyne.CanvasObject {
 	//containerhbox:=container.New(layout.NewBorderLayout(nil, nil, hbox, nil))
 	//return container.NewHSplit(containerhbox,assestsdestailslist)
 
-	return container.NewVSplit( container.NewCenter(hbox),assestsdestailslist)
+	return container.NewVSplit( hbox,assestsdestailslist)
 }

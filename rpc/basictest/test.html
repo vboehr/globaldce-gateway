@@ -29,6 +29,12 @@ socket.addEventListener('open', function (event) {
     params: [tmpmagnet,'cooldapp',''],
     id: 2
   };
+  const dropTorrentRequest = {
+    jsonrpc: '2.0',
+    method: 'DropTorrent',
+    params: [tmpmagnet,'cooldapp','','true'],
+    id: 2
+  };
   const ProtorizeTorrentPiecesIntervalRequest = {
     jsonrpc: '2.0',
     method: 'ProtorizeTorrentPiecesInterval',
@@ -38,7 +44,7 @@ socket.addEventListener('open', function (event) {
   const ProtorizeTorrentDurationPercentageIntervalRequest = {
     jsonrpc: '2.0',
     method: 'ProtorizeTorrentDurationPercentageInterval',
-    params: [tmpmagnet,'.mp4','0','50'],
+    params: [tmpmagnet,'.mp4','0','50','true'],
     id: 3
   };
   const getTorrentDetailsRequest = {
@@ -47,16 +53,21 @@ socket.addEventListener('open', function (event) {
     params: [tmpmagnet],
     id: 2
   };
+
   socket.send(JSON.stringify(pingRequest));
   socket.send(JSON.stringify(cacheTorrentRequest));
-  //setTimeout(myPreview, 10000); 
+  setTimeout(myDropout, 20000); 
   setInterval(myPreview, 5000); 
   function myPreview(){
       //socket.send(JSON.stringify(ProtorizeTorrentPiecesIntervalRequest));
       socket.send(JSON.stringify(ProtorizeTorrentDurationPercentageIntervalRequest));
       socket.send(JSON.stringify(getTorrentDetailsRequest));
   }
+  function myDropout(){
 
+      socket.send(JSON.stringify(dropTorrentRequest));
+  
+  }
   //socket.send(JSON.stringify(getTorrentDetailsRequest));
 /////////////////////
 

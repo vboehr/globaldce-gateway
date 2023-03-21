@@ -47,7 +47,7 @@ func InitLocalhost(){
 	fs := http.FileServer(http.Dir("./Cache/Content"))
 	http.Handle("/", http.StripPrefix("/", fs))
 
-	fmt.Println(http.ListenAndServe(":8080", nil))
+	fmt.Println(http.ListenAndServe(":8088", nil))
 
 }
 /*

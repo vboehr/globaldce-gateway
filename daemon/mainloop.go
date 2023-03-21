@@ -25,6 +25,8 @@ func listenSigInt() chan os.Signal {
     //}()
 
 }
+//
+
 /////////////////////////////
 
 func startmining(){
@@ -32,9 +34,9 @@ func startmining(){
     for {
         //fmt.Printf("****** %v %v %v %v\n",Miningrequested ,Miningaddrressesfileloaded , Walletinstantiated, Wireswarm.Syncingdone )
         //fmt.Printf("?.????? %v\n",Miningrequested && (Miningaddrressesfileloaded || Walletinstantiated) && Wireswarm.Syncingdone )
-        if Miningrequested && (Miningaddrressesfileloaded || Walletinstantiated) && Wireswarm.Syncingdone {
+        if Miningrequested && (Miningaddrressesfileloaded || Walletinstantiated()) && Wireswarm.Syncingdone {
             var miningaddress utility.Hash
-            if Walletinstantiated {
+            if Walletinstantiated() {
                 miningaddress=Wlt.GenerateKeyPair()
             } else if Miningaddrressesfileloaded {
                 miningaddress=MAddresses.GetRandomAddress()
@@ -53,7 +55,7 @@ func startmining(){
               }
               //if !Wlt.HotWallet{
                   
-                  if Walletinstantiated && success{
+                  if Walletinstantiated() && success{
                     Mn.SyncWallet(Wlt)
                     Wlt.SaveJSONWalletFile(MainwalletFilePath,MainwalletFileKey)
                   }
@@ -124,11 +126,6 @@ func Mainloop(){
     //
     for {
         //fmt.Println("Main loop")
-        if Wlt!=nil{
-            if Wlt.Walletloaded{ 
-                Walletinstantiated=true
-            }
-        }
 
         //
         /*
@@ -143,7 +140,7 @@ func Mainloop(){
         }*/
         //
         //if  Miningrequested && ((Wlt.HotWallet) || (Walletinstantiated)) && Wireswarm.Syncingdone{
-        if Walletinstantiated && Wireswarm.Syncingdone{
+        if Walletinstantiated() && Wireswarm.Syncingdone{
            //if !Wlt.HotWallet{
                 Mn.SyncWallet(Wlt)
                 Mn.LoadUnconfirmedBroadcastedTxs(Wlt)   
@@ -214,7 +211,7 @@ func Mainloop(){
             }
         */
         case <-time.After(180 * time.Minute):
-            if Walletinstantiated {
+            if Walletinstantiated() {
                 // (re)broadcasting wallet transactions that have not been included in the mainchain
                 Mn.SyncWallet(Wlt)
                 broadcastingtxs:=Wlt.GetUnconfirmedBroadcastedTxs()
@@ -256,7 +253,7 @@ func Mainloop(){
             AppIsClosing = true 
             applog.UnlockDisplay()
             applog.Notice("Quitting ...")
-            if Walletinstantiated {
+            if Walletinstantiated() {
                 Wlt.SaveJSONWalletFile(MainwalletFilePath,MainwalletFileKey)
             }
             _=SaveUsersettingsFile()

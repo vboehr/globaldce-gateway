@@ -92,6 +92,15 @@ func RPCHandler(w http.ResponseWriter, r *http.Request) {
                 Result:  &tmpResult,
                 ID:      request.ID,
             }
+        case "DropTorrent":
+            //log.Printf("cacheTorrent params %s",request.Params[0])
+            
+            tmpResult:=runDropTorrent(request.Params)
+            response = Response{
+                Jsonrpc: "2.0",
+                Result:  &tmpResult,
+                ID:      request.ID,
+            }
         //maincontentclient.AddCacheTorrentRequest("cooldapp","",tmpmagnet)
         //maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
         //maincontentclient.ProtorizeTorrentAllPieces(tmpmagnet,".mp4")

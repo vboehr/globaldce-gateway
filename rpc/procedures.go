@@ -12,10 +12,22 @@ func runCacheTorrent(tmpparms []string) Result {
     tmpdirectory:=tmpparms[2]
 	if Mncc==nil{
 		//fmt.Println("Uninitiated Client")
-		return Result{Type:"CacheTorrentProcessedAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
+		return Result{Type:"CacheTorrentAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
 	}
     Mncc.AddCacheTorrentRequest(tmpdappname,tmpdirectory,tmpmagnet)
 	return Result{Type:"CacheTorrentProcessed"}
+}
+func runDropTorrent(tmpparms []string) Result {
+    tmpmagnet:=tmpparms[0]
+	tmpdappname:=tmpparms[1]
+    tmpdirectory:=tmpparms[2]
+	tmperasefilesflag:=(tmpparms[3]=="true")
+	if Mncc==nil{
+		//fmt.Println("Uninitiated Client")
+		return Result{Type:"DropTorrentAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
+	}
+    Mncc.DropTorrent(tmpmagnet,tmpdappname,tmpdirectory,tmperasefilesflag)
+	return Result{Type:"DropTorrentProcessed"}
 }
 
 func runProtorizeTorrentPiecesInterval(tmpparms []string) Result {
@@ -30,7 +42,8 @@ func runProtorizeTorrentPiecesInterval(tmpparms []string) Result {
 	if cerr2 != nil {
 		return Result{Type:"ProtorizeTorrentPiecesIntervalAborted",Data:fmt.Sprintf("Warning:", cerr2)}
 	}
-	Mncc.ProtorizeTorrentPiecesInterval(tmpmagnet,tmpfilepath,tmpstartpiece,tmpendpiece)
+	tmpcancelflag:=(tmpparms[3]=="true")
+	Mncc.ProtorizeTorrentPiecesInterval(tmpmagnet,tmpfilepath,tmpstartpiece,tmpendpiece,tmpcancelflag)
 	//maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
 	return Result{Type:"ProtorizeTorrentPiecesIntervalProcessed"}
 }
@@ -48,8 +61,8 @@ func runProtorizeTorrentDurationPercentageInterval(tmpparms []string) Result {
 		return Result{Type:"ProtorizeTorrentPiecesIntervalAborted",Data:fmt.Sprintf("Warning:", cerr2)}
 	}
 
-
-	Mncc.ProtorizeTorrentDurationPercentageInterval(tmpmagnet,tmpfilepath,tmpstartpercentage,tmpendpercentage)
+	tmpcancelflag:=(tmpparms[3]=="true")
+	Mncc.ProtorizeTorrentDurationPercentageInterval(tmpmagnet,tmpfilepath,tmpstartpercentage,tmpendpercentage,tmpcancelflag)
 	//maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
 	return Result{Type:"ProtorizeTorrentDurationPercentageIntervalProcessed"}
 }

@@ -16,7 +16,7 @@ import (
 		AppPath=""
 		AppName=""
 		AppLocalPort=""
-		Walletinstantiated=false
+		//Walletinstantiated=false
 		//Walletstate=""
 		Miningrequested=false
 		Miningrunning=false
@@ -32,4 +32,9 @@ import (
 		Wlt *wallet.Wallet
 		MAddresses *MiningAddresses
 	)
-
+	func Walletinstantiated() bool{
+		if Wlt==nil {
+			return false
+		}
+		return Wlt.Walletloaded
+	}

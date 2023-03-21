@@ -35,7 +35,7 @@ type ContentClient struct {
 	ctx context.Context
 	//ClosingChannel chan bool
 	CacheTorrentRequestChannel chan CacheTorrentRequest
-	UncacheTorrentMagnetChannel chan string
+	//UncacheTorrentMagnetChannel chan string
 }
 
 func Newcontentclient(ctx context.Context,applocation string) *ContentClient{
@@ -56,7 +56,7 @@ func Newcontentclient(ctx context.Context,applocation string) *ContentClient{
 
 	//contentclient.AppIsClosing=false
 	contentclient.CacheTorrentRequestChannel=make(chan CacheTorrentRequest)
-	contentclient.UncacheTorrentMagnetChannel=make(chan string)
+	//contentclient.UncacheTorrentMagnetChannel=make(chan string)
 	//contentclient.ClosingChannel=make(chan bool)
 	//wlt.Walletloaded=false     
 	//go Gensequentialwallet(wlt,seedString)
@@ -217,6 +217,41 @@ func (contentclient *ContentClient)  CacheTorrent(tmpdappname string, tmppath st
 	//	time.Sleep(8 * time.Second)
 	//}
 }
+//
+func (contentclient *ContentClient)  DropTorrent(tmpmagneturi string,tmpdappname string,tmpdirectory string,tmperasefilesflag bool) string{
+	log.Printf("Droping torrent %s erase files%v",tmpmagneturi,tmperasefilesflag)
+	tmpmagnet, perr := metainfo.ParseMagnetUri(tmpmagneturi)
+	if perr != nil {
+		return ""
+	}
+
+	t, ok := contentclient.torrentclient.Torrent(tmpmagnet.InfoHash)
+	if !ok {
+		return ""
+	}
+	if t == nil {
+		return ""
+	}
+	if t.Info() == nil {
+		return ""
+	}
+	files := t.Files()
+	if files == nil {
+		return ""
+	}
+	t.Drop()
+	if tmperasefilesflag {
+		for _, filei := range files {
+			tmpfpath:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(filei.Path()))
+			terr:=os.Remove(tmpfpath)
+			log.Printf("Removed file %s error %v",tmpfpath,terr)
+		}
+	}
+
+	
+	return "TorrentDropped magnet "+tmpmagneturi
+}
+//
 /*
 func (contentclient *ContentClient)  ProtorizeTorrentAllPieces(tmpmagnet string, tmppath string) {
 	tmpmagnetobj, perr := metainfo.ParseMagnetUri(tmpmagnet)
@@ -243,7 +278,7 @@ func (contentclient *ContentClient)  ProtorizeTorrentAllPieces(tmpmagnet string,
 	}
 }
 */
-func (contentclient *ContentClient)  ProtorizeTorrentPiecesInterval(tmpmagnet string, tmppath string, beginprioritizedpiece int,endprioritizedpiece int) {
+func (contentclient *ContentClient)  ProtorizeTorrentPiecesInterval(tmpmagnet string, tmppath string, beginprioritizedpiece int,endprioritizedpiece int,cancelflag bool) {
 	
 
 	tmpmagnetobj, perr := metainfo.ParseMagnetUri(tmpmagnet)
@@ -265,14 +300,16 @@ func (contentclient *ContentClient)  ProtorizeTorrentPiecesInterval(tmpmagnet st
 			lastpiece := CustomMin(firstpiece+(endprioritizedpiece-beginprioritizedpiece), int(filei.EndPieceIndex()))
 			log.Println("Priority for ",firstpiece,lastpiece)
 			t.DownloadPieces(firstpiece, lastpiece)
-			t.CancelPieces(lastpiece, filei.EndPieceIndex())
+			if cancelflag {
+				t.CancelPieces(lastpiece, filei.EndPieceIndex())
+			}
 		} else {
 			filei.SetPriority(torrent.PiecePriorityNone)
 		}
 	}
 }
 //
-func (contentclient *ContentClient) ProtorizeTorrentDurationPercentageInterval(tmpmagnet string, tmppath string, beginprioritizeddurationpercentage int,endprioritizeddurationpercentage int) {
+func (contentclient *ContentClient) ProtorizeTorrentDurationPercentageInterval(tmpmagnet string, tmppath string, beginprioritizeddurationpercentage int,endprioritizeddurationpercentage int,cancelflag bool) {
 	
 
 	tmpmagnetobj, perr := metainfo.ParseMagnetUri(tmpmagnet)
@@ -295,7 +332,9 @@ func (contentclient *ContentClient) ProtorizeTorrentDurationPercentageInterval(t
 			lastpiece := int(filei.BeginPieceIndex())+(endprioritizeddurationpercentage*d/100)////CustomMin(firstpiece+(endprioritizedpiece-beginprioritizedpiece), int(filei.EndPieceIndex()))
 			log.Println("Priority for ",firstpiece,lastpiece)
 			t.DownloadPieces(firstpiece, lastpiece)
-			t.CancelPieces(lastpiece, filei.EndPieceIndex())
+			if cancelflag {
+				t.CancelPieces(lastpiece, filei.EndPieceIndex())
+			}
 		} else {
 			filei.SetPriority(torrent.PiecePriorityNone)
 		}

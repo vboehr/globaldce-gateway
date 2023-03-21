@@ -150,12 +150,13 @@ searchButton:=widget.NewButton("Fixed size window", func() {
 	sendtoaddressarraytxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
 		sendtoaddressarraytxfeeEntry.SetText(fmt.Sprintf("%d",daemon.Usersettings.Sendtoaddressarraytxfee))
 	})
-    sendtoaddressarraytxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),sendtoaddressarraytxfeeSetDefaultButton)
+    //sendtoaddressarraytxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),sendtoaddressarraytxfeeSetDefaultButton)
 
-    sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
-	sendtoaddressarraytxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Send to addresses fee"))
-	sendtoaddressarraytxfeeContainer:=container.NewHBox(sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeEntryContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer)
-	//
+    //sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
+	//sendtoaddressarraytxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Send to addresses fee"))
+	//sendtoaddressarraytxfeeContainer:=container.NewHBox(sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeEntryContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer)
+	sendtoaddressarraytxfeeContainer := container.NewBorder(nil, nil, widget.NewLabel("Send to addresses fee"),sendtoaddressarraytxfeeSetDefaultButton, sendtoaddressarraytxfeeEntry)
+    //
     //
     completebutton:= widget.NewButton("SEND", func() {
         fmt.Println("got :",componentsList)
@@ -179,7 +180,8 @@ searchButton:=widget.NewButton("Fixed size window", func() {
     })
 
 
-    completebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(appscreenWidth/4, 40)),completebutton)
+    completebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(100, 40)),completebutton)
+    //content := container.NewBorder(top, nil, left, nil, middle)
     //
     formlayout:=container.New(layout.NewPaddedLayout(),container.NewVBox(outputform,completiontext,sendtoaddressarraytxfeeContainer,completebuttoncontainer))
     //layout:= container.NewHSplit(label,formlayout)

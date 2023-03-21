@@ -71,7 +71,7 @@ func  passwordDialog(win fyne.Window){
 					//nowalletFoundDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
 					passwordDecryptionFailedDialog(win,"Could not decrypt walletfile "+daemon.MainwalletFilePath)
 				} else {
-					daemon.Walletinstantiated=true
+					daemon.Wlt.Walletloaded=true
 					daemon.Mn.SyncWallet(daemon.Wlt)
 					//
 				}
@@ -89,15 +89,11 @@ func newWalletCreationDialog(win fyne.Window){
 	selectWalletFileCallback := func(response bool){
 		fmt.Println("Responded with", response)
 		if response {
-			
-			newSequentialWalletCreationDialog(win)
+			newSequentialWalletSeedCreationDialog(win)
 		} else {
 			//
-			
 			nowalletFoundDialog(win,"")
-
 		}
-		
 	}
 	//TODO support other types of wallets
 	//combo := widget.NewSelect([]string{"Sequential Wallet", "Option 2"}, func(value string) {
@@ -110,12 +106,71 @@ func newWalletCreationDialog(win fyne.Window){
 	cnf:=dialog.NewCustomConfirm("Would you like to create a new wallet file ?", "Yes ", "No  ", content,selectWalletFileCallback, win)
 	cnf.Show()
 }
-func newSequentialWalletCreationDialog(win fyne.Window) {
+
+
+//
+func newSequentialWalletPasswordCreationDialog(win fyne.Window,wltseedString string) {
+	//
+	wltpassword := widget.NewPasswordEntry()//NewMultiLineEntry()//
+	wltpassword.Validator=passwordValidation()
+	firstpassword := widget.NewPasswordEntry()
+	//password.Validator = validation.NewRegexp(`^[A-Za-z0-9_-]+$`, "password can only contain letters, numbers, '_', and '-'")
+	firstpassword.Validator=passwordValidation()
+	secondpassword := widget.NewPasswordEntry()
+	secondpassword.Validator=passwordValidation()
+
+	remember:=widget.NewLabel("THIS PASSWORD WILL BE USED TO DECRYPT YOUR WALLET")
+
+
+	items := []*widget.FormItem{
+
+		widget.NewFormItem("Password", firstpassword),
+		widget.NewFormItem("Password", secondpassword),
+		widget.NewFormItem("", remember),
+	}
+
+
+	dialog.ShowForm("A password is required for the new wallet          ", "Okay  ", "Cancel", items, func(b bool) {
+		if !b {
+			fmt.Println("canceled")
+			nowalletFoundDialog(win,"")
+			return
+		}
+		//fmt.Println("Password",password.Text)
+
+		if firstpassword.Text!=secondpassword.Text  {
+			nowalletFoundDialog(win,"Wallet creation abroted entred passwords do not match")
+		}
+		if  b&&(firstpassword.Text==secondpassword.Text) {
+			text:=firstpassword.Text
+				key:=[]byte(text)
+				if (len(key)==32){
+					// No hashing is needed
+					daemon.MainwalletFileKey= key
+				} else {
+					// If the key length is 32, the key is hashed first
+					daemon.MainwalletFileKey=utility.ComputeHashBytes(key)
+				}
+				walletsettingsDisplayedMainwalletFilePath.Set(daemon.MainwalletFilePath)
+				//fmt.Println("*** wltseed.Text",wltseedString,text)
+				//os.Exit(0)
+				newSequentialWalletCreationProgressDialog(win,wltseedString)
+		} 
+		//var rememberText string
+		//if remember {
+		//	rememberText = "and remember this login"
+		//}
+		//fmt.Println("Entred password", password.Text)
+	}, win)
+
+
+}
+//
+func newSequentialWalletSeedCreationDialog(win fyne.Window) {
 	//
 
 	fmt.Printf("\nCreating new sequential wallet \n")
-    wltseedString:=wallet.GenerateRandomSeedString()
-    fmt.Printf("Random Seed String :%s\n",wltseedString)
+
 
 	//
 	//username := widget.NewEntry()
@@ -126,20 +181,17 @@ func newSequentialWalletCreationDialog(win fyne.Window) {
 	wltseed.MultiLine=true
 	wltseed.Wrapping=fyne.TextWrapBreak
 	wltseed.Validator=passwordValidation()
-	wltseed.Text=wltseedString
+
+	wltseed.Text=wallet.GenerateRandomSeedString()
+    fmt.Printf("Random Seed String :%s\n",wltseed.Text)
 	//wltseed.SetMinSize(fyne.NewSize(100, 20))
 	//wltseed.Validator=wltseedValidation()
-	firstpassword := widget.NewPasswordEntry()
-	//password.Validator = validation.NewRegexp(`^[A-Za-z0-9_-]+$`, "password can only contain letters, numbers, '_', and '-'")
-	firstpassword.Validator=passwordValidation()
-	secondpassword := widget.NewPasswordEntry()
-	secondpassword.Validator=passwordValidation()
+
 
 	remember:=widget.NewLabel("CAUNTION: IF YOU LOSE YOUR SEED YOU CAN NOT RECOVER YOUR WALLET")
 	generateSeedButton:=widget.NewButton("Generate New Seed", func() {
 		fmt.Println("tapped Generate New Seed")
-		wltseedString=wallet.GenerateRandomSeedString()
-		wltseed.Text=wltseedString
+		wltseed.Text=wallet.GenerateRandomSeedString()
 		wltseed.Refresh()
 		})
 
@@ -147,8 +199,6 @@ func newSequentialWalletCreationDialog(win fyne.Window) {
 		//widget.NewFormItem("Username", username),
 		widget.NewFormItem("Seed", wltseed),
 		widget.NewFormItem("", generateSeedButton),
-		widget.NewFormItem("Password", firstpassword),
-		widget.NewFormItem("Password", secondpassword),
 		widget.NewFormItem("", remember),
 	}
 
@@ -163,29 +213,14 @@ func newSequentialWalletCreationDialog(win fyne.Window) {
 		}
 		//fmt.Println("Password",password.Text)
 
-		if firstpassword.Text!=secondpassword.Text  {
-			nowalletFoundDialog(win,"Wallet creation abroted entred passwords do not match")
-		}
 		if  b {
-			text:=firstpassword.Text
-				key:=[]byte(text)
-				if (len(key)==32){
-					// No hashing is needed
-					daemon.MainwalletFileKey= key
-				} else {
-					// If the key length is 32, the key is hashed first
-					daemon.MainwalletFileKey=utility.ComputeHashBytes(key)
-				}
+
 				walletsettingsDisplayedMainwalletFilePath.Set(daemon.MainwalletFilePath)
-				//fmt.Println("*** wltseed.Text",wltseed.Text)
+				fmt.Println("*** wltseed.Text",wltseed.Text)
 				//os.Exit(0)
-				newSequentialWalletCreationProgressDialog(win,wltseedString)
+				newSequentialWalletPasswordCreationDialog(win,wltseed.Text)
 		} 
-		//var rememberText string
-		//if remember {
-		//	rememberText = "and remember this login"
-		//}
-		//fmt.Println("Entred password", password.Text)
+
 	}, win)
 
 
@@ -280,7 +315,7 @@ func selectWalletFileDialog(win fyne.Window) {
 		walletsettingsDisplayedMainwalletFilePath.Set(filepath.Path())
 		daemon.MainwalletFilePath=filepath.Path()
 		daemon.Usersettings.MainwalletFilePath=filepath.Path()
-		if !daemon.Walletinstantiated{
+		if !daemon.Walletinstantiated(){
 			daemon.MainwalletFilePath=filepath.Path()
 			passwordDialog(win)
 		} 

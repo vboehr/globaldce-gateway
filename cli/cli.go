@@ -13,22 +13,14 @@ import (
 )
 
 //var appName string
-func Start(tmpappname string,tmpappversion string,tmpapppath string){
+func Start(tmpappname string,tmpappversion string){
     
-    if tmpapppath==""{
-    //appPath=os.Args[0]
-        tmpapppathos, err := filepath.Abs(filepath.Dir(os.Args[0]))
-        if err != nil {
-                fmt.Printf("%v",err)
-                os.Exit(0)
-        }
-        tmpapppath=tmpapppathos
-    }
+
     fmt.Printf("%s %s \n",tmpappname,tmpappversion)
-    fmt.Printf("AppPath: %s \n",tmpapppath)
+    //
     daemon.AppName=tmpappname
-    daemon.AppPath=tmpapppath
-    applog.Init(tmpapppath)
+    //daemon.AppPath=tmpapppath
+    applog.Init(daemon.AppPath)
     //for i:=0;i<len(os.Args);i++{
     //    applog.Notice("arg %d %s",i,os.Args[i])
     //}
@@ -137,7 +129,7 @@ func Loadusermainwalletfile() *wallet.Wallet{
    
     
 
-for (!daemon.Walletinstantiated) && (!daemon.Miningaddrressesfileloaded){    
+for (!daemon.Walletinstantiated()) && (!daemon.Miningaddrressesfileloaded){    
     if _, err := os.Stat( daemon.MainwalletFilePath); !os.IsNotExist(err) {
         
         //if daemon.HotMining{
@@ -155,7 +147,8 @@ for (!daemon.Walletinstantiated) && (!daemon.Miningaddrressesfileloaded){
             lerr:=wlt.LoadJSONWalletFile(daemon.MainwalletFilePath,daemon.MainwalletFileKey)
             //daemon.Walletinstantiated=true
             if lerr==nil{
-                daemon.Walletinstantiated=true
+                //daemon.Walletinstantiated=true
+                wlt.Walletloaded=true
             } else {
                 applog.Notice("wallet file %s not loaded",wlt.Path)
             }
