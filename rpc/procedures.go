@@ -6,6 +6,18 @@ import (
 	"fmt"
 	"strconv"
 )
+func runCacheRawString(tmpparms []string) Result {
+    tmpdappname:=tmpparms[0]
+    tmppath:=tmpparms[1]
+	tmpfilename:=tmpparms[2]
+	tmprawstring:=tmpparms[3]
+	if Mncc==nil{
+		//fmt.Println("Uninitiated Client")
+		return Result{Type:"CacheRawStringAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
+	}
+    Mncc.CacheRawString(tmpdappname,tmppath,tmpfilename, tmprawstring)
+	return Result{Type:"CacheRawStringProcessed"}
+}
 func runCacheTorrent(tmpparms []string) Result {
     tmpmagnet:=tmpparms[0]
     tmpdappname:=tmpparms[1]

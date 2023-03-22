@@ -151,10 +151,28 @@ func (contentclient *ContentClient) Initcontentclient() {
 }
 
 ////////////////////
+func (contentclient *ContentClient)  CacheRawString(tmpdappname string, tmppath string,tmpfilename string, tmprawstring string) {
+	tmpcacheDir:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmppath))
+	if _, err := os.Stat(tmpcacheDir); os.IsNotExist(err) {
+		os.Mkdir(tmpcacheDir, os.ModePerm)
+		//TODO better error handling
+	}
+	tmpcacheFileDir:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmppath),tmpfilename)
+	f, err := os.OpenFile(tmpcacheFileDir, os.O_WRONLY|os.O_CREATE, 0755)
+	if err != nil {
+		//log.Fatal(err)
+		fmt.Println("error:", err)
+	}
+	defer f.Close()
+	rawstringbytes := []byte(tmprawstring)
+	_, wserr := f.Write(rawstringbytes)
+	if wserr != nil {
+		//log.Fatal(err)
+		fmt.Println("error:", wserr)
+	}
+}
+////////////////////
 func (contentclient *ContentClient)  CacheTorrent(tmpdappname string, tmppath string, tmpmagneturi string) {
-
-
-
 	//////////
 	tmpdownloadDir:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmppath))
 	t, err := contentclient.AddMagnetWithDownloadDir(tmpmagneturi,tmpdownloadDir)
@@ -167,12 +185,8 @@ func (contentclient *ContentClient)  CacheTorrent(tmpdappname string, tmppath st
 	//_=tmpdappname
 	//t.SetDownloadDir(filepath.Join(contentclient.ContentLocation,"Cache",tmpdappname,filepath.FromSlash(tmppath)))// "/path/to/download/directory")
 	/////////
-
-
-
 	///////
 	<-t.GotInfo()
-
 	log.Printf("added magnet %s\n", tmpmagneturi)
 	files := t.Files()
 	for _, filei := range files {
@@ -182,9 +196,6 @@ func (contentclient *ContentClient)  CacheTorrent(tmpdappname string, tmppath st
 	totalsize := int64(0)
 	tmppreviewfile := ""
 	tmppreviewfilesize := int64(0)
-
-
-	
 	for _, filei := range files {
 		if (filei.Length() > tmppreviewfilesize) && (strings.Contains(filei.Path(), ".mp4")) {
 			tmppreviewfile = filei.Path()
@@ -204,8 +215,6 @@ func (contentclient *ContentClient)  CacheTorrent(tmpdappname string, tmppath st
 		}
 	}
 	*/
-
-
 	//for {
 		/*
 		if (!IsSavedItemWithMagnet(tmpmagneturi)) && (!s.IsMainTorrent(tmpmagneturi)) && (!IsPreviewingTorrent(tmpmagneturi)) {
@@ -242,7 +251,7 @@ func (contentclient *ContentClient)  DropTorrent(tmpmagneturi string,tmpdappname
 	t.Drop()
 	if tmperasefilesflag {
 		for _, filei := range files {
-			tmpfpath:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(filei.Path()))
+			tmpfpath:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmpdirectory),filepath.FromSlash(filei.Path()))
 			terr:=os.Remove(tmpfpath)
 			log.Printf("Removed file %s error %v",tmpfpath,terr)
 		}

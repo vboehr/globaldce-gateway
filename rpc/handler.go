@@ -38,8 +38,8 @@ var upgrader = websocket.Upgrader{
     CheckOrigin: func(r *http.Request) bool {
         return true // allow all origins
     },
-    ReadBufferSize:  1024,
-    WriteBufferSize: 1024,
+    ReadBufferSize:  1024*1024,//1MB it was 1024
+    WriteBufferSize: 1024*1024,//1MB it was 1024
 }
 
 var Mncc *content.ContentClient
@@ -81,6 +81,15 @@ func RPCHandler(w http.ResponseWriter, r *http.Request) {
             response = Response{
                 Jsonrpc: "2.0",
                 Result:  &Result{Type:"pong"},
+                ID:      request.ID,
+            }
+        case "CacheRawString":
+            //log.Printf("cacheTorrent params %s",request.Params[0])
+            
+            tmpResult:=runCacheRawString(request.Params)
+            response = Response{
+                Jsonrpc: "2.0",
+                Result:  &tmpResult,
                 ID:      request.ID,
             }
         case "CacheTorrent":

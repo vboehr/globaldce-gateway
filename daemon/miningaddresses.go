@@ -37,6 +37,7 @@ func (maddresses *MiningAddresses) LoadJSONMiningAddressesFile(filepath string) 
 		//log.Fatal(err)
 		fmt.Println("error:", err)
 	}
+	defer f.Close()
 	bufferMiningAddrfileseize := make([]byte, 4)
 	_, rserr := f.Read(bufferMiningAddrfileseize)
 	if rserr != nil {
@@ -75,6 +76,7 @@ func (maddresses *MiningAddresses) SaveJSONMiningAddressesFile(addrfilepath stri
 		//log.Fatal(err)
 		fmt.Println("error:", err)
 	}
+	defer f.Close()
 	_, wserr := f.Write(bufferMiningAddrfileseize)
 	if wserr != nil {
 		//log.Fatal(err)
