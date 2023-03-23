@@ -158,6 +158,7 @@ func (contentclient *ContentClient)  CacheRawString(tmpdappname string, tmppath 
 		//TODO better error handling
 	}
 	tmpcacheFileDir:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmppath),tmpfilename)
+	_=os.Remove(tmpcacheFileDir)
 	f, err := os.OpenFile(tmpcacheFileDir, os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {
 		//log.Fatal(err)
@@ -252,8 +253,11 @@ func (contentclient *ContentClient)  DropTorrent(tmpmagneturi string,tmpdappname
 	if tmperasefilesflag {
 		for _, filei := range files {
 			tmpfpath:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmpdirectory),filepath.FromSlash(filei.Path()))
-			terr:=os.Remove(tmpfpath)
-			log.Printf("Removed file %s error %v",tmpfpath,terr)
+			tmpfdir := filepath.Dir(tmpfpath)
+			//if _, tmpfdirerr := os.Stat(tmpfdir); !os.IsNotExist(tmpfdirerr) {
+			terr:=os.RemoveAll(tmpfdir)//os.Remove(tmpfpath)// 
+			log.Printf("Removed folder %s error %v",tmpfdir,terr)
+			//}
 		}
 	}
 
