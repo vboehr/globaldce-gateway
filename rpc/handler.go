@@ -83,6 +83,24 @@ func RPCHandler(w http.ResponseWriter, r *http.Request) {
                 Result:  &Result{Type:"pong"},
                 ID:      request.ID,
             }
+        case "DeleteFileSystemObject":
+            //log.Printf("cacheTorrent params %s",request.Params[0])
+            
+            tmpResult:=runDeleteFileSystemObject(request.Params)
+            response = Response{
+                Jsonrpc: "2.0",
+                Result:  &tmpResult,
+                ID:      request.ID,
+            }
+        case "ScanDirectory":
+            //log.Printf("cacheTorrent params %s",request.Params[0])
+            
+            tmpResult:=runScanDirectory(request.Params)
+            response = Response{
+                Jsonrpc: "2.0",
+                Result:  &tmpResult,
+                ID:      request.ID,
+            }
         case "CacheRawString":
             //log.Printf("cacheTorrent params %s",request.Params[0])
             

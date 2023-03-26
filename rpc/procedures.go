@@ -6,6 +6,26 @@ import (
 	"fmt"
 	"strconv"
 )
+func runScanDirectory(tmpparms []string) Result {
+    tmpdappname:=tmpparms[0]
+    tmppath:=tmpparms[1]
+	if Mncc==nil{
+		//fmt.Println("Uninitiated Client")
+		return Result{Type:"ScanDirectoryAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
+	}
+    Mncc.ScanDirectory(tmpdappname,tmppath,tmpfilename, tmprawstring)
+	return Result{Type:"ScanDirectoryProcessed"}
+}
+func runDeleteFileSystemObject(tmpparms []string) Result {
+    tmpdappname:=tmpparms[0]
+    tmppath:=tmpparms[1]
+	if Mncc==nil{
+		//fmt.Println("Uninitiated Client")
+		return Result{Type:"DeleteFileSystemObjectAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
+	}
+    Mncc.DeleteFileSystemObject(tmpdappname,tmppath,tmpfilename, tmprawstring)
+	return Result{Type:"DeleteFileSystemObjectProcessed"}
+}
 func runCacheRawString(tmpparms []string) Result {
     tmpdappname:=tmpparms[0]
     tmppath:=tmpparms[1]

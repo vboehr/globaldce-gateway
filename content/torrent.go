@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 	//"time"
+	"io/fs"
 	"os"
 	"log"
 	"encoding/json"
@@ -151,6 +152,64 @@ func (contentclient *ContentClient) Initcontentclient() {
 }
 
 ////////////////////
+////////////////////
+func (contentclient *ContentClient)  DeleteFileSystemObject(tmpdappname string, tmppath string) string{
+	tmpDir:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmppath))
+
+	fileInfo, err := os.Stat(tmpDir)
+    if err != nil {
+        fmt.Println("Error:", err)
+        return ""
+    }
+
+    // Check if the path refers to a directory
+    if fileInfo.Mode().IsDir() {
+        fmt.Println("removing directory",tmpDir)
+		_=os.RemoveAll(tmpcacheFileDir)
+		return ""
+    } else {
+        fmt.Println("removing file",tmpDir)
+		_=os.Remove(tmpcacheFileDir)
+		return ""
+    }
+
+}
+//
+func (contentclient *ContentClient)  ScanDirectory(tmpdappname string, tmppath string) string{
+	tmpDir:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmppath))
+	
+	var err error
+	var tmpDirectoryDetails []string
+	err = filepath.Walk(tmpDir, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", path, err)
+			return err
+		}
+		if info.IsDir() {
+			if path==tmpDir { // Skipping root path 
+				return nil
+			}
+			tmprelpath,terr:=filepath.Rel(tmpDir, path)
+			fmt.Printf("directory : %+v err %v \n",filepath.ToSlash(tmprelpath),terr)//info.Name())
+			tmpDirectoryDetails=append(tmpDirectoryDetails,filepath.ToSlash(tmprelpath)+"/")
+		} else {
+			tmprelpath,terr:=filepath.Rel(tmpDir, path)
+			fmt.Printf("file : %+v err %v \n",filepath.ToSlash(tmprelpath),terr)//info.Name())
+			tmpDirectoryDetails=append(tmpDirectoryDetails,filepath.ToSlash(tmprelpath))
+		}
+		//fmt.Printf("visited file or dir: %q\n", path)
+		return nil
+	})
+	if err != nil {
+		return fmt.Sprintf("error walking the path %q: %v\n", tmpDir, err)
+	}
+	tmpDirectoryDetailsBytes, err := json.Marshal(tmpDirectoryDetails)
+    if err != nil {
+        return fmt.Sprintf("Error:", err)
+    }
+	return string(tmpDirectoryDetailsBytes)
+}
+//
 func (contentclient *ContentClient)  CacheRawString(tmpdappname string, tmppath string,tmpfilename string, tmprawstring string) {
 	tmpcacheDir:=filepath.Join(contentclient.ContentLocation,tmpdappname,filepath.FromSlash(tmppath))
 	if _, err := os.Stat(tmpcacheDir); os.IsNotExist(err) {
@@ -227,6 +286,7 @@ func (contentclient *ContentClient)  CacheTorrent(tmpdappname string, tmppath st
 	//	time.Sleep(8 * time.Second)
 	//}
 }
+//
 //
 func (contentclient *ContentClient)  DropTorrent(tmpmagneturi string,tmpdappname string,tmpdirectory string,tmperasefilesflag bool) string{
 	log.Printf("Droping torrent %s erase files%v",tmpmagneturi,tmperasefilesflag)

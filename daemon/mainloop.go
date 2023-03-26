@@ -78,7 +78,7 @@ func Mainloop(){
     Mn=mainchain.NewMaincore()
     Mn.PutPath( AppPath)
 	Mn.LoadMaincore()
-	go mainchain.InitLocalhost()
+	go mainchain.InitLocalhost(AppPath)
     //
 	// Create a context with a cancellation function
 	ctx, cancel := context.WithCancel(context.Background())

@@ -6,7 +6,7 @@ import(
 	"fmt"
 	//"github.com/globaldce/globaldce-gateway/utility"
 	"net/http"
-    "html/template"
+    //"html/template"
 )
 
 func  (mn *Maincore) ServeContent(name string)  error{
@@ -19,7 +19,7 @@ func  (mn *Maincore) ServeContent(name string)  error{
 	_=name
 	return nil
 }
-
+/*
 func HandleContent(w http.ResponseWriter, r *http.Request) {
     contentfilepath:= filepath.Join("Cache","Content",filepath.FromSlash(r.URL.Path[1:]))////filepath.FromSlash() for win compatibility
     fmt.Printf("Content file path %s loading ... url %s \n",contentfilepath,r.URL.Path)
@@ -31,6 +31,7 @@ func HandleContent(w http.ResponseWriter, r *http.Request) {
 	}
 	doc.Execute(w, nil)
 }
+*/
 /*
 func newRouter() *mux.Router {
 	r := mux.NewRouter()
@@ -40,11 +41,11 @@ func newRouter() *mux.Router {
 	return r
 }
 */
-func InitLocalhost(){
+func InitLocalhost(tmpAppPath string){
 	//http.HandleFunc("/", HandleContent)/////////////////Was removed
 	//http.Handle("/static/", http.FileServer(http.Dir("/")))
 	
-	fs := http.FileServer(http.Dir("./Cache/Content"))
+	fs := http.FileServer(http.Dir(filepath.Join(tmpAppPath,"Cache","Content")))  
 	http.Handle("/", http.StripPrefix("/", fs))
 
 	fmt.Println(http.ListenAndServe(":8088", nil))
