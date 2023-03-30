@@ -119,7 +119,7 @@ func CacheExistingDirectoryWithUniformPieceSize(dirpath string,piecesize uint64,
 			return err
 		}
 		if !(fileinfo.IsDir()) {
-			if fileinfo.Name()=="content.json"{
+			if fileinfo.Name()=="contentroot.json"{
 				return nil
 			}
 			fmt.Printf("path %s file %s\n",path,fileinfo.Name())
@@ -194,11 +194,11 @@ func CacheExistingDirectoryWithUniformPieceSize(dirpath string,piecesize uint64,
 		fmt.Println("newcontentdirinfo serialize error:", merr)
 		return nil,merr
 	}
-	contentjsonpath:=basepath+"/"+"content.json"
+	contentjsonpath:=basepath+"/"+"contentroot.json"
 	fmt.Println("Saving ",contentjsonpath)
 	serr:=utility.SaveBytesFile(newcontentdirinfobytes,filepath.FromSlash(contentjsonpath))
 	if serr != nil {
-		fmt.Println("content.json error:", serr)
+		fmt.Println("contentroot.json error:", serr)
 		return nil,serr
 	}
 	//
@@ -220,8 +220,7 @@ func CacheExistingDirectoryWithUniformPieceSize(dirpath string,piecesize uint64,
 		}
 	}
 	//
-	
-	CacheExistingFile(basepath+"/content.json","./Cache/Content/"+string(registredname)+"/content.json")
+	CacheExistingFile(basepath+"/contentroot.json","./Cache/Content/"+string(registredname)+"/contentroot.json")
 	for i:=0;i<len(oldcontentdirinfo.ContentFileInfoArray);i++{
 		cachingpath:="./Cache/Content/"+string(registredname)+"/"+newcontentdirinfo.ContentFileInfoArray[i].FilePath
 		CacheExistingFile(oldcontentdirinfo.ContentFileInfoArray[i].FilePath,cachingpath)

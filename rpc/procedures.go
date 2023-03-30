@@ -13,8 +13,8 @@ func runScanDirectory(tmpparms []string) Result {
 		//fmt.Println("Uninitiated Client")
 		return Result{Type:"ScanDirectoryAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
 	}
-    Mncc.ScanDirectory(tmpdappname,tmppath,tmpfilename, tmprawstring)
-	return Result{Type:"ScanDirectoryProcessed"}
+    tmpScanDirectoryDetailsString:=Mncc.ScanDirectory(tmpdappname,tmppath)
+	return Result{Type:"ScanDirectoryDetails",Data:tmpScanDirectoryDetailsString}
 }
 func runDeleteFileSystemObject(tmpparms []string) Result {
     tmpdappname:=tmpparms[0]
@@ -23,7 +23,7 @@ func runDeleteFileSystemObject(tmpparms []string) Result {
 		//fmt.Println("Uninitiated Client")
 		return Result{Type:"DeleteFileSystemObjectAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
 	}
-    Mncc.DeleteFileSystemObject(tmpdappname,tmppath,tmpfilename, tmprawstring)
+    Mncc.DeleteFileSystemObject(tmpdappname,tmppath)
 	return Result{Type:"DeleteFileSystemObjectProcessed"}
 }
 func runCacheRawString(tmpparms []string) Result {

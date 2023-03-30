@@ -165,11 +165,11 @@ func (contentclient *ContentClient)  DeleteFileSystemObject(tmpdappname string, 
     // Check if the path refers to a directory
     if fileInfo.Mode().IsDir() {
         fmt.Println("removing directory",tmpDir)
-		_=os.RemoveAll(tmpcacheFileDir)
+		_=os.RemoveAll(tmpDir)
 		return ""
     } else {
         fmt.Println("removing file",tmpDir)
-		_=os.Remove(tmpcacheFileDir)
+		_=os.Remove(tmpDir)
 		return ""
     }
 
