@@ -12,7 +12,7 @@ import(
 )
 const (
 	AppName="globaldce-gateway"
-    AppVersion="0.2.6"
+    AppVersion="0.2.7"
 	AppID="globaldcegateway.app.testapp"
 	AppReleaseType=""//"mobile"
 )
