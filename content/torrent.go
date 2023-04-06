@@ -366,6 +366,10 @@ func (contentclient *ContentClient)  ProtorizeTorrentPiecesInterval(tmpmagnet st
 		log.Println("Torrent not found ")
 		return 
 	}
+	if t==nil {
+		log.Println("Torrent not found ")
+		return 
+	}
 	files := t.Files()
 	for _, filei := range files {
 		if strings.Contains(filei.Path(), tmppath) {//tmppreviewfile == filei.Path() {
@@ -394,6 +398,10 @@ func (contentclient *ContentClient) ProtorizeTorrentDurationPercentageInterval(t
 
 	t, ok := contentclient.torrentclient.Torrent(tmpmagnetobj.InfoHash)
 	if !ok {
+		log.Println("Torrent not found ")
+		return 
+	}
+	if t==nil {
 		log.Println("Torrent not found ")
 		return 
 	}

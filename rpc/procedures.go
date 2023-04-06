@@ -75,6 +75,10 @@ func runProtorizeTorrentPiecesInterval(tmpparms []string) Result {
 		return Result{Type:"ProtorizeTorrentPiecesIntervalAborted",Data:fmt.Sprintf("Warning:", cerr2)}
 	}
 	tmpcancelflag:=(tmpparms[3]=="true")
+	if Mncc==nil{
+		//fmt.Println("Uninitiated Client")
+		return Result{Type:"ProtorizeTorrentPiecesIntervalAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
+	}
 	Mncc.ProtorizeTorrentPiecesInterval(tmpmagnet,tmpfilepath,tmpstartpiece,tmpendpiece,tmpcancelflag)
 	//maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
 	return Result{Type:"ProtorizeTorrentPiecesIntervalProcessed"}
@@ -94,6 +98,10 @@ func runProtorizeTorrentDurationPercentageInterval(tmpparms []string) Result {
 	}
 
 	tmpcancelflag:=(tmpparms[3]=="true")
+	if Mncc==nil{
+		//fmt.Println("Uninitiated Client")
+		return Result{Type:"ProtorizeTorrentDurationPercentageIntervalAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
+	}
 	Mncc.ProtorizeTorrentDurationPercentageInterval(tmpmagnet,tmpfilepath,tmpstartpercentage,tmpendpercentage,tmpcancelflag)
 	//maincontentclient.ProtorizeTorrentPiecesInterval(tmpmagnet,".mp4",0,20)
 	return Result{Type:"ProtorizeTorrentDurationPercentageIntervalProcessed"}
@@ -111,6 +119,10 @@ func runProtorizeTorrentAllPieces(tmpparms []string) Result {
 func runGetTorrentDetails(tmpparms []string) Result {
     tmpmagnet:=tmpparms[0]
     _=tmpmagnet
+	if Mncc==nil{
+		//fmt.Println("Uninitiated Client")
+		return Result{Type:"TorrentDetailsAborted",Data:fmt.Sprintf("Warning: Uninitiated Client")}
+	}	
 	tmpTorrentDetailsString:=Mncc.GetTorrentDetails(tmpmagnet)
 	return Result{Type:"TorrentDetails",Data:tmpTorrentDetailsString}
 }
