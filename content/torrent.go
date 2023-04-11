@@ -409,7 +409,7 @@ func (contentclient *ContentClient) ProtorizeTorrentDurationPercentageInterval(t
 		return 
 	}
 	if t.Info() == nil {
-		return ""
+		return
 	}
 	files := t.Files()
 	for _, filei := range files {
