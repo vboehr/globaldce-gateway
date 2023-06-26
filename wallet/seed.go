@@ -2,9 +2,12 @@ package wallet
 import
 (
 	//"fmt"
-	"math/rand"
-	"time"
+	//"math/rand"
+	//"time"
+	"crypto/rand"
+	"math/big"
 )
+/*
 func GenerateRandomSeedString() string{
 
 	rand.Seed(time.Now().UnixNano())
@@ -19,7 +22,7 @@ func GenerateRandomSeedString() string{
     }
     return string(b)
 } 
-
+*/
 /////////////////////////////////////////////////////////////////////////
 // generateSeedString generates a seed string by randomly selecting words from the provided word list.
 func GenerateMnemonicSeedString() (string, error) {
