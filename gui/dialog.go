@@ -182,8 +182,8 @@ func newSequentialWalletSeedCreationDialog(win fyne.Window) {
 	wltseed.Wrapping=fyne.TextWrapBreak
 	wltseed.Validator=passwordValidation()
 
-	wltseed.Text=wallet.GenerateRandomSeedString()
-    fmt.Printf("Random Seed String :%s\n",wltseed.Text)
+	wltseed.Text,_=wallet.GenerateMnemonicSeedString()
+    fmt.Printf("Random Mnemonic Seed String :%s\n",wltseed.Text)
 	//wltseed.SetMinSize(fyne.NewSize(100, 20))
 	//wltseed.Validator=wltseedValidation()
 
@@ -191,7 +191,7 @@ func newSequentialWalletSeedCreationDialog(win fyne.Window) {
 	remember:=widget.NewLabel("CAUNTION: IF YOU LOSE YOUR SEED YOU CAN NOT RECOVER YOUR WALLET")
 	generateSeedButton:=widget.NewButton("Generate New Seed", func() {
 		fmt.Println("tapped Generate New Seed")
-		wltseed.Text=wallet.GenerateRandomSeedString()
+		wltseed.Text,_=wallet.GenerateMnemonicSeedString()
 		wltseed.Refresh()
 		})
 
