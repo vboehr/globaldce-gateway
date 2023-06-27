@@ -218,8 +218,8 @@ func Newsequentialwallet()  *wallet.Wallet{
     
     fmt.Printf("\nCreating new sequential wallet \n")
 
-    randomseedString:=wallet.GenerateRandomSeedString()
-    fmt.Printf("Random Seed String :%s\n",randomseedString)
+    randomseedString,_:=wallet.GenerateMnemonicSeedString()
+    fmt.Printf("Random Mnemonic Seed String :%s\n",randomseedString)
     seedStringCorrectlyEntred:=false
     var seedString string
     var reentredseedString string
