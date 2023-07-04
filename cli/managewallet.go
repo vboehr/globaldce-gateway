@@ -114,7 +114,7 @@ func managewallet(ws *wire.Swarm, mn *mainchain.Maincore, wlt *wallet.Wallet) {
 		case "h":
 			managewallethelp()
 		default:
-			fmt.Printf("\nUnkown manage wallet option.\n\n")
+			fmt.Printf("\nunknown manage wallet option.\n\n")
 			managewallethelp()
 		}
 	}
@@ -356,20 +356,20 @@ func sendtoaddress(ws *wire.Swarm, wlt *wallet.Wallet, addrstring string, amount
 
 }
 func sendtoaddresshelp() {
-	fmt.Printf("\nError: sendtoaddress inappropiate usage\n")
+	fmt.Printf("\nError: sendtoaddress inappropriate usage\n")
 	fmt.Printf("In order to send an address X an amount of N globals, enter as follows:\n")
 	fmt.Printf("sendtoaddress X N \n")
 	//
 }
 func sendnameregistrationhelp() {
-	fmt.Printf("\nError: sendnameregistration inappropiate usage\n")
+	fmt.Printf("\nError: sendnameregistration inappropriate usage\n")
 	fmt.Printf("In order to proceed with registration of name X with an amount of N globals, enter as follows:\n")
 	fmt.Printf("sendnameregistration X N \n")
 	//
 }
 
 func sendregistrednamecontentcommithelp() {
-	fmt.Printf("\nError: sendpublicpost inappropiate usage\n")
+	fmt.Printf("\nError: sendpublicpost inappropriate usage\n")
 	fmt.Printf("In order to proceed with a public post for the registred name X with a web link of Y, a text Z and attached files F1 F2 ... Fn, enter as follows:\n")
 	fmt.Printf("sendpublicpost X Y Z F1 F2 ... Fn\n")
 	//

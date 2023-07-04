@@ -135,7 +135,7 @@ func (sw *Swarm) HandlePeerMessage(mn *mainchain.Maincore, rmsg *Message) bool {
 					sw.ReplyMessage(replayedmsg,rmsg.OriginPeer)
 					return true
 				} else {
-					applog.Warning("incorrect request data hash - unkown data hash ")
+					applog.Warning("incorrect request data hash - unknown data hash ")
 					return false
 				}
 			} else {
@@ -158,7 +158,7 @@ func (sw *Swarm) HandlePeerMessage(mn *mainchain.Maincore, rmsg *Message) bool {
 					sw.ReplyMessage(replayedmsg,rmsg.OriginPeer)
 					return true
 				} else {
-					applog.Warning("incorrect request data file hash - unkown data file hash ")
+					applog.Warning("incorrect request data file hash - unknown data file hash ")
 					return false
 				}
 			} else {
@@ -214,7 +214,7 @@ func (sw *Swarm) HandlePeerMessage(mn *mainchain.Maincore, rmsg *Message) bool {
 	*/
 	//////////////////////////////////
 	default:
-		applog.Warning("unkown indentifier")
+		applog.Warning("unknown indentifier")
 		return false
 	}
 	applog.Warning("unexpected flow of instructions in HandlePeerMessage")

@@ -22,8 +22,8 @@ func (wlt *Wallet) SetupTransactionToPublicKeyHashArray(pubkeyhasharray []utilit
 	tx := new(utility.Transaction)
 	tx.Version = 1
 	/*if amount==0{
-		applog.Trace("error: can not setup transaction with no ammount")
-		return nil,fmt.Errorf("error: can not setup transaction with no ammount")
+		applog.Trace("error: can not setup transaction with no amount")
+		return nil,fmt.Errorf("error: can not setup transaction with no amount")
 	}*/
 
 	var selectedassetarray []Asset

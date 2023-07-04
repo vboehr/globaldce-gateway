@@ -316,7 +316,7 @@ func (peer *Peer) ReadTCPMessage() (*Message, error) {
 
 	msgidentifierstring := DecodeIdentifier(msgidentifier)
 	if msgidentifierstring == "" {
-		applog.Trace("error unkown message identifier")
+		applog.Trace("error unknown message identifier")
 		return nil, nil
 	}
 

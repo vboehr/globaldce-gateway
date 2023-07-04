@@ -89,7 +89,7 @@ func (mn *Maincore) Mine(miningaddress utility.Hash) (bool, *Mainblock) { //(wlt
 
 	} else {
 		if !success {
-			applog.Warning("Mining unsuccessful - no appropiate mainblock found")
+			applog.Warning("Mining unsuccessful - no appropriate mainblock found")
 		} else {
 			applog.Warning("mined mainblock rejected - mainblock.Height %d mn.GetMainchainLength() %d ", mainblock.Height, mn.GetMainchainLength())
 		}

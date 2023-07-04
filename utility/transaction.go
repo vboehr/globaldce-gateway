@@ -23,7 +23,7 @@ const (
 //)
 
 type TxOut struct {
-	Value uint64 // in milion globals
+	Value uint64 // in million globals
 	//Address Hash
 	Bytecode []byte
 }

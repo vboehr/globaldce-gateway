@@ -210,7 +210,7 @@ func (sw *Swarm) InitiateSyncing(mn *mainchain.Maincore, lmpeeraddress string) e
 		applog.Trace("Confirm mainblock of height %d", tmpblock.Height)
 		mn.ConfirmMainblock(tmpblock)
 
-		applog.Trace("Confirm mainblock lenght %d ", mn.GetMainchainLength())
+		applog.Trace("Confirm mainblock length %d ", mn.GetMainchainLength())
 		//}
 
 	}

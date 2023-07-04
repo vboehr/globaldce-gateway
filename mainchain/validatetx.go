@@ -147,10 +147,10 @@ func (mn *Maincore) ValidateTxIn(signinghash utility.Hash, tmptxin utility.TxIn)
 			//rewardclaimaddress:=utility.ComputeHash(pubkey)
 			//stateid,_,_:=mn.GetEngagementPublicPostState(tmptxin.Hash,tmptxin.Index,rewardclaimaddress)
 			//if stateid!=StateValueIdentifierUnclaimedEngagementPublicPost{
-			//	return 0,fmt.Errorf("Engagement reward claim points to engagment already claimed or inexisting")
+			//	return 0,fmt.Errorf("Engagement reward claim points to engagement already claimed or inexisting")
 			//}
 			if (mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index)!=StateValueIdentifierUnclaimedEngagementPublicPost){
-				return 0,fmt.Errorf("Engagement reward claim points to engagment already claimed or inexisting - GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
+				return 0,fmt.Errorf("Engagement reward claim points to engagement already claimed or inexisting - GetTxOutputState %d for %x %d ",mn.GetTxOutputState(tmptxin.Hash,tmptxin.Index),tmptxin.Hash,tmptxin.Index)
 			}
 			_,height,number:=mn.GetTxState(tmptxin.Hash)//URGENT TODO
 			//applog.Trace("height%d,number%d",height,number)

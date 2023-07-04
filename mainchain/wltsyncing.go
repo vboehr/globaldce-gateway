@@ -53,7 +53,7 @@ func (mn *Maincore) SyncWallet(wlt *wallet.Wallet) {
 							if strings.Index(wlt.Assetarray[m].StateString, "NAMEREGISTERED_") == 0 && moduleid == utility.ModuleIdentifierECDSANameUnregistration {
 								r := strings.NewReplacer("NAMEREGISTERED_", "NAMEUNREGISTERED_")
 								wlt.Assetarray[m].StateString = r.Replace(wlt.Assetarray[m].StateString)
-								//fmt.Println("Unregistration occured",j,k)
+								//fmt.Println("Unregistration occurred",j,k)
 								//os.Exit(0)
 							}
 						}
