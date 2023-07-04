@@ -14,8 +14,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 	"github.com/gorilla/rpc/v2"
+	"github.com/gorilla/websocket"
 )
 
 func main() {
@@ -96,41 +96,41 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	// Handle the WebSocket connection.
 	for {
 		/*
-		// Read a message from the WebSocket connection.
-		_, message, err := conn.ReadMessage()
+			// Read a message from the WebSocket connection.
+			_, message, err := conn.ReadMessage()
+			if err != nil {
+				log.Println("Failed to read message from WebSocket connection:", err)
+				break
+			}
+
+			// Handle the message here. You can implement your own RPC protocol here.
+			log.Printf("Received message: %s", message)
+
+			// Send a response back to the client.
+			if err := conn.WriteMessage(websocket.TextMessage, []byte("Hello, client!")); err != nil {
+				log.Println("Failed to send message to WebSocket connection:", err)
+				break
+			}*/
+		// Read the next message from the WebSocket connection.
+		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("Failed to read message from WebSocket connection:", err)
+			log.Println(err)
 			break
 		}
 
-		// Handle the message here. You can implement your own RPC protocol here.
-		log.Printf("Received message: %s", message)
-
-		// Send a response back to the client.
-		if err := conn.WriteMessage(websocket.TextMessage, []byte("Hello, client!")); err != nil {
-			log.Println("Failed to send message to WebSocket connection:", err)
+		// Handle the JSON-RPC message and send the response back.
+		resp, err := jsonrpcserver.HandleBytes(msg)
+		if err != nil {
+			log.Println(err)
 			break
-		}*/
-		// Read the next message from the WebSocket connection.
-		_, msg, err := conn.ReadMessage()
+		}
+		if resp != nil {
+			err = conn.WriteMessage(websocket.TextMessage, resp)
 			if err != nil {
 				log.Println(err)
 				break
 			}
-		
-			// Handle the JSON-RPC message and send the response back.
-			resp, err := jsonrpcserver.HandleBytes(msg)
-			if err != nil {
-				log.Println(err)
-				break
-			}
-			if resp != nil {
-				err = conn.WriteMessage(websocket.TextMessage, resp)
-				if err != nil {
-					log.Println(err)
-					break
-				}
-			}
+		}
 	}
 
 	// Close the WebSocket connection.

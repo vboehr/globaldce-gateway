@@ -1,18 +1,19 @@
 package daemon
 
-import(
-	"fmt"
+import (
 	"encoding/json"
-	"path/filepath"
+	"fmt"
 	"github.com/globaldce/globaldce-gateway/utility"
+	"path/filepath"
 	//"github.com/globaldce/globaldce-gateway/mainchain"
 )
-var MainwalletFilePathDefault=filepath.Join("WalletFiles","Wallet.dat")
+
+var MainwalletFilePathDefault = filepath.Join("WalletFiles", "Wallet.dat")
 var (
-	MaxDisplayedPostDefault=30
-	NameregistrationtxfeeDefault=300
+	MaxDisplayedPostDefault      = 30
+	NameregistrationtxfeeDefault = 300
 	//PublicposttxfeeDefault=500
-	SendtoaddressarraytxfeeDefault=500
+	SendtoaddressarraytxfeeDefault = 500
 )
 
 type UsersettingsType struct {
@@ -25,7 +26,7 @@ type UsersettingsType struct {
 	//////////////////////////
 	//Confirmationlayer uint32
 	//////////////////////////
-	MaxDisplayedPost int
+	MaxDisplayedPost      int
 	Nameregistrationtxfee int
 	//Publicposttxfee int
 	Sendtoaddressarraytxfee int
@@ -33,17 +34,18 @@ type UsersettingsType struct {
 	//Broadcastedtxarray [] Broadcastedtx
 	//mu sync.Mutex
 	//BannedNameArray []string
-	Miningrequested bool
-	CachedDirInfoArray []CachedDirInfo
+	Miningrequested      bool
+	CachedDirInfoArray   []CachedDirInfo
 	Recentdappnamesarray []string
-	Activeloginname string
+	Activeloginname      string
 }
+
 var Usersettings UsersettingsType
 
-func GetActiveloginname() string{
-	registerednames:=Wlt.GetRegisteredNames()
-	for _,regname:=range registerednames{
-		if regname==Usersettings.Activeloginname{
+func GetActiveloginname() string {
+	registerednames := Wlt.GetRegisteredNames()
+	for _, regname := range registerednames {
+		if regname == Usersettings.Activeloginname {
 			return Usersettings.Activeloginname
 		}
 	}
@@ -51,31 +53,31 @@ func GetActiveloginname() string{
 }
 
 func PutActiveloginname(newlogin string) {
-	Usersettings.Activeloginname=newlogin
+	Usersettings.Activeloginname = newlogin
 }
 
-func SetDefaultSettings(){
-	
-	Usersettings=UsersettingsType{
-		MainwalletFilePath:MainwalletFilePathDefault,
+func SetDefaultSettings() {
+
+	Usersettings = UsersettingsType{
+		MainwalletFilePath: MainwalletFilePathDefault,
 		/////////////////////////////////
 		//Confirmationlayer: uint32(200),
 		/////////////////////////////////
-		MaxDisplayedPost:MaxDisplayedPostDefault,
-		Nameregistrationtxfee:NameregistrationtxfeeDefault,
+		MaxDisplayedPost:      MaxDisplayedPostDefault,
+		Nameregistrationtxfee: NameregistrationtxfeeDefault,
 		//Publicposttxfee:PublicposttxfeeDefault,
-		Sendtoaddressarraytxfee:SendtoaddressarraytxfeeDefault,
+		Sendtoaddressarraytxfee: SendtoaddressarraytxfeeDefault,
 		//BannedNameArray:nil,
-		Miningrequested:false,
-		CachedDirInfoArray:nil,
-		Activeloginname:"",
+		Miningrequested:    false,
+		CachedDirInfoArray: nil,
+		Activeloginname:    "",
 	}
 }
 
-func ApplyUsersettings(){
+func ApplyUsersettings() {
 
-	MainwalletFilePath=Usersettings.MainwalletFilePath//MainwalletFilePathDefault//"./WalletFiles/MainWallet.dat"
-	Miningrequested=Usersettings.Miningrequested
+	MainwalletFilePath = Usersettings.MainwalletFilePath //MainwalletFilePathDefault//"./WalletFiles/MainWallet.dat"
+	Miningrequested = Usersettings.Miningrequested
 }
 
 //func GetMainwalletPath() string{
@@ -84,78 +86,80 @@ func ApplyUsersettings(){
 //func PutMainwalletPath(path string){
 //	Usersettings.MainwalletFilePath=path
 //}
-func SaveUsersettingsFile() error{
+func SaveUsersettingsFile() error {
 	//if Mn!=nil{
 	//	Usersettings.BannedNameArray=Mn.BannedNameArray
 	//}
-	
+
 	//
 	usersettingsfilebytes, err := json.Marshal(Usersettings)
 	if err != nil {
 		fmt.Println("error:", err)
 		return err
 	}
-	_=utility.SaveBytesFile(usersettingsfilebytes,filepath.Join(AppPath,"settings.ini"))
+	_ = utility.SaveBytesFile(usersettingsfilebytes, filepath.Join(AppPath, "settings.ini"))
 	fmt.Println("Usersettings saved.")
 	return nil
 }
-func LoadUsersettingsFile() error{
-	usersettingsfilebytes,lerr:=utility.LoadBytesFile(filepath.Join(AppPath,"settings.ini"))
+func LoadUsersettingsFile() error {
+	usersettingsfilebytes, lerr := utility.LoadBytesFile(filepath.Join(AppPath, "settings.ini"))
 	if lerr != nil {
 		fmt.Println("error:", lerr)
 		return lerr
 	}
-	uerr:=json.Unmarshal(*usersettingsfilebytes,&Usersettings)
+	uerr := json.Unmarshal(*usersettingsfilebytes, &Usersettings)
 	if uerr != nil {
-		fmt.Println("error:",uerr)
+		fmt.Println("error:", uerr)
 		return uerr
 	}
 
 	return nil
 }
+
 type CachedDirInfo struct {
 	RegistredName string
-	Path string
+	Path          string
 }
-func GetCachedDirPathForRegistredName(name string) (string,int){
-		for i , cacheddirinfo:= range Usersettings.CachedDirInfoArray{
-			if cacheddirinfo.RegistredName==name{
-				//fmt.Println("********************", cacheddirinfo.Path,i)
-				return cacheddirinfo.Path,i
-			}
+
+func GetCachedDirPathForRegistredName(name string) (string, int) {
+	for i, cacheddirinfo := range Usersettings.CachedDirInfoArray {
+		if cacheddirinfo.RegistredName == name {
+			//fmt.Println("********************", cacheddirinfo.Path,i)
+			return cacheddirinfo.Path, i
 		}
-		return "",-1
+	}
+	return "", -1
 }
-func PutCachedDirPathForRegistredName(name string,path string) {
-	p,i:=GetCachedDirPathForRegistredName(name)
-	if p==""{
-		newcacheddirinfo:=new(CachedDirInfo)
-		newcacheddirinfo.RegistredName=name
-		newcacheddirinfo.Path=path
-		Usersettings.CachedDirInfoArray=append(Usersettings.CachedDirInfoArray,*newcacheddirinfo)
-	} else{
-		Usersettings.CachedDirInfoArray[i].Path=path
+func PutCachedDirPathForRegistredName(name string, path string) {
+	p, i := GetCachedDirPathForRegistredName(name)
+	if p == "" {
+		newcacheddirinfo := new(CachedDirInfo)
+		newcacheddirinfo.RegistredName = name
+		newcacheddirinfo.Path = path
+		Usersettings.CachedDirInfoArray = append(Usersettings.CachedDirInfoArray, *newcacheddirinfo)
+	} else {
+		Usersettings.CachedDirInfoArray[i].Path = path
 	}
 
 }
 func AddToRecentDappNames(dappnameinputText string) {
-	for _ , tmpname:= range Usersettings.Recentdappnamesarray{
-		if tmpname==dappnameinputText{
-			return 
+	for _, tmpname := range Usersettings.Recentdappnamesarray {
+		if tmpname == dappnameinputText {
+			return
 		}
 	}
-	Usersettings.Recentdappnamesarray=append([]string{dappnameinputText}, Usersettings.Recentdappnamesarray ...)
+	Usersettings.Recentdappnamesarray = append([]string{dappnameinputText}, Usersettings.Recentdappnamesarray...)
 	return
 }
-func GetRecentDappNames() ([]string){
+func GetRecentDappNames() []string {
 	return Usersettings.Recentdappnamesarray
 }
-func ClearRecentDappNameWithId(dappnameselectedid int){
-	if (dappnameselectedid<0)||(dappnameselectedid>=len(Usersettings.Recentdappnamesarray)){
+func ClearRecentDappNameWithId(dappnameselectedid int) {
+	if (dappnameselectedid < 0) || (dappnameselectedid >= len(Usersettings.Recentdappnamesarray)) {
 		return
 	}
-	Usersettings.Recentdappnamesarray=append(Usersettings.Recentdappnamesarray[:dappnameselectedid], Usersettings.Recentdappnamesarray[dappnameselectedid+1:] ...)
+	Usersettings.Recentdappnamesarray = append(Usersettings.Recentdappnamesarray[:dappnameselectedid], Usersettings.Recentdappnamesarray[dappnameselectedid+1:]...)
 }
-func ClearAllRecentDappNames(){
-	Usersettings.Recentdappnamesarray=make([]string, 0)
+func ClearAllRecentDappNames() {
+	Usersettings.Recentdappnamesarray = make([]string, 0)
 }

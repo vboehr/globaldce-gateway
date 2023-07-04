@@ -3,23 +3,22 @@ package gui
 import (
 	"fyne.io/fyne/v2"
 	//"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-    "fyne.io/fyne/v2/container"
-    "fyne.io/fyne/v2/layout"
-    "fyne.io/fyne/v2/dialog"
-    //"log"
-    "fmt"
-    "github.com/globaldce/globaldce-gateway/cli"
-    "github.com/globaldce/globaldce-gateway/daemon"
-    "fyne.io/fyne/v2/data/validation"
+	//"log"
+	"fmt"
+	"fyne.io/fyne/v2/data/validation"
+	"github.com/globaldce/globaldce-gateway/cli"
+	"github.com/globaldce/globaldce-gateway/daemon"
 )
 
- 	
-
 type TxInfo struct {
-    address string
-    amount  string
+	address string
+	amount  string
 }
+
 /*
 
 func sendScreen(win fyne.Window) fyne.CanvasObject {
@@ -29,7 +28,7 @@ func sendScreen(win fyne.Window) fyne.CanvasObject {
 		//container.NewTabItem("Add Contact",  addContactScreen()),
 
 	)
-	
+
 	//tabsisTransitioning
 	//tabs.OnChanged = func(_ *container.TabItem) {
 	//	//list.Refresh()
@@ -46,151 +45,144 @@ func sendScreen(win fyne.Window) fyne.CanvasObject {
 
 */
 
-var componentsList []TxInfo//{"test1: test1"}
+var componentsList []TxInfo //{"test1: test1"}
 //var componentsList = []string{"test1: test1"}
-var selecteditemid=-1
+var selecteditemid = -1
+
 /*
 func main() {
-	
+
     app := app.New()
     window := app.NewWindow("cool app")
 
- 
+
     window.SetContent(txbuilderScreen())
 
     window.Resize(fyne.NewSize(800, 600))
     window.ShowAndRun()
 }*/
 
-func txbuilderScreen(win fyne.Window) fyne.CanvasObject{
+func txbuilderScreen(win fyne.Window) fyne.CanvasObject {
 
-   componentsTree := widget.NewList(
-        func() int {
-            return len(componentsList)
-        },
-        func() fyne.CanvasObject {
+	componentsTree := widget.NewList(
+		func() int {
+			return len(componentsList)
+		},
+		func() fyne.CanvasObject {
 
+			return widget.NewLabel("template")
+		},
+		func(i widget.ListItemID, o fyne.CanvasObject) {
 
-            return widget.NewLabel("template")
-        },
-        func(i widget.ListItemID, o fyne.CanvasObject) {
-
-
-
-            o.(*widget.Label).SetText("Pay to "+componentsList[i].address +" an amount "+componentsList[i].amount) // i need to update this when componentsList was updated
-        })
+			o.(*widget.Label).SetText("Pay to " + componentsList[i].address + " an amount " + componentsList[i].amount) // i need to update this when componentsList was updated
+		})
 	componentsTree.OnSelected = func(id widget.ListItemID) {
-		selecteditemid=id
+		selecteditemid = id
 	}
 
-    //nameEntry := widget.NewEntry()
-    //typeEntry := widget.NewEntry()
-/*
-!!!!!!!!!!!
-searchButton:=widget.NewButton("Fixed size window", func() {
-			w := fyne.CurrentApp().NewWindow("Fixed")
-			w.SetContent(fyne.NewContainerWithLayout(layout.NewCenterLayout(), widget.NewLabel("Hello World!")))
+	//nameEntry := widget.NewEntry()
+	//typeEntry := widget.NewEntry()
+	/*
+	   !!!!!!!!!!!
+	   searchButton:=widget.NewButton("Fixed size window", func() {
+	   			w := fyne.CurrentApp().NewWindow("Fixed")
+	   			w.SetContent(fyne.NewContainerWithLayout(layout.NewCenterLayout(), widget.NewLabel("Hello World!")))
 
-			w.Resize(fyne.NewSize(240, 180))
-			w.SetFixedSize(true)
-			w.Show()
-		})
-!!!!
-*/
-    /*
-    form := &widget.Form{
-        Items: []*widget.FormItem{
-            {Text: "Name", Widget: nameEntry},
-            {Text: "Type", Widget: typeEntry}},
-        OnSubmit: func() {
-            componentsList = append(componentsList, TxInfo{nameEntry.Text, typeEntry.Text}) // append an item to componentsList array
-	componentsTree.Refresh()
-        },
-    }
-    */
+	   			w.Resize(fyne.NewSize(240, 180))
+	   			w.SetFixedSize(true)
+	   			w.Show()
+	   		})
+	   !!!!
+	*/
+	/*
+	    form := &widget.Form{
+	        Items: []*widget.FormItem{
+	            {Text: "Name", Widget: nameEntry},
+	            {Text: "Type", Widget: typeEntry}},
+	        OnSubmit: func() {
+	            componentsList = append(componentsList, TxInfo{nameEntry.Text, typeEntry.Text}) // append an item to componentsList array
+		componentsTree.Refresh()
+	        },
+	    }
+	*/
 
-    addressinput := widget.NewEntry()// TODO validation of address
+	addressinput := widget.NewEntry() // TODO validation of address
 	addressinput.SetPlaceHolder("Enter recipient address ...")
 
-	amountinput := widget.NewEntry()// TODO validation of amount as float
+	amountinput := widget.NewEntry() // TODO validation of amount as float
 	amountinput.SetPlaceHolder("Enter amount ...")
 
-	outputform := container.NewVBox(addressinput,amountinput, widget.NewButton("Add", func() {
-		fmt.Printf("Address was: %s - Amount was: %s", addressinput.Text,amountinput.Text)
-        componentsList = append(componentsList, TxInfo{addressinput.Text, amountinput.Text}) // append an item to componentsList array
-        componentsTree.Refresh()
-		addressinput.Text=""
+	outputform := container.NewVBox(addressinput, amountinput, widget.NewButton("Add", func() {
+		fmt.Printf("Address was: %s - Amount was: %s", addressinput.Text, amountinput.Text)
+		componentsList = append(componentsList, TxInfo{addressinput.Text, amountinput.Text}) // append an item to componentsList array
+		componentsTree.Refresh()
+		addressinput.Text = ""
 		addressinput.Refresh()
-		amountinput.Text=""
+		amountinput.Text = ""
 		amountinput.Refresh()
 	}))
 
+	rmvbutton := widget.NewButton("Remove Selection", func() {
+		if selecteditemid != -1 && 0 < len(componentsList) {
 
+			componentsList = remove(componentsList, selecteditemid)
 
-
-    rmvbutton:= widget.NewButton("Remove Selection", func() {
-		if selecteditemid!=-1 && 0<len(componentsList) {
-            
-			componentsList=remove(componentsList,selecteditemid)
-            
 			componentsTree.Refresh()
 		}
-		
+
 	})
-	
-    //layout := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 500)),label , form)
 
+	//layout := container.New(layout.NewGridWrapLayout(fyne.NewSize(350, 500)),label , form)
 
-    label:= container.NewBorder(rmvbutton, nil, nil,nil,componentsTree)
-    
-    completiontext:=widget.NewLabel("  ")// TODO Add balance information
-    sendtoaddressarraytxfeeEntry:=widget.NewEntry()
-	sendtoaddressarraytxfeeEntry.Text=fmt.Sprintf("%d",daemon.Usersettings.Sendtoaddressarraytxfee)
-	sendtoaddressarraytxfeeEntry.Validator=validation.NewRegexp(`^[0-9]+$`, "only numbers")
-	sendtoaddressarraytxfeeSetDefaultButton:= widget.NewButton("Set default", func() {
-		sendtoaddressarraytxfeeEntry.SetText(fmt.Sprintf("%d",daemon.Usersettings.Sendtoaddressarraytxfee))
+	label := container.NewBorder(rmvbutton, nil, nil, nil, componentsTree)
+
+	completiontext := widget.NewLabel("  ") // TODO Add balance information
+	sendtoaddressarraytxfeeEntry := widget.NewEntry()
+	sendtoaddressarraytxfeeEntry.Text = fmt.Sprintf("%d", daemon.Usersettings.Sendtoaddressarraytxfee)
+	sendtoaddressarraytxfeeEntry.Validator = validation.NewRegexp(`^[0-9]+$`, "only numbers")
+	sendtoaddressarraytxfeeSetDefaultButton := widget.NewButton("Set default", func() {
+		sendtoaddressarraytxfeeEntry.SetText(fmt.Sprintf("%d", daemon.Usersettings.Sendtoaddressarraytxfee))
 	})
-    //sendtoaddressarraytxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),sendtoaddressarraytxfeeSetDefaultButton)
+	//sendtoaddressarraytxfeeSetDefaultButtonContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(100, 40)),sendtoaddressarraytxfeeSetDefaultButton)
 
-    //sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
+	//sendtoaddressarraytxfeeEntryContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),sendtoaddressarraytxfeeEntry)
 	//sendtoaddressarraytxfeeLabelContainer:=container.New(  layout.NewGridWrapLayout(fyne.NewSize(200, 40)),widget.NewLabel("Send to addresses fee"))
 	//sendtoaddressarraytxfeeContainer:=container.NewHBox(sendtoaddressarraytxfeeLabelContainer,sendtoaddressarraytxfeeEntryContainer,sendtoaddressarraytxfeeSetDefaultButtonContainer)
-	sendtoaddressarraytxfeeContainer := container.NewBorder(nil, nil, widget.NewLabel("Send to addresses fee"),sendtoaddressarraytxfeeSetDefaultButton, sendtoaddressarraytxfeeEntry)
-    //
-    //
-    completebutton:= widget.NewButton("SEND", func() {
-        fmt.Println("got :",componentsList)
-        var addressarray []string
-        var amountarray []string
+	sendtoaddressarraytxfeeContainer := container.NewBorder(nil, nil, widget.NewLabel("Send to addresses fee"), sendtoaddressarraytxfeeSetDefaultButton, sendtoaddressarraytxfeeEntry)
+	//
+	//
+	completebutton := widget.NewButton("SEND", func() {
+		fmt.Println("got :", componentsList)
+		var addressarray []string
+		var amountarray []string
 
-        for i,_:=range componentsList{
-            addressarray=append(addressarray,componentsList[i].address)
-            amountarray=append(amountarray,componentsList[i].amount)
-        }
-        if len(addressarray)==0 {
-            dialog.ShowInformation("Error no recipient address was added", "Add at least one recipient address ", win)
-            return
-        }
-        cli.Sendtoaddressarray(daemon.Wireswarm, daemon.Wlt,addressarray,amountarray,sendtoaddressarraytxfeeEntry.Text)
-        var emptycomponentsList []TxInfo
-        componentsList=emptycomponentsList
-            
-        componentsTree.Refresh()
+		for i, _ := range componentsList {
+			addressarray = append(addressarray, componentsList[i].address)
+			amountarray = append(amountarray, componentsList[i].amount)
+		}
+		if len(addressarray) == 0 {
+			dialog.ShowInformation("Error no recipient address was added", "Add at least one recipient address ", win)
+			return
+		}
+		cli.Sendtoaddressarray(daemon.Wireswarm, daemon.Wlt, addressarray, amountarray, sendtoaddressarraytxfeeEntry.Text)
+		var emptycomponentsList []TxInfo
+		componentsList = emptycomponentsList
 
-    })
+		componentsTree.Refresh()
 
+	})
 
-    completebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(100, 40)),completebutton)
-    //content := container.NewBorder(top, nil, left, nil, middle)
-    //
-    formlayout:=container.New(layout.NewPaddedLayout(),container.NewVBox(outputform,completiontext,sendtoaddressarraytxfeeContainer,completebuttoncontainer))
-    //layout:= container.NewHSplit(label,formlayout)
+	completebuttoncontainer := container.New(layout.NewGridWrapLayout(fyne.NewSize(100, 40)), completebutton)
+	//content := container.NewBorder(top, nil, left, nil, middle)
+	//
+	formlayout := container.New(layout.NewPaddedLayout(), container.NewVBox(outputform, completiontext, sendtoaddressarraytxfeeContainer, completebuttoncontainer))
+	//layout:= container.NewHSplit(label,formlayout)
 
-    return container.NewVSplit(label,formlayout)//layout
+	return container.NewVSplit(label, formlayout) //layout
 }
 
 func remove(s []TxInfo, i int) []TxInfo {
-    //s[len(s)-1], s[i] = s[i], s[len(s)-1]
-    //return s[:len(s)-1]
-    return append(s[:i], s[i+1:]...)
+	//s[len(s)-1], s[i] = s[i], s[len(s)-1]
+	//return s[:len(s)-1]
+	return append(s[:i], s[i+1:]...)
 }

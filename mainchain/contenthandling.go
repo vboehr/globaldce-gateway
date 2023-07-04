@@ -1,24 +1,26 @@
 package mainchain
-import(
+
+import (
 	"path/filepath"
 	//"os"
 	//"bufio"
 	"fmt"
 	//"github.com/globaldce/globaldce-gateway/utility"
 	"net/http"
-    //"html/template"
+	//"html/template"
 )
 
-func  (mn *Maincore) ServeContent(name string)  error{
+func (mn *Maincore) ServeContent(name string) error {
 	//p:="/"+name+"/sytle.css"
 	//http.HandleFunc(p, HandleContent)
 	//http.Handle("/", http.FileServer("./style.css"))
 	//http.Handle("/"+name+"/", fileServer("./style.css"))
 	//http.Handle("/"+name+"/",http.FileServer(http.Dir("./Cache/Content/"+name+"/")))
 
-	_=name
+	_ = name
 	return nil
 }
+
 /*
 func HandleContent(w http.ResponseWriter, r *http.Request) {
     contentfilepath:= filepath.Join("Cache","Content",filepath.FromSlash(r.URL.Path[1:]))////filepath.FromSlash() for win compatibility
@@ -41,19 +43,20 @@ func newRouter() *mux.Router {
 	return r
 }
 */
-func InitLocalhost(tmpAppPath string){
+func InitLocalhost(tmpAppPath string) {
 	//http.HandleFunc("/", HandleContent)/////////////////Was removed
 	//http.Handle("/static/", http.FileServer(http.Dir("/")))
-	
-	fs := http.FileServer(http.Dir(filepath.Join(tmpAppPath,"Cache","Content")))  
+
+	fs := http.FileServer(http.Dir(filepath.Join(tmpAppPath, "Cache", "Content")))
 	http.Handle("/", http.StripPrefix("/", fs))
 
 	fmt.Println(http.ListenAndServe(":8088", nil))
 
 }
+
 /*
 func  (mn *Maincore) CacheExistingFile(path string) (*utility.Extradata,error){
-	
+
 	f, err := os.Open(path)
 	if err != nil {
 		//
@@ -78,7 +81,7 @@ func  (mn *Maincore) CacheExistingFile(path string) (*utility.Extradata,error){
 	//////////////////////////////////////////
 
 	datafilesdirpath:=filepath.Join(mn.path,"Data","DataFiles")
-	
+
 	if _, err := os.Stat(datafilesdirpath); os.IsNotExist(err) {
 		os.Mkdir(datafilesdirpath, os.ModePerm)
 	}
@@ -95,7 +98,7 @@ func  (mn *Maincore) CacheExistingFile(path string) (*utility.Extradata,error){
 	newdatafilepath:=filepath.Join(datafilesdirpath,newdatafilename)
 	fmt.Println("creating file",newdatafilepath)
 	cf, err := os.OpenFile(newdatafilepath, os.O_WRONLY|os.O_CREATE, 0755)
-	
+
 	if err != nil {
 		//
 		fmt.Println("error:", err)
@@ -110,15 +113,16 @@ func  (mn *Maincore) CacheExistingFile(path string) (*utility.Extradata,error){
 	//////////////////////////////////////////
 	mn.PutDataFileState(ed.Hash,ed.Size)
 
-	return &ed,nil	
+	return &ed,nil
 }
 */
 
-func  (mn *Maincore) PushRegistredNameCommit(name []byte,contentid []byte)  {
+func (mn *Maincore) PushRegistredNameCommit(name []byte, contentid []byte) {
 
-	mn.PutRegistredNameCommitState(name,contentid) 
+	mn.PutRegistredNameCommitState(name, contentid)
 
 }
+
 /*
 func  (mn *Maincore) GetDataFile(hash utility.Hash) ([]byte,error) {
 	//TODO check if file has been add to mainstate

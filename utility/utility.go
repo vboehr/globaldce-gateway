@@ -1,17 +1,19 @@
 package utility
+
 import (
-    "fmt"
-    "syscall"
-    "golang.org/x/term"
+	"fmt"
+	"golang.org/x/term"
+	"syscall"
 )
 
-func PrintBytes (b []byte) {
-	for i:=0;i<len(b);i++{
-		fmt.Printf("0x%x, ",b[i])
+func PrintBytes(b []byte) {
+	for i := 0; i < len(b); i++ {
+		fmt.Printf("0x%x, ", b[i])
 	}
-	
+
 	fmt.Printf("")
 }
+
 /*
 func main() {
 	fmt.Print("Enter Password: ")
@@ -20,11 +22,11 @@ func main() {
 }
 */
 // go get golang.org/x/term
-func GetUserSecretEntry() ( string, error) {
-    byteUserSecretEntry, err := term.ReadPassword(int(syscall.Stdin))
-    if err != nil {
-        return  "", err
-    }
-    UserSecretEntry := string(byteUserSecretEntry)
-    return UserSecretEntry, nil
+func GetUserSecretEntry() (string, error) {
+	byteUserSecretEntry, err := term.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		return "", err
+	}
+	UserSecretEntry := string(byteUserSecretEntry)
+	return UserSecretEntry, nil
 }

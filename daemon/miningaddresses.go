@@ -1,37 +1,38 @@
 package daemon
-import
-(
+
+import (
 	//"crypto/sha256"
 	//"math/big"
-	"github.com/globaldce/globaldce-gateway/utility"
-	"encoding/json"
-	"encoding/binary"
 	"bytes"
+	"encoding/binary"
+	"encoding/json"
+	"github.com/globaldce/globaldce-gateway/utility"
 	"math/rand"
-	
+
 	//"github.com/globaldce/globaldce-gateway/applog"
 	"fmt"
 	"os"
 )
+
 //TODO integrate address  in the wallet
 type MiningAddresses struct {
-	Addressesarray [] utility.Hash
+	Addressesarray []utility.Hash
 }
 
-func (maddresses* MiningAddresses) AddAddress(addr utility.Hash){
-	maddresses.Addressesarray=append(maddresses.Addressesarray,addr)
-}//(rand.Intn(113)
-func (maddresses* MiningAddresses) GetAddress(i int) utility.Hash{
+func (maddresses *MiningAddresses) AddAddress(addr utility.Hash) {
+	maddresses.Addressesarray = append(maddresses.Addressesarray, addr)
+} //(rand.Intn(113)
+func (maddresses *MiningAddresses) GetAddress(i int) utility.Hash {
 	return maddresses.Addressesarray[i]
 }
-func (maddresses* MiningAddresses) GetRandomAddress() utility.Hash{
-	maxnb:=len(maddresses.Addressesarray)
-	i:=rand.Intn( maxnb )
+func (maddresses *MiningAddresses) GetRandomAddress() utility.Hash {
+	maxnb := len(maddresses.Addressesarray)
+	i := rand.Intn(maxnb)
 	//fmt.Printf("****%d",i)
 	return maddresses.Addressesarray[i]
-}//(rand.Intn(113)
+} //(rand.Intn(113)
 
-func (maddresses *MiningAddresses) LoadJSONMiningAddressesFile(filepath string) error{
+func (maddresses *MiningAddresses) LoadJSONMiningAddressesFile(filepath string) error {
 	f, err := os.OpenFile(filepath, os.O_RDONLY, 0755)
 	if err != nil {
 		//log.Fatal(err)
@@ -54,7 +55,7 @@ func (maddresses *MiningAddresses) LoadJSONMiningAddressesFile(filepath string) 
 		//log.Fatal(err)
 		fmt.Println("error:", rerr)
 	}
-	uerr:=json.Unmarshal(addrfilerawbytes,maddresses)
+	uerr := json.Unmarshal(addrfilerawbytes, maddresses)
 	if uerr != nil {
 		fmt.Println("error:", uerr)
 		return uerr
@@ -62,12 +63,12 @@ func (maddresses *MiningAddresses) LoadJSONMiningAddressesFile(filepath string) 
 	return nil
 }
 
-func (maddresses *MiningAddresses) SaveJSONMiningAddressesFile(addrfilepath string){
+func (maddresses *MiningAddresses) SaveJSONMiningAddressesFile(addrfilepath string) {
 	addrfilerawbytes, err := json.Marshal(*maddresses)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	
+
 	bufferMiningAddrfileseize := make([]byte, 4)
 	binary.LittleEndian.PutUint32(bufferMiningAddrfileseize, uint32(len(addrfilerawbytes)))
 
@@ -90,9 +91,9 @@ func (maddresses *MiningAddresses) SaveJSONMiningAddressesFile(addrfilepath stri
 }
 
 /*
-    address,addrerr:=hex.DecodeString(addrstring)
-    if addrerr!=nil{
-        applog.Warning("\nError: inappropriate address provided - %v",err)
-        os.Exit(0)
-    }
+   address,addrerr:=hex.DecodeString(addrstring)
+   if addrerr!=nil{
+       applog.Warning("\nError: inappropriate address provided - %v",err)
+       os.Exit(0)
+   }
 */
