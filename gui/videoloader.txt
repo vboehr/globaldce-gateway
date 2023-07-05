@@ -1,0 +1,37 @@
+package main
+
+import (
+	"os/exec"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
+)
+
+func main() {
+	myApp := app.New()
+	myWindow := myApp.NewWindow("Play Button")
+
+	playButton := widget.NewButton("Play", func() {
+		// Specify the path to your video file here
+		videoFile := "./video.mp4"
+
+		cmd := exec.Command("xdg-open", videoFile)
+		err := cmd.Start()
+		if err != nil {
+			// Handle any error that occurred while launching the video player
+			// For example, you can display an error message
+			// or log the error for debugging
+			fyne.LogError("Failed to open video player", err)
+		}
+	})
+
+	content := container.NewVBox(
+		playButton,
+	)
+
+	myWindow.SetContent(content)
+	myWindow.ShowAndRun()
+}
+

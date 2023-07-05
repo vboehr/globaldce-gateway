@@ -1,0 +1,110 @@
+package main
+
+import (
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
+	"fyne.io/fyne/v2/layout"
+	"fmt"
+)
+
+func main() {
+	myApp := app.New()
+	myWindow := myApp.NewWindow("Collapsible Sidebar")
+	device := fyne.CurrentDevice()
+
+	// Create the main content panel
+	content := widget.NewLabel("Main Content")
+
+	// Create the menu panel
+	menu := container.NewVBox(
+		widget.NewButton("Option 1", func() {
+			content.SetText("Option 1 selected")
+		}),
+		widget.NewButton("Option 2", func() {
+			content.SetText("Option 2 selected")
+		}),
+	)
+		if o := device.Orientation(); fyne.IsVertical(o) {
+			fmt.Printf("Orientation IsVertical\n")
+			menu.Hide()
+		}
+	// Create a button to toggle the menu visibility
+	menuButton := widget.NewButton("Toggle Menu", func() {
+		if menu.Hidden {
+			menu.Show()
+			
+			if o := device.Orientation(); fyne.IsVertical(o) {
+				fmt.Printf("Orientation IsVertical\n")
+				content.Hide()
+			}
+		} else {	
+			content.Show()
+			menu.Hide()
+		}
+
+	})
+
+	// Create a horizontal split container
+	splitContainer := container.NewHBox(menu, content)
+
+	// Create a container to hold the menu button and the split container
+	mainContainer := fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(menuButton, nil, nil, nil),
+		menuButton, splitContainer,
+	)
+
+	// Set the main container as the content of the window
+	myWindow.SetContent(mainContainer)
+	myWindow.ShowAndRun()
+}
+
+
+
+/*
+package main
+
+import (
+	"time"
+	"fmt"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/widget"
+)
+
+func main() {
+	a := app.New()
+	w := a.NewWindow("Hello")
+
+	str := binding.NewString()
+	device := fyne.CurrentDevice()
+	go func() {
+		for {
+		//dots := "....."
+		//for i := 5; i >= 0; i-- {
+		//	str.Set("Count down" + dots[:i])
+			time.Sleep(time.Second)
+		//}
+		//str.Set("Blast off!")
+		if o := device.Orientation(); fyne.IsVertical(o) {
+			fmt.Printf("Orientation IsVertical\n")
+		} else {
+			fmt.Printf("Orientation IsHorizontal\n")
+		}
+	
+		}
+	}()
+
+
+	
+
+
+	//fmt.Printf("ID: %s\n", device.Orientation)
+
+
+	w.SetContent(widget.NewLabelWithData(str))
+	w.ShowAndRun()
+}
+*/
