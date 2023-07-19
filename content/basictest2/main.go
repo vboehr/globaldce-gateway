@@ -1,9 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/globaldce/globaldce-gateway/content"
-	"context"
 	//"time"
 )
 
@@ -14,11 +14,11 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	maincontentclient:=content.Newcontentclient(ctx,"./")
+	maincontentclient := content.Newcontentclient(ctx, "./")
 	go maincontentclient.Initcontentclient()
 
-	fmt.Println(maincontentclient.ScanDirectory("cooldapp","xxx"))
-	
+	fmt.Println(maincontentclient.ScanDirectory("cooldapp", "xxx"))
+
 	cancel()
 
 }

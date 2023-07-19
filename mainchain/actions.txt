@@ -41,7 +41,7 @@ func HandleWebSocket(dappname string) {
         }
         defer conn.Close()
 
-        // Continuosly read and write actions
+        // Continuously read and write actions
         for {
 			if LoadedDAppName!=dappname{
 				break

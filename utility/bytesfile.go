@@ -1,7 +1,6 @@
-package utility 
+package utility
 
-import
-(
+import (
 	//"encoding/binary"
 	//"bytes"
 	//"fmt"
@@ -9,14 +8,16 @@ import
 	//"path/filepath"
 	"io/ioutil"
 )
-func SaveBytesFile(bytesfilebytes []byte,bytesfilepath string) error{
-	err :=ioutil.WriteFile(bytesfilepath,bytesfilebytes,0644)
+
+func SaveBytesFile(bytesfilebytes []byte, bytesfilepath string) error {
+	err := ioutil.WriteFile(bytesfilepath, bytesfilebytes, 0644)
 	return err
 }
-func LoadBytesFile(path string) (*[]byte,error){
-	b,err :=ioutil.ReadFile(path)
-	return &b,err
+func LoadBytesFile(path string) (*[]byte, error) {
+	b, err := ioutil.ReadFile(path)
+	return &b, err
 }
+
 /*
 func SaveBytesFile(bytesfilebytes []byte,bytesfilepath string) error{
 
@@ -25,9 +26,9 @@ func SaveBytesFile(bytesfilebytes []byte,bytesfilepath string) error{
 
 	bufferBytesfileseize := make([]byte, 4)
 	binary.LittleEndian.PutUint32(bufferBytesfileseize, uint32(len(bytesfilebytes)))
-	
+
 	f, err := os.OpenFile(bytesfilepath, os.O_WRONLY|os.O_CREATE, 0755)
-	
+
 	if err != nil {
 		//
 		fmt.Println("error:", err)
@@ -52,9 +53,9 @@ func SaveBytesFile(bytesfilebytes []byte,bytesfilepath string) error{
 	return nil
 }
 func LoadBytesFile(path string) (*[]byte,error){
-	
+
 	f, err := os.OpenFile(path, os.O_RDONLY, 0755)
-	
+
 	if err != nil {
 		//
 		fmt.Println("error:", err)

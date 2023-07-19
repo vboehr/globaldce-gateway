@@ -1,7 +1,5 @@
 package gui
 
-
-
 import (
 	"image/color"
 
@@ -30,19 +28,19 @@ func (myTheme) Color(c fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
 	case theme.ColorNameHover:
 		return color.NRGBA{R: 0xff, G: 0xff, B: 0xff, A: 0xf}
 	case theme.ColorNameInputBackground:
-		return color.NRGBA{R: 0xff, G: 0xff, B: 0xff, A: 0x19}//it was {R: 0xff, G: 0xff, B: 0xff, A: 0x19}
+		return color.NRGBA{R: 0xff, G: 0xff, B: 0xff, A: 0x19} //it was {R: 0xff, G: 0xff, B: 0xff, A: 0x19}
 	case theme.ColorNamePlaceHolder:
 		return color.NRGBA{R: 0xb2, G: 0xb2, B: 0xb2, A: 0xff}
 	case theme.ColorNamePressed:
 		return color.NRGBA{R: 0xff, G: 0xff, B: 0xff, A: 0x66}
 	case theme.ColorNamePrimary:
-		return color.NRGBA{R: 0xff, G: 0xff, B: 0x44, A: 0xff}///{R: 0xee, G: 0xd7, B: 0x00, A: 0xff}//TODO goldish color
+		return color.NRGBA{R: 0xff, G: 0xff, B: 0x44, A: 0xff} ///{R: 0xee, G: 0xd7, B: 0x00, A: 0xff}//TODO goldish color
 	case theme.ColorNameScrollBar:
 		return color.NRGBA{R: 0x0, G: 0x0, B: 0x0, A: 0x99}
 	case theme.ColorNameShadow:
 		return color.NRGBA{R: 0x0, G: 0x0, B: 0x0, A: 0x66}
-	case theme.ColorNameSelection:// Newly added
-		return color.NRGBA{R: 0x99, G: 0x99, B: 0x99, A: 0x66}// Newly added
+	case theme.ColorNameSelection: // Newly added
+		return color.NRGBA{R: 0x99, G: 0x99, B: 0x99, A: 0x66} // Newly added
 	default:
 		return theme.DefaultTheme().Color(c, v)
 	}
@@ -83,7 +81,7 @@ func (myTheme) Size(s fyne.ThemeSizeName) float32 {
 	case theme.SizeNameSeparatorThickness:
 		return 1
 	case theme.SizeNameText:
-		return 8//14 // Desktop 14 Mobile 8
+		return 8 //14 // Desktop 14 Mobile 8
 	case theme.SizeNameInputBorder:
 		return 2
 	default:

@@ -1,61 +1,62 @@
 package wallet
-import
-(
-	"github.com/globaldce/globaldce-gateway/utility"
-	"encoding/json"
-	"encoding/binary"
+
+import (
 	"bytes"
+	"encoding/binary"
+	"encoding/json"
+	"github.com/globaldce/globaldce-gateway/utility"
 	//"github.com/btcsuite/btcd/btcec/v2"
-	"github.com/globaldce/globaldce-gateway/applog"
 	"fmt"
+	"github.com/globaldce/globaldce-gateway/applog"
 	"os"
 	//"sync"
 )
+
 type PrivateKeyBytes []byte
 type Walletfile struct {
 	//Path string
 	//Chain []byte
 	//
-	Privatekeyarray [] PrivateKeyBytes
+	Privatekeyarray []PrivateKeyBytes
 
-	Assetarray [] Asset
-	Lastknownblock uint64
-	Broadcastedtxarray [] Broadcastedtx
-	Groupnamearray [] string
-	Contactarray [] Contact
+	Assetarray         []Asset
+	Lastknownblock     uint64
+	Broadcastedtxarray []Broadcastedtx
+	Groupnamearray     []string
+	Contactarray       []Contact
 }
 
-func (wlt *Wallet) SaveJSONWalletFile(walletfilepath string,key []byte) {
+func (wlt *Wallet) SaveJSONWalletFile(walletfilepath string, key []byte) {
 
-	walletfile:=new(Walletfile)
+	walletfile := new(Walletfile)
 	//walletfile.Chain=wlt.Chain
 
 	for i := 0; i < len(wlt.Privatekeyarray); i++ {
-		walletfile.Privatekeyarray=append(walletfile.Privatekeyarray,wlt.Privatekeyarray[i].Serialize())
+		walletfile.Privatekeyarray = append(walletfile.Privatekeyarray, wlt.Privatekeyarray[i].Serialize())
 	}
-	
-	walletfile.Assetarray=wlt.Assetarray
-	walletfile.Lastknownblock=wlt.Lastknownblock
-	walletfile.Broadcastedtxarray=wlt.Broadcastedtxarray
-	walletfile.Groupnamearray=wlt.Groupnamearray
-	walletfile.Contactarray=wlt.Contactarray
+
+	walletfile.Assetarray = wlt.Assetarray
+	walletfile.Lastknownblock = wlt.Lastknownblock
+	walletfile.Broadcastedtxarray = wlt.Broadcastedtxarray
+	walletfile.Groupnamearray = wlt.Groupnamearray
+	walletfile.Contactarray = wlt.Contactarray
 	walletfilerawstring, err := json.Marshal(walletfile)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
 	var walletfilestring []byte
-	if (len(key)!=0){
-		walletfilestring,_=utility.Encrypt(key,walletfilerawstring)
+	if len(key) != 0 {
+		walletfilestring, _ = utility.Encrypt(key, walletfilerawstring)
 	} else {
 		fmt.Println("No encryption key set")
-		walletfilestring=walletfilerawstring
+		walletfilestring = walletfilerawstring
 	}
 	bufferWalletfiletype := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bufferWalletfiletype, uint32(WALLET_TYPE_SEQUENTIAL))// type 1
+	binary.LittleEndian.PutUint32(bufferWalletfiletype, uint32(WALLET_TYPE_SEQUENTIAL)) // type 1
 
 	//
 	bufferWalletfileversion := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bufferWalletfileversion, uint32(WALLET_TYPE_SEQUENTIAL_VERSION))// type 1
+	binary.LittleEndian.PutUint32(bufferWalletfileversion, uint32(WALLET_TYPE_SEQUENTIAL_VERSION)) // type 1
 	//
 
 	bufferWalletfileseize := make([]byte, 4)
@@ -94,7 +95,7 @@ func (wlt *Wallet) SaveJSONWalletFile(walletfilepath string,key []byte) {
 	applog.Notice("Wallet saved.")
 
 }
-func (wlt *Wallet) LoadJSONWalletFile(path string,key []byte) error{
+func (wlt *Wallet) LoadJSONWalletFile(path string, key []byte) error {
 	//walletfilerawstring:=*LoadJSONFile(path)
 	f, err := os.OpenFile(path, os.O_RDONLY, 0755)
 	if err != nil {
@@ -146,34 +147,34 @@ func (wlt *Wallet) LoadJSONWalletFile(path string,key []byte) error{
 	}
 
 	var walletfilestring []byte
-	fmt.Println("key length",len(key))
-	if (len(key)!=0){
-		walletfilestring,_=utility.Decrypt(key,walletfilerawstring)
+	fmt.Println("key length", len(key))
+	if len(key) != 0 {
+		walletfilestring, _ = utility.Decrypt(key, walletfilerawstring)
 	} else {
 		fmt.Println("No encryption key set")
-		fmt.Println("data:",walletfilerawstring)
-		walletfilestring=walletfilerawstring
+		fmt.Println("data:", walletfilerawstring)
+		walletfilestring = walletfilerawstring
 	}
 
 	//applog.Trace("read JSONFILE CONTENT: %s", walletfilestring)
-	walletfile:=new(Walletfile)
-	uerr:=json.Unmarshal(walletfilestring,walletfile)
+	walletfile := new(Walletfile)
+	uerr := json.Unmarshal(walletfilestring, walletfile)
 	if uerr != nil {
 		fmt.Println("unmarshal error:", uerr)
 		return uerr
 	}
 	//applog.Trace("read JSONFILE CONTENT: %d %d", len (walletfile.Keypairarray),len(walletfile.Assetarray))
-	for i:=0;i<len(walletfile.Privatekeyarray);i++{
-		
-		privKey := utility.PrivKeyFromBytes([]byte( walletfile.Privatekeyarray[i] ))
-		wlt.Privatekeyarray=append(wlt.Privatekeyarray,&privKey)
+	for i := 0; i < len(walletfile.Privatekeyarray); i++ {
+
+		privKey := utility.PrivKeyFromBytes([]byte(walletfile.Privatekeyarray[i]))
+		wlt.Privatekeyarray = append(wlt.Privatekeyarray, &privKey)
 	}
-	wlt.Assetarray=walletfile.Assetarray
-	wlt.Lastknownblock=walletfile.Lastknownblock
-	wlt.Path=path
-	wlt.Broadcastedtxarray=walletfile.Broadcastedtxarray
-	wlt.Contactarray=walletfile.Contactarray
-	wlt.Walletloaded=true
+	wlt.Assetarray = walletfile.Assetarray
+	wlt.Lastknownblock = walletfile.Lastknownblock
+	wlt.Path = path
+	wlt.Broadcastedtxarray = walletfile.Broadcastedtxarray
+	wlt.Contactarray = walletfile.Contactarray
+	wlt.Walletloaded = true
 
 	return nil
 }

@@ -1,35 +1,37 @@
 package wire
+
 import (
 	//"github.com/globaldce/globaldce-gateway/applog"
 	"net"
 )
 
 type Peer struct {
-	// 
-	Address string
-	Connection net.Conn
+	//
+	Address                string
+	Connection             net.Conn
 	SyncingMainchainlength uint32
-	GoodIPArray []string
-	BadIPArray []string
+	GoodIPArray            []string
+	BadIPArray             []string
 	//BannedNameArray []string
 }
-func NewPeer(peeraddress string,conn net.Conn) * Peer {
-	np:=new(Peer)
-	np.Address=peeraddress
-	np.Connection=conn
-	np.SyncingMainchainlength=uint32(0)	
+
+func NewPeer(peeraddress string, conn net.Conn) *Peer {
+	np := new(Peer)
+	np.Address = peeraddress
+	np.Connection = conn
+	np.SyncingMainchainlength = uint32(0)
 
 	return np
 }
-func(p *Peer) WriteMessage(msg * Message){
+func (p *Peer) WriteMessage(msg *Message) {
 	p.WriteTCPMessage(msg)
 }
-func(p *Peer) WriteTCPMessage(msg * Message){
+func (p *Peer) WriteTCPMessage(msg *Message) {
 	msg.WriteBytes(p.Connection)
 }
-func(p * Peer) ReadMessage() (*Message,error){
-		msg,err:= p.ReadTCPMessage()
-		
-		return msg,err
-	
+func (p *Peer) ReadMessage() (*Message, error) {
+	msg, err := p.ReadTCPMessage()
+
+	return msg, err
+
 }

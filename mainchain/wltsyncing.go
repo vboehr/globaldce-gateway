@@ -1,4 +1,5 @@
 package mainchain
+
 import (
 	"github.com/globaldce/globaldce-gateway/applog"
 	"github.com/globaldce/globaldce-gateway/utility"
@@ -8,90 +9,87 @@ import (
 	//"os"
 )
 
-func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
-	var wltPubkeyHash [] utility.Hash
-	for i:=0;i<len(wlt.Privatekeyarray);i++{
-	wltPubkeyHash=append(wltPubkeyHash,utility.ComputeHash(wlt.Privatekeyarray[i].PubKey().SerializeCompressed()))
+func (mn *Maincore) SyncWallet(wlt *wallet.Wallet) {
+	var wltPubkeyHash []utility.Hash
+	for i := 0; i < len(wlt.Privatekeyarray); i++ {
+		wltPubkeyHash = append(wltPubkeyHash, utility.ComputeHash(wlt.Privatekeyarray[i].PubKey().SerializeCompressed()))
 	}
 	applog.Trace("Maincore Syncing Wallet ...")
 
 	applog.Trace("Maincore Syncing Wallet Adding Assets ...")
-	for i:=wlt.Lastknownblock+uint64(1);i<uint64(mn.GetConfirmedMainchainLength());i++{
-		mb:=mn.GetConfirmedMainblock(int(i))
+	for i := wlt.Lastknownblock + uint64(1); i < uint64(mn.GetConfirmedMainchainLength()); i++ {
+		mb := mn.GetConfirmedMainblock(int(i))
 		//if !mn.ValidateMainblockTransactions(uint32 (i), &mb.Transactions){
 		//	applog.Warning("ConfirmMainblock - Invalid mainblock %d",i)
 		//	return
 		//}
-		if mn.GetMainblockState(uint32(i))==StateValueIdentifierInvalidMainblock{
+		if mn.GetMainblockState(uint32(i)) == StateValueIdentifierInvalidMainblock {
 			continue
 		}
-		
-		for j:=0;j<len(mb.Transactions);j++{
-			for k:=0;k<len(mb.Transactions[j].Vout);k++{
-				for l:=0;l<len(wltPubkeyHash);l++{
-					if mb.Transactions[j].Vout[k].CompareWithAddress(wltPubkeyHash[l]){
-						assetstate:=mb.Transactions[j].Vout[k].GetAssetState()
-						wlt.AddAsset(mb.Transactions[j].ComputeHash(),uint32(k),mb.Transactions[j].Vout[k].Value,uint32(l),assetstate)
-						applog.Trace("Maincore Syncing Wallet - Adding Assets ... %d",mb.Transactions[j].Vout[k].Value)
+
+		for j := 0; j < len(mb.Transactions); j++ {
+			for k := 0; k < len(mb.Transactions[j].Vout); k++ {
+				for l := 0; l < len(wltPubkeyHash); l++ {
+					if mb.Transactions[j].Vout[k].CompareWithAddress(wltPubkeyHash[l]) {
+						assetstate := mb.Transactions[j].Vout[k].GetAssetState()
+						wlt.AddAsset(mb.Transactions[j].ComputeHash(), uint32(k), mb.Transactions[j].Vout[k].Value, uint32(l), assetstate)
+						applog.Trace("Maincore Syncing Wallet - Adding Assets ... %d", mb.Transactions[j].Vout[k].Value)
 					}
 				}
 			}
 			//
 			//
-			for k:=0;k<len(mb.Transactions[j].Vin);k++{
-						for m:=0;m<len(wlt.Assetarray);m++{
-							if wlt.Assetarray[m].Hash==mb.Transactions[j].Vin[k].Hash && wlt.Assetarray[m].Index==mb.Transactions[j].Vin[k].Index {
-								//
-								//utility.DecodeBytecodeId(mb.Transactions[j].Vin[k].Bytecode)
-								if (wlt.Assetarray[m].StateString=="UNSPENT")||(wlt.Assetarray[m].StateString=="BROADCASTED") {
-									wlt.Assetarray[m].StateString="SPENT"
-									applog.Trace("Maincore Syncing Wallet - Consuming Assets ... %d %s",wlt.Assetarray[m].Value,wlt.Assetarray[m].StateString)
-								} else {
-									moduleid:=utility.DecodeBytecodeId(mb.Transactions[j].Vin[k].Bytecode)
-									
-									if strings.Index(wlt.Assetarray[m].StateString,"NAMEREGISTERED_")==0 && moduleid==utility.ModuleIdentifierECDSANameUnregistration{
-										r := strings.NewReplacer("NAMEREGISTERED_", "NAMEUNREGISTERED_")
-										wlt.Assetarray[m].StateString=r.Replace(wlt.Assetarray[m].StateString)
-										//fmt.Println("Unregistration occured",j,k)
-										//os.Exit(0)
-									}
-								}
-								
-	
-								
-								//
-								wlt.Assetarray[m].SpendingTxHash=mb.Transactions[j].ComputeHash()
-								wlt.Assetarray[m].SpendingIndex=uint32(k)
+			for k := 0; k < len(mb.Transactions[j].Vin); k++ {
+				for m := 0; m < len(wlt.Assetarray); m++ {
+					if wlt.Assetarray[m].Hash == mb.Transactions[j].Vin[k].Hash && wlt.Assetarray[m].Index == mb.Transactions[j].Vin[k].Index {
+						//
+						//utility.DecodeBytecodeId(mb.Transactions[j].Vin[k].Bytecode)
+						if (wlt.Assetarray[m].StateString == "UNSPENT") || (wlt.Assetarray[m].StateString == "BROADCASTED") {
+							wlt.Assetarray[m].StateString = "SPENT"
+							applog.Trace("Maincore Syncing Wallet - Consuming Assets ... %d %s", wlt.Assetarray[m].Value, wlt.Assetarray[m].StateString)
+						} else {
+							moduleid := utility.DecodeBytecodeId(mb.Transactions[j].Vin[k].Bytecode)
 
+							if strings.Index(wlt.Assetarray[m].StateString, "NAMEREGISTERED_") == 0 && moduleid == utility.ModuleIdentifierECDSANameUnregistration {
+								r := strings.NewReplacer("NAMEREGISTERED_", "NAMEUNREGISTERED_")
+								wlt.Assetarray[m].StateString = r.Replace(wlt.Assetarray[m].StateString)
+								//fmt.Println("Unregistration occurred",j,k)
+								//os.Exit(0)
 							}
 						}
+
+						//
+						wlt.Assetarray[m].SpendingTxHash = mb.Transactions[j].ComputeHash()
+						wlt.Assetarray[m].SpendingIndex = uint32(k)
+
+					}
+				}
 				//
 			}
 			//
 		}
-		wlt.Lastknownblock=i
+		wlt.Lastknownblock = i
 	}
-	applog.Trace("Maincore Syncing Wallet Refreshing Broadcasted Transactions Confirmation ...")	
-	for i:=0;i<len(wlt.Broadcastedtxarray);i++{
+	applog.Trace("Maincore Syncing Wallet Refreshing Broadcasted Transactions Confirmation ...")
+	for i := 0; i < len(wlt.Broadcastedtxarray); i++ {
 
 		//applog.Trace("hash %x index %d value %d pkindex %d ",wlt.Assetarray[i].Hash,wlt.Assetarray[i].Index,wlt.Assetarray[i].Value,wlt.Assetarray[i].Privatekeyindex)
-		tmpstate,_,_:=mn.GetTxState(wlt.Broadcastedtxarray[i].Tx.ComputeHash())
-		if tmpstate==StateValueIdentifierTx{
+		tmpstate, _, _ := mn.GetTxState(wlt.Broadcastedtxarray[i].Tx.ComputeHash())
+		if tmpstate == StateValueIdentifierTx {
 			//applog.Trace("unspents")
-			wlt.Broadcastedtxarray[i].ConfirmationString="CONFIRMED"
+			wlt.Broadcastedtxarray[i].ConfirmationString = "CONFIRMED"
 		}
 
 	}
-	
-	for i:=0;i<len(wlt.Broadcastedtxarray);i++{
-			if wlt.Broadcastedtxarray[i].ConfirmationString=="CONFIRMED"{
-				txhash:=wlt.Broadcastedtxarray[i].Tx.ComputeHash()
-				mn.txspool.DeleteTransaction(&txhash)
-			}			
+
+	for i := 0; i < len(wlt.Broadcastedtxarray); i++ {
+		if wlt.Broadcastedtxarray[i].ConfirmationString == "CONFIRMED" {
+			txhash := wlt.Broadcastedtxarray[i].Tx.ComputeHash()
+			mn.txspool.DeleteTransaction(&txhash)
+		}
 	}
 	applog.Notice("Maincore Syncing Wallet done.")
 }
-
 
 /*
 func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
@@ -109,7 +107,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 			for k:=0;k<len(mb.Transactions[j].Vout);k++{
 				for l:=0;l<len(wltPubkeyHash);l++{
 					if mb.Transactions[j].Vout[k].CompareWithAddress(wltPubkeyHash[l]){
-					
+
 						//applog.Notice("Adding asset ...")
 						wlt.AddAsset(mb.Transactions[j].ComputeHash(),uint32(k),mb.Transactions[j].Vout[k].Value,uint32(l))
 					}
@@ -158,7 +156,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 
 
 	//}
-	applog.Trace("Maincore Syncing Wallet Refreshing Broadcasted Transactions Confirmation ...")	
+	applog.Trace("Maincore Syncing Wallet Refreshing Broadcasted Transactions Confirmation ...")
 	for i:=0;i<len(wlt.Broadcastedtxarray);i++{
 
 		//applog.Trace("hash %x index %d value %d pkindex %d ",wlt.Assetarray[i].Hash,wlt.Assetarray[i].Index,wlt.Assetarray[i].Value,wlt.Assetarray[i].Privatekeyindex)
@@ -169,7 +167,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 		}
 
 	}
-	
+
 	for i:=0;i<len(wlt.Broadcastedtxarray);i++{
 			//applog.Trace("unspents")
 			//if wlt.Broadcastedtxarray[i].ConfirmationString==""{
@@ -178,7 +176,7 @@ func  (mn *Maincore) SyncWallet (wlt *wallet.Wallet){
 			if wlt.Broadcastedtxarray[i].ConfirmationString=="CONFIRMED"{
 				txhash:=wlt.Broadcastedtxarray[i].Tx.ComputeHash()
 				mn.txspool.DeleteTransaction(&txhash)
-			}			
+			}
 	}
 
 	applog.Notice("Maincore Syncing Wallet done.")

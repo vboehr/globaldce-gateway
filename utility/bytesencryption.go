@@ -5,14 +5,15 @@ import (
 	//"encoding/binary"
 	//"bytes"
 	//"os"
-    "crypto/aes"
-    "crypto/cipher"
-    "crypto/rand"
-    "encoding/base64"
-    "errors"
-    "io"
-    //"log"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"encoding/base64"
+	"errors"
+	"io"
+	//"log"
 )
+
 /*
 func LoadJSONFile(path string) *[]byte{
 	f, err := os.OpenFile(path, os.O_RDONLY, 0755)
@@ -37,7 +38,7 @@ func LoadJSONFile(path string) *[]byte{
 		fmt.Println("error:", rerr)
 	}
 	return &walletfilestring
-	
+
 }
 */
 
@@ -45,7 +46,7 @@ func LoadJSONFile(path string) *[]byte{
 // https://stackoverflow.com/questions/18817336/golang-encrypting-a-string-with-aes-and-base64
 // As answered by the following user:
 // https://stackoverflow.com/users/1567738/intermernet
-// The answer was also modified by the following user: 
+// The answer was also modified by the following user:
 // https://stackoverflow.com/users/2588732/roundsparrow-hilltx
 
 func Encrypt(key, text []byte) ([]byte, error) {
