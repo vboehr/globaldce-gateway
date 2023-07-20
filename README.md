@@ -1,7 +1,7 @@
 <h1 align="center">
   <br>
   <a href="https://globaldce.github.io">
-    <img src="globaldce.png" alt="globaldce" width="200">
+    <img src="globaldce.png" alt="globaldce" width="70%">
   </a>
   <br>
   globaldce gateway
