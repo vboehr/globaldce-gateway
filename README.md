@@ -9,6 +9,7 @@
   <br>
 </h1>
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/globaldce/globaldce-gateway)](https://goreportcard.com/report/github.com/globaldce/globaldce-gateway)
 
 ## globaldce-gateway
 This is the reference implementation of globaldce protocol coded in the go programming language.
