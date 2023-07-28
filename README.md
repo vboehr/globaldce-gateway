@@ -62,7 +62,7 @@ globaldce-gateway -help
 ```
 
 ## Contributing
-Bug reports and bug fixes are welcome.
+This software is open source, feel free to contribute! Not just code, but reporting issues, suggesting ideas, improving documentation or marketing material.
 
 ## Licence
 This project is an open source free software; you can redistribute it and/or modify it under the terms of the MIT license.
